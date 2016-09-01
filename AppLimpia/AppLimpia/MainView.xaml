@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:MainViewModel}"
+             x:Class="AppLimpia.MainView">
+  <ContentPage.ToolbarItems>
+    <!-- Search drop points menu item -->
+    <ToolbarItem Text="Buscar"
+                 Order="Primary"
+                 Priority="0"
+                 Command="{Binding SearchDropPointsCommand}">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    iOS="{x:Null}"
+                    Android="icon_search"
+                    WinPhone="Assets/AppBar/IconSearch.png"/>
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+
+    <!-- Locate vehicle menu item -->
+    <ToolbarItem Text="Ubicar"
+                 Order="Primary"
+                 Priority="1"
+                 Command="{Binding LocateVehicleForPrimaryFavoriteCommand}">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    iOS="{x:Null}"
+                    Android="icon_vehicle"
+                    WinPhone="Assets/AppBar/IconVehicle.png"/>
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+
+    <!-- View favorites menu item -->
+    <ToolbarItem Text="Favoritos"
+                 Order="Primary"
+                 Priority="2"
+                 Command="{Binding ShowFavoritesCommand}">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    iOS="{x:Null}"
+                    Android="icon_favorites"
+                    WinPhone="Assets/AppBar/IconFavorites.png"/>
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+
+    <!-- View notifications menu item -->
+    <ToolbarItem Text="Ver notificaciones"
+                 Order="Secondary"
+                 Priority="0"
+                 Command="{Binding ShowNotificationsCommand}">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    iOS="{x:Null}"
+                    Android="icon_notifications"
+                    WinPhone="Assets/AppBar/IconNotifications.png"/>
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+
+    <!-- View my reports menu item -->
+    <ToolbarItem Text="Ver mis reportes"
+                 Order="Secondary"
+                 Priority="1"
+                 Command="{Binding ShowMyReportsCommand}">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    iOS="{x:Null}"
+                    Android="icon_reports"
+                    WinPhone="Assets/AppBar/IconReports.png"/>
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+
+    <!-- View my reports menu item -->
+    <ToolbarItem Text="Salir"
+                 Order="Secondary"
+                 Priority="2"
+                 Command="{Binding LogoutCommand}">
+      <ToolbarItem.Icon>
+        <OnPlatform x:TypeArguments="FileImageSource"
+                    iOS="{x:Null}"
+                    Android="icon_logout"
+                    WinPhone="Assets/AppBar/IconLogout.png"/>
+      </ToolbarItem.Icon>
+    </ToolbarItem>
+  </ContentPage.ToolbarItems>
+
+  <!-- Main view -->
+  <Grid>
+    <local:MapEx x:Name="MapView"
+                 Grid.Column="0"
+                 Grid.Row="0"
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand"
+                 ShowUserPosition="true"
+                 UserPosition="{Binding UserPosition,Mode=OneWayToSource}"/>
+  </Grid>
+</ContentPage>

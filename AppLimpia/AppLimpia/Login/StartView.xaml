@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:AppLimpia.Login;assembly=AppLimpia"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:StartViewModel}"
+             x:Class="AppLimpia.Login.StartView"
+             BackgroundColor="White">
+  <StackLayout Orientation="Vertical"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"
+               Padding="40">
+    <!-- Title and application logos -->
+    <Image>
+      <Image.Source>
+        <OnPlatform x:TypeArguments="ImageSource"
+                    iOS="TitleLogo.png"
+                    Android="TitleLogo.png"
+                    WinPhone="Assets/TitleLogo.png"/>
+      </Image.Source>
+    </Image>
+    <Image>
+      <Image.Source>
+        <OnPlatform x:TypeArguments="ImageSource"
+                    iOS="AppLogo.png"
+                    Android="AppLogo.png"
+                    WinPhone="Assets/AppLogo.png"/>
+      </Image.Source>
+    </Image>
+
+    <!-- Start button -->
+    <Button Margin="0, 20"
+            Text="Inicio"
+            Command="{Binding StartCommand}">
+      <Button.Style>
+        <OnPlatform x:TypeArguments="Style">
+          <OnPlatform.WinPhone>
+            <Style TargetType="Button">
+              <Setter Property="BorderColor" Value="Black"/>
+              <Setter Property="BackgroundColor" Value="White"/>
+              <Setter Property="TextColor" Value="Black"/>
+            </Style>
+          </OnPlatform.WinPhone>
+        </OnPlatform>
+      </Button.Style>
+    </Button>
+  </StackLayout>
+</ContentPage>

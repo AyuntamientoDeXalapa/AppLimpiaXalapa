@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:AppLimpia.Login;assembly=AppLimpia"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:RegisterViewModel}"
+             x:Class="AppLimpia.Login.RegisterView"
+             BackgroundColor="White">
+  <StackLayout Orientation="Vertical"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"
+               Padding="10">
+    <!-- Application logo -->
+    <Image HorizontalOptions="Start">
+      <Image.Source>
+        <OnPlatform x:TypeArguments="ImageSource"
+                    iOS="AppLogoWide.png"
+                    Android="AppLogoWide.png"
+                    WinPhone="Assets/AppLogoWide.png"/>
+      </Image.Source>
+    </Image>
+    <Label HorizontalOptions="CenterAndExpand"
+           Style="{DynamicResource LabelTitleStyle}"
+           Text="Registro"/>
+
+    <!-- User data fields -->
+    <Label Text="Email"/>
+    <Entry x:Name="EntryEmail"
+           HorizontalOptions="FillAndExpand"
+           Placeholder="Email"
+           Text="{Binding UserEmail}"/>
+    <Label Text="Contraseña"/>
+    <Entry x:Name="EntryPassword"
+           HorizontalOptions="FillAndExpand"
+           Placeholder="Contraseña"
+           IsPassword="True"
+           Text="{Binding Password,Mode=OneWayToSource}"/>
+    <Label Text="Confirmar contraseña"/>
+    <Entry x:Name="EntryPasswordConfirm"
+           HorizontalOptions="FillAndExpand"
+           Placeholder="Confirmar contraseña"
+           IsPassword="True"
+           Text="{Binding PasswordConfirm,Mode=OneWayToSource}"/>
+    <Label Text="Nombre"/>
+    <Entry x:Name="EntryName"
+           HorizontalOptions="FillAndExpand"
+           Placeholder="Nombre"
+           Text="{Binding Name}"/>
+    <Label Text="Telefono"/>
+    <Entry x:Name="EntryPhoneNumber"
+           HorizontalOptions="FillAndExpand"
+           Placeholder="Telefono"
+           Text="{Binding PhoneNumber}"/>
+
+    <!-- Register and cancel buttons -->
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Button Grid.Column="0"
+              Text="Cancelar"
+              Command="{Binding CancelCommand}"/>
+      <Button x:Name="ButtonRegister"
+              Grid.Column="1"
+              Text="Registrarse"
+              Command="{Binding RegisterCommand}"/>
+    </Grid>
+  </StackLayout>
+</ContentPage>

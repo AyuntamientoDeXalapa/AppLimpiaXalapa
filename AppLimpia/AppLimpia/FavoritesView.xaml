@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:FavoritesViewModel}"
+             x:Class="AppLimpia.FavoritesView"
+             BackgroundColor="White">
+  <Grid VerticalOptions="FillAndExpand"
+        HorizontalOptions="FillAndExpand"
+        Margin="5">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <!-- Header -->
+    <Label HorizontalOptions="Center"
+           Style="{DynamicResource LabelTitleStyle}"
+           Text="Favoritos"/>
+
+    <!-- Favorites list -->
+    <ListView Grid.Column="0"
+              Grid.Row="1"
+              HasUnevenRows="True"
+              ItemsSource="{Binding Favorites}">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <Grid ColumnSpacing="1"
+                  RowSpacing="1">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+              <!-- Favorite information -->
+              <Label Grid.Column="0"
+                     Grid.Row="0"
+                     Text="{Binding Label}"/>
+              <Label Grid.Column="0"
+                     Grid.Row="1"
+                     Text="Principal">
+                <Label.Style>
+                  <Style TargetType="Label">
+                    <Setter Property="IsVisible" Value="False"/>
+                  </Style>
+                </Label.Style>
+                <Label.Triggers>
+                  <DataTrigger TargetType="Label"
+                               Binding="{Binding IsPrimary}"
+                               Value="True">
+                    <Setter Property="IsVisible" Value="True"/>
+                  </DataTrigger>
+                </Label.Triggers>
+              </Label>
+
+              <!-- Set as favorite button -->
+              <Image Grid.Column="1"
+                     Grid.Row="0"
+                     Grid.RowSpan="2"
+                     Margin="5">
+                <Image.Source>
+                  <OnPlatform x:TypeArguments="ImageSource"
+                              iOS="Set.png"
+                              Android="set.png"
+                              WinPhone="Assets/Icons/Set.png"/>
+                </Image.Source>
+                <Image.Triggers>
+                  <DataTrigger TargetType="Image"
+                               Binding="{Binding IsPrimary}"
+                               Value="True">
+                    <Setter Property="IsVisible" Value="False"/>
+                  </DataTrigger>
+                </Image.Triggers>
+              </Image>
+              <Button Grid.Column="1"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"
+                      WidthRequest="32"
+                      HeightRequest="32"
+                      Command="{Binding SetAsPrimaryCommand}">
+                <Button.Style>
+                  <Style TargetType="Button">
+                    <Setter Property="BorderWidth" Value="0"/>
+                    <Setter Property="BorderColor" Value="Transparent"/>
+                    <Setter Property="BackgroundColor" Value="Transparent"/>
+                  </Style>
+                </Button.Style>
+                <Button.Triggers>
+                  <DataTrigger TargetType="Button"
+                               Binding="{Binding IsPrimary}"
+                               Value="True">
+                    <Setter Property="IsVisible" Value="False"/>
+                  </DataTrigger>
+                </Button.Triggers>
+              </Button>
+
+              <!-- Remove favorite button -->
+              <Image Grid.Column="2"
+                     Grid.Row="0"
+                     Grid.RowSpan="2"
+                     Margin="5">
+                <Image.Source>
+                  <OnPlatform x:TypeArguments="ImageSource"
+                              iOS="Remove.png"
+                              Android="remove.png"
+                              WinPhone="Assets/Icons/Remove.png"/>
+                </Image.Source>
+              </Image>
+              <Button Grid.Column="2"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"
+                      WidthRequest="32"
+                      HeightRequest="32"
+                      Command="{Binding RemoveFavoriteCommand}">
+                <Button.Style>
+                  <Style TargetType="Button">
+                    <Setter Property="BorderWidth" Value="0"/>
+                    <Setter Property="BorderColor" Value="Transparent"/>
+                    <Setter Property="BackgroundColor" Value="Transparent"/>
+                  </Style>
+                </Button.Style>
+              </Button>
+            </Grid>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+
+    <!-- Control buttons -->
+    <Grid Grid.Column="0"
+          Grid.Row="2"
+          HorizontalOptions="FillAndExpand">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Button Grid.Column="0"
+              Grid.Row="0"
+              Margin="5"
+              HorizontalOptions="FillAndExpand"
+              Text="Cerrar"
+              Command="{Binding CancelCommand}"/>
+    </Grid>
+  </Grid>
+</ContentPage>

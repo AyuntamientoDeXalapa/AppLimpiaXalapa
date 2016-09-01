@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:IncidentReportViewModel}"
+             x:Class="AppLimpia.IncidentReportView"
+             BackgroundColor="White">
+  <StackLayout Orientation="Vertical"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"
+               Padding="10">
+    <!-- View header -->
+    <Label HorizontalOptions="CenterAndExpand"
+           Style="{DynamicResource SubtitleStyle}"
+           Text="Incidencia"/>
+
+    <!-- Incident report fields -->
+    <Label Text="Tipo de incidencia"/>
+    <local:PickerEx x:Name="PickerIncidentTypes"
+                    HorizontalOptions="FillAndExpand"
+                    SelectedIndex="{Binding IncidentTypeIndex}"/>
+
+    <!-- Incident report photo -->
+    <Image x:Name="Image1" HeightRequest="300" WidthRequest="300" IsVisible="False"/>
+
+    <!-- Report and cancel buttons -->
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Button Grid.Column="1" Grid.Row="0" Text="Agregar foto" Clicked="OnTakePhoto"/>
+      <Button Grid.Column="0" Grid.Row="1" Text="Cancelar" Clicked="OnCanceled"/>
+      <Button Grid.Column="1"
+              Grid.Row="1"
+              Text="Enviar"
+              Command="{Binding ReportIncidentCommand}"/>
+    </Grid>
+  </StackLayout>
+</ContentPage>

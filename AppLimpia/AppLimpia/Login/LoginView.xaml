@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:AppLimpia.Login;assembly=AppLimpia"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance local:LoginViewModel}"
+             x:Class="AppLimpia.Login.LoginView"
+             BackgroundColor="White">
+  <StackLayout Orientation="Vertical"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill"
+               Padding="10">
+    <!-- Application logo -->
+    <Image HorizontalOptions="Start">
+      <Image.Source>
+        <OnPlatform x:TypeArguments="ImageSource"
+                    iOS="AppLogoWide.png"
+                    Android="AppLogoWide.png"
+                    WinPhone="Assets/AppLogoWide.png"/>
+      </Image.Source>
+    </Image>
+    <Label HorizontalOptions="CenterAndExpand"
+           Style="{DynamicResource LabelTitleStyle}"
+           Text="Bienvenido"/>
+
+    <!-- User login and password boxes -->
+    <StackLayout Orientation="Vertical"
+                 HorizontalOptions="Fill">
+      <Label Text="Email"/>
+      <Entry x:Name="EntryUserName"
+             HorizontalOptions="FillAndExpand"
+             Placeholder="Email"
+             Text="{Binding UserName}"/>
+      <Label Text="Contraseña"/>
+      <Entry x:Name="EntryPassword"
+             HorizontalOptions="FillAndExpand"
+             Placeholder="Contraseña"
+             IsPassword="True"
+             Text="{Binding Password,Mode=OneWayToSource}"/>
+    </StackLayout>
+    
+    <!-- Login and register buttons -->
+    <Grid HorizontalOptions="FillAndExpand">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Button Grid.Column="0"
+              Margin="5"
+              Text="Registrarse"
+              Command="{Binding RegisterCommand}"/>
+      <Button x:Name="ButtonLogin"
+              Grid.Column="1"
+              Margin="5"
+              Text="Entrar"
+              Command="{Binding LoginCommand}"/>
+    </Grid>
+    <Label HorizontalOptions="End"
+           Text="Olvidaste tu contraseña?">
+      <Label.Style>
+        <Style TargetType="Label">
+          <Setter Property="TextColor" Value="Blue"/>
+          <Setter Property="FontAttributes" Value="Italic"/>
+          <Setter Property="FontSize" Value="16"/>
+        </Style>
+      </Label.Style>
+      <Label.GestureRecognizers>
+        <TapGestureRecognizer Command="{Binding RestorePasswordCommand}"/>
+      </Label.GestureRecognizers>
+    </Label>
+  
+    <!-- Enter with buttons -->
+    <Label HorizontalOptions="CenterAndExpand"
+           FontSize="14"
+           Text="Entrar con"/>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Image Grid.Column="0">
+        <Image.Source>
+          <OnPlatform x:TypeArguments="ImageSource"
+                      iOS="Google.png"
+                      Android="Google.png"
+                      WinPhone="Assets/Google.png"/>
+        </Image.Source>
+        <Image.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding LoginWithCommand}"
+                                CommandParameter="google"/>
+        </Image.GestureRecognizers>
+      </Image>
+      <Image Grid.Column="1">
+        <Image.Source>
+          <OnPlatform x:TypeArguments="ImageSource"
+                      iOS="Facebook.png"
+                      Android="Facebook.png"
+                      WinPhone="Assets/Facebook.png"/>
+        </Image.Source>
+        <Image.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding LoginWithCommand}"
+                                CommandParameter="facebook"/>
+        </Image.GestureRecognizers>
+      </Image>
+      <Image Grid.Column="2">
+        <Image.Source>
+          <OnPlatform x:TypeArguments="ImageSource"
+                      iOS="Twitter.png"
+                      Android="Twitter.png"
+                      WinPhone="Assets/Twitter.png"/>
+        </Image.Source>
+        <Image.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding LoginWithCommand}"
+                                CommandParameter="twitter"/>
+        </Image.GestureRecognizers>
+      </Image>
+    </Grid>
+  </StackLayout>
+</ContentPage>
