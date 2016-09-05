@@ -13,7 +13,7 @@
                VerticalOptions="Fill"
                Padding="40">
     <!-- Title and application logos -->
-    <Image>
+    <Image Margin="0,20">
       <Image.Source>
         <OnPlatform x:TypeArguments="ImageSource"
                     iOS="TitleLogo.png"
@@ -21,7 +21,7 @@
                     WinPhone="Assets/TitleLogo.png"/>
       </Image.Source>
     </Image>
-    <Image>
+    <Image Margin="0,20">
       <Image.Source>
         <OnPlatform x:TypeArguments="ImageSource"
                     iOS="AppLogo.png"
