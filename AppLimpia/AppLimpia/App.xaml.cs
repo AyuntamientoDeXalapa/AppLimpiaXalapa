@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -28,9 +29,25 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets or sets the current culture info for the current application.
+        /// </summary>
+        internal CultureInfo CurrentCultureInfo
+        {
+            get
+            {
+                return Localization.Culture;
+            }
+
+            set
+            {
+                Debug.WriteLine("New culture {0}", value);
+                Localization.Culture = value;
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the main view model.
         /// </summary>
-        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
         private MainViewModel MainViewModel { get; set; }
 
         /// <summary>

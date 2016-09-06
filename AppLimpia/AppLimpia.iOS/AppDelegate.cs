@@ -42,8 +42,49 @@ namespace AppLimpia.iOS
             MediaPicker.Instance = new Media.MediaPickerIOS();
 
             // Initialize the application
-            this.LoadApplication(new App());
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var application = new App();
+            application.CurrentCultureInfo = AppDelegate.GetCurrentCultureInfo();
+            this.LoadApplication(application);
             return base.FinishedLaunching(app, options);
+        }
+
+        /// <summary>
+        /// Gets the current culture for application display.
+        /// </summary>
+        /// <returns>The culture to use for application resources.</returns>
+        private static System.Globalization.CultureInfo GetCurrentCultureInfo()
+        {
+            // Set the fallback language
+            var netLanguage = "en";
+            var prefLanguageOnly = "en";
+
+            // If preferred language is set
+            if (NSLocale.PreferredLanguages.Length > 0)
+            {
+                var pref = NSLocale.PreferredLanguages[0];
+                prefLanguageOnly = pref.Substring(0, 2);
+                if (prefLanguageOnly == "pt")
+                {
+                    // Get the correct Portuguese language
+                    pref = pref == "pt" ? "pt-BR" : "pt-PT";
+                }
+
+                netLanguage = pref.Replace("_", "-");
+            }
+
+            // Create the culture info for the current application
+            System.Globalization.CultureInfo ci;
+            try
+            {
+                ci = new System.Globalization.CultureInfo(netLanguage);
+            }
+            catch
+            {
+                ci = new System.Globalization.CultureInfo(prefLanguageOnly);
+            }
+
+            return ci;
         }
     }
 }

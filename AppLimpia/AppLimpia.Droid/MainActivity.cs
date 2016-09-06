@@ -28,7 +28,21 @@ namespace AppLimpia.Droid
             Media.MediaPicker.Instance = new MediaPickerDroid();
 
             // Initialize the application
-            this.LoadApplication(new App());
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var application = new App();
+            application.CurrentCultureInfo = MainActivity.GetCurrentCultureInfo();
+            this.LoadApplication(application);
+        }
+
+        /// <summary>
+        /// Gets the current culture for application display.
+        /// </summary>
+        /// <returns>The culture to use for application resources.</returns>
+        private static System.Globalization.CultureInfo GetCurrentCultureInfo()
+        {
+            var androidLocale = Java.Util.Locale.Default;
+            var netLanguage = androidLocale.ToString().Replace("_", "-");
+            return new System.Globalization.CultureInfo(netLanguage);
         }
     }
 }

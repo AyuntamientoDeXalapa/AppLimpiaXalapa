@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 using Windows.UI.Xaml.Navigation;
 
@@ -25,7 +26,11 @@ namespace AppLimpia.WinPhone
             // Initialize the application
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            this.LoadApplication(new AppLimpia.App());
+
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var application = new AppLimpia.App();
+            application.CurrentCultureInfo = CultureInfo.CurrentUICulture;
+            this.LoadApplication(application);
         }
 
         /// <summary>

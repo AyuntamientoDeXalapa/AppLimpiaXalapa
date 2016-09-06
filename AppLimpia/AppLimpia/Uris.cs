@@ -35,7 +35,7 @@ namespace AppLimpia
         /// <summary>
         /// The get nearest drop points URI.
         /// </summary>
-        public const string GetNearest = Uris.Server + "applimpia-fake/error2.php"; //getnearest.php";
+        public const string GetNearest = Uris.Server + "applimpia-fake/getnearest.php";
 
         /// <summary>
         /// The locate vehicle for drop points URI.
