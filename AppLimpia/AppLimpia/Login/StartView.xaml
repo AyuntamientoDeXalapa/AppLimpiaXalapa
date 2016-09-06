@@ -18,7 +18,7 @@
       <Image.Source>
         <OnPlatform x:TypeArguments="ImageSource"
                     iOS="TitleLogo.png"
-                    Android="TitleLogo.png"
+                    Android="title_logo.png"
                     WinPhone="Assets/TitleLogo.png"/>
       </Image.Source>
     </Image>
@@ -26,7 +26,7 @@
       <Image.Source>
         <OnPlatform x:TypeArguments="ImageSource"
                     iOS="AppLogo.png"
-                    Android="AppLogo.png"
+                    Android="app_logo.png"
                     WinPhone="Assets/AppLogo.png"/>
       </Image.Source>
     </Image>

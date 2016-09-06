@@ -2078,10 +2078,10 @@ namespace AppLimpia.Droid
 			public const int add_to_favorites = 2130837579;
 			
 			// aapt resource value: 0x7f02004c
-			public const int AppLogo = 2130837580;
+			public const int app_logo = 2130837580;
 			
 			// aapt resource value: 0x7f02004d
-			public const int AppLogoWide = 2130837581;
+			public const int app_logo_wide = 2130837581;
 			
 			// aapt resource value: 0x7f02004e
 			public const int common_full_open_on_phone = 2130837582;
@@ -2219,13 +2219,13 @@ namespace AppLimpia.Droid
 			public const int DropPoint = 2130837626;
 			
 			// aapt resource value: 0x7f02007b
-			public const int Facebook = 2130837627;
+			public const int facebook = 2130837627;
 			
 			// aapt resource value: 0x7f02007c
 			public const int Favorite = 2130837628;
 			
 			// aapt resource value: 0x7f02007d
-			public const int Google = 2130837629;
+			public const int google = 2130837629;
 			
 			// aapt resource value: 0x7f02007e
 			public const int ic_audiotrack = 2130837630;
@@ -2510,10 +2510,10 @@ namespace AppLimpia.Droid
 			public const int set = 2130837722;
 			
 			// aapt resource value: 0x7f0200db
-			public const int TitleLogo = 2130837723;
+			public const int title_logo = 2130837723;
 			
 			// aapt resource value: 0x7f0200dc
-			public const int Twitter = 2130837724;
+			public const int twitter = 2130837724;
 			
 			// aapt resource value: 0x7f0200dd
 			public const int Vehicle = 2130837725;

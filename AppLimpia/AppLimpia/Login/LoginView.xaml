@@ -17,7 +17,7 @@
       <Image.Source>
         <OnPlatform x:TypeArguments="ImageSource"
                     iOS="AppLogoWide.png"
-                    Android="AppLogoWide.png"
+                    Android="app_logo_wide.png"
                     WinPhone="Assets/AppLogoWide.png"/>
       </Image.Source>
     </Image>
@@ -85,7 +85,7 @@
         <Image.Source>
           <OnPlatform x:TypeArguments="ImageSource"
                       iOS="Google.png"
-                      Android="Google.png"
+                      Android="google.png"
                       WinPhone="Assets/Google.png"/>
         </Image.Source>
         <Image.GestureRecognizers>
@@ -97,7 +97,7 @@
         <Image.Source>
           <OnPlatform x:TypeArguments="ImageSource"
                       iOS="Facebook.png"
-                      Android="Facebook.png"
+                      Android="facebook.png"
                       WinPhone="Assets/Facebook.png"/>
         </Image.Source>
         <Image.GestureRecognizers>
@@ -109,7 +109,7 @@
         <Image.Source>
           <OnPlatform x:TypeArguments="ImageSource"
                       iOS="Twitter.png"
-                      Android="Twitter.png"
+                      Android="twitter.png"
                       WinPhone="Assets/Twitter.png"/>
         </Image.Source>
         <Image.GestureRecognizers>
