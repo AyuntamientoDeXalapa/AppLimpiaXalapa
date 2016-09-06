@@ -233,12 +233,13 @@ namespace AppLimpia
             this.haveFavorites = false;
 
             // Get the favorites from the server
-            var task = WebHelper.GetAsync(new Uri(Uris.GetFavorites));
-
-            // Show the favorites on the map
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            var continuation = task.ContinueWith(this.ParseServerData, scheduler);
-            continuation.ContinueWith(t => this.UpdateStatus(this.havePosition, true), scheduler);
+            WebHelper.GetAsync(
+                new Uri(Uris.GetFavorites),
+                json =>
+                    {
+                        this.ParseJson(json);
+                        this.UpdateStatus(this.havePosition, true);
+                    });
         }
 
         /// <summary>
@@ -249,11 +250,7 @@ namespace AppLimpia
             // Get the drop points from the server
             System.Diagnostics.Debug.Assert(this.havePosition, "Mush have user position");
             var uri = $"{Uris.GetNearest}?lat={this.userPosition.Latitude}&lon={this.userPosition.Longitude}";
-            var task = WebHelper.GetAsync(new Uri(uri));
-
-            // Show the drop points on the map
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            task.ContinueWith(this.ParseServerData, scheduler);
+            WebHelper.GetAsync(new Uri(uri), this.ParseJson);
         }
 
         /// <summary>
@@ -688,8 +685,8 @@ namespace AppLimpia
         {
             // Update the status
             var change = (this.havePosition != newHavePosition) || (this.haveFavorites != newHaveFavorites);
-            this.havePosition = newHavePosition;
-            this.haveFavorites = newHaveFavorites;
+            this.havePosition |= newHavePosition;
+            this.haveFavorites |= newHaveFavorites;
 
             ////// If favorites are loaded
             ////if (this.haveFavorites)

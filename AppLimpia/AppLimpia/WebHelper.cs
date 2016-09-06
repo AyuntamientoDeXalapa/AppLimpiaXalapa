@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using AppLimpia.Json;
@@ -19,25 +20,41 @@ namespace AppLimpia
         /// Asynchronously gets the data from the server with the GET method.
         /// </summary>
         /// <param name="uri">The server URI to retrieve data.</param>
-        /// <returns>A task that represents the asynchronous get operation.</returns>
+        /// <param name="action">An action to be performed on successful remote operation.</param>
+        public static void GetAsync(Uri uri, Action<JsonValue> action)
+        {
+            // Get the task
+            var task = WebHelper.GetAsync(uri);
+
+            // Setup continuation
+            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            task.ContinueWith(
+                t => action(t.Result),
+                default(CancellationToken),
+                TaskContinuationOptions.OnlyOnRanToCompletion,
+                scheduler);
+
+            // Setup error handling
+            task.ContinueWith(
+                WebHelper.ParseTaskError,
+                default(CancellationToken),
+                TaskContinuationOptions.OnlyOnFaulted,
+                scheduler);
+        }
+
+        /// <summary>
+        /// Asynchronously gets the data from the server with the GET method.
+        /// </summary>
+        /// <param name="uri">The server URI to retrieve data.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<JsonValue> GetAsync(Uri uri)
         {
             // Prepare the GET request
-            var httpClient = new HttpClient();
             using (var request = new HttpRequestMessage(HttpMethod.Get, uri))
             {
                 // Send the GET request to the server
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                using (var response = await httpClient.SendAsync(request))
-                {
-                    // Ensure a success operation
-                    response.EnsureSuccessStatusCode();
-
-                    // Parse the returned JSON data
-                    var content = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine("Response: " + content);
-                    return await Task.Run(() => Json.Json.Read(content));
-                }
+                return await WebHelper.SendAsync(request);
             }
         }
 
@@ -46,14 +63,13 @@ namespace AppLimpia
         /// </summary>
         /// <param name="uri">The server URI to post data.</param>
         /// <param name="content">The content to post to server.</param>
-        /// <returns>A task that represents the asynchronous get operation.</returns>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public static async Task<JsonValue> PostAsync(Uri uri, JsonValue content)
         {
-            // Prepare the GET request
-            var httpClient = new HttpClient();
+            // Prepare the POST request
             using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
             {
-                // Send the GET request to the server
+                // Send the POST request to the server
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
                 // Prepare the request content
@@ -63,41 +79,93 @@ namespace AppLimpia
                 request.Content = new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
 
                 // Get server response
-                using (var response = await httpClient.SendAsync(request))
-                {
-                    // Ensure a success operation
-                    response.EnsureSuccessStatusCode();
-
-                    // Parse the returned JSON data
-                    var responseContent = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine("Response: " + responseContent);
-                    return await Task.Run(() => Json.Json.Read(responseContent));
-                }
+                return await WebHelper.SendAsync(request);
             }
         }
 
         /// <summary>
-        /// Asynchronously gets the data from the server with the GET method.
+        /// Asynchronously sends the request to the server.
         /// </summary>
-        /// <param name="uri">The server URI to retrieve data.</param>
-        /// <returns>A task that represents the asynchronous get operation.</returns>
-        public static async Task<JsonValue> GetServerDataOld(Uri uri)
+        /// <param name="request">The request to be send to the server.</param>
+        /// <returns>>A task that represents the asynchronous operation.</returns>
+        private static async Task<JsonValue> SendAsync(HttpRequestMessage request)
         {
-            // Create the web request
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Accept = "application/json";
-            request.Method = "GET";
-
-            // Send the request to the server and wait for the response
-            using (var response = await request.GetResponseAsync())
+            // Get server response
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var httpClient = new HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(30);
+            try
             {
-                // Get a stream representation of the HTTP web response
-                using (var stream = response.GetResponseStream())
+                using (var response = await httpClient.SendAsync(request))
                 {
-                    // Parse the returned JSON data
-                    // ReSharper disable once AccessToDisposedClosure
-                    var jsonDoc = await Task.Run(() => Json.Json.Read(stream));
-                    return jsonDoc;
+                    // If response is a error
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        // Parse the returned error description
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        Debug.WriteLine("Error: " + responseContent);
+                        var problem = Json.Json.Read(responseContent);
+
+                        // Read error description
+                        var title = problem.GetItemOrDefault("title").GetStringValueOrDefault(null);
+                        var detail = problem.GetItemOrDefault("detail").GetStringValueOrDefault(null);
+                        throw new RemoteServerException(title, detail);
+                    }
+
+                    // Parse success error response
+                    {
+                        // If response body does not have content
+                        if (response.StatusCode == HttpStatusCode.NoContent)
+                        {
+                            return null;
+                        }
+
+                        // Parse the returned JSON data
+                        var responseContent = await response.Content.ReadAsStringAsync();
+                        Debug.WriteLine("Response: " + responseContent);
+                        return await Task.Run(() => Json.Json.Read(responseContent));
+                    }
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                // Operation has timed out
+                // TODO: Localize
+                throw new TimeoutException("No connectivity", ex);
+            }
+        }
+
+        /// <summary>
+        /// Parses the task that have failed to execute.
+        /// </summary>
+        /// <param name="task">A task that represents the failed asynchronous operation.</param>
+        private static void ParseTaskError(Task task)
+        {
+            // The task should be faulted
+            System.Diagnostics.Debug.Assert(task.Status == TaskStatus.Faulted, "Asynchronous task must be faulted.");
+
+            // Report the error to the user
+            foreach (var ex in task.Exception.Flatten().InnerExceptions)
+            {
+                // If the error is an not connected error
+                if (ex is TimeoutException)
+                {
+                    // TODO: Localize
+                    App.DisplayAlert(
+                        "Error",
+                        "No se pudo conectar con el servidor. Por favor verifica que esta conectado al Internet o intenta más tarde.",
+                        "OK");
+                }
+                else if (ex is RemoteServerException)
+                {
+                    var exception = (RemoteServerException)ex;
+                    App.DisplayAlert(exception.Title, exception.Message, "OK");
+                }
+                else
+                {
+                    // TODO: Localize
+                    App.DisplayAlert("Error", "El servidor marco el error pero no ha regresado ninguna detalle.", "OK");
+                    Debug.WriteLine(ex.ToString());
                 }
             }
         }
