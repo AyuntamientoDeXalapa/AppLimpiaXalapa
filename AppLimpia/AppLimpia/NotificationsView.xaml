@@ -23,7 +23,8 @@
     <!-- Notifications list -->
     <ListView Grid.Column="0"
               Grid.Row="1"
-              ItemsSource="{Binding Notifications}">
+              ItemsSource="{Binding Notifications}"
+              HasUnevenRows="True">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>

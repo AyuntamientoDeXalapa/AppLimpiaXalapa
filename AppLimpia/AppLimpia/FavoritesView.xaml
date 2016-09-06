@@ -25,8 +25,8 @@
     <!-- Favorites list -->
     <ListView Grid.Column="0"
               Grid.Row="1"
-              HasUnevenRows="True"
-              ItemsSource="{Binding Favorites}">
+              ItemsSource="{Binding Favorites}"
+              HasUnevenRows="True">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
