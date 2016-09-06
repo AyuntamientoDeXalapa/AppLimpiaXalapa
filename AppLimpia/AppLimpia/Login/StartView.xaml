@@ -14,7 +14,7 @@
                VerticalOptions="Fill"
                Padding="40">
     <!-- Title and application logos -->
-    <Image Margin="0,20">
+    <Image>
       <Image.Source>
         <OnPlatform x:TypeArguments="ImageSource"
                     iOS="TitleLogo.png"
@@ -32,20 +32,7 @@
     </Image>
 
     <!-- Start button -->
-    <Button Margin="0, 20"
-            Text="{local:Localize ButtonStart}"
-            Command="{Binding StartCommand}">
-      <Button.Style>
-        <OnPlatform x:TypeArguments="Style">
-          <OnPlatform.WinPhone>
-            <Style TargetType="Button">
-              <Setter Property="BorderColor" Value="Black"/>
-              <Setter Property="BackgroundColor" Value="White"/>
-              <Setter Property="TextColor" Value="Black"/>
-            </Style>
-          </OnPlatform.WinPhone>
-        </OnPlatform>
-      </Button.Style>
-    </Button>
+    <Button Text="{local:Localize ButtonStart}"
+            Command="{Binding StartCommand}"/>
   </StackLayout>
 </ContentPage>
