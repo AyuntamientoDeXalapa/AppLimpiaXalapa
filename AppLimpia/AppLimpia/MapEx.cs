@@ -45,7 +45,7 @@ namespace AppLimpia
             this.IsShowingUser = false;
 
             // TODO: Remove
-            Device.OnPlatform(Android: () => { }, iOS: () => this.IsShowingUser = true);
+            Device.OnPlatform(Android: () => { }, iOS: () => { });
 
             this.pins = new ObservableCollection<MapExPin>();
 
@@ -77,7 +77,7 @@ namespace AppLimpia
                 this.SetValue(MapEx.ShowUserPositionProperty, value);
 
                 // TODO: Remove
-                Device.OnPlatform(Android: () => { }, iOS: () => this.IsShowingUser = value);
+                Device.OnPlatform(Android: () => { }, iOS: () => { });
             }
         }
 

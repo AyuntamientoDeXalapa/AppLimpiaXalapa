@@ -13,6 +13,7 @@ using MapKit;
 using UIKit;
 
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Maps.iOS;
 using Xamarin.Forms.Platform.iOS;
 
@@ -40,6 +41,8 @@ namespace AppLimpia.iOS
             // Remove event handlers
             if (e.OldElement != null)
             {
+                Xamarin.Forms.MessagingCenter.Unsubscribe<MapEx>(this, "CenterMap");
+
                 var nativeMap = (MKMapView)this.Control;
                 nativeMap.GetViewForAnnotation = null;
                 var pins = (ObservableCollection<MapExPin>)((MapEx)e.OldElement).Pins;
@@ -49,10 +52,20 @@ namespace AppLimpia.iOS
             // Register new event handlers
             if (e.NewElement != null)
             {
+                // Setup event handlers
+                Xamarin.Forms.MessagingCenter.Subscribe(this, "CenterMap", new Action<MapEx, Position>(this.CenterMap));
+
                 var nativeMap = (MKMapView)this.Control;
                 nativeMap.GetViewForAnnotation = this.GetViewForAnnotation;
+                nativeMap.CalloutAccessoryControlTapped += this.OnCalloutAccessoryControlTapped;
                 var pins = (ObservableCollection<MapExPin>)((MapEx)e.NewElement).Pins;
                 pins.CollectionChanged += this.OnCollectionChanged;
+
+                nativeMap.DidUpdateUserLocation += this.OnUpdateUserLocation;
+
+                // Show user position if required
+                var element = (MapEx)e.NewElement;
+                element.IsShowingUser = element.ShowUserPosition;
             }
         }
 
@@ -66,7 +79,27 @@ namespace AppLimpia.iOS
             // Call the base member
             base.OnElementPropertyChanged(sender, e);
 
-            // This method is called when a property of a map is changed
+            // If ShowUserPosition property is changed
+            if (e.PropertyName == MapEx.ShowUserPositionProperty.PropertyName)
+            {
+                var element = (MapEx)this.Element;
+                element.IsShowingUser = element.ShowUserPosition;
+            }
+        }
+
+        /// <summary>
+        /// Centers the map on the required point.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="center">The point to center map on.</param>
+        private void CenterMap(MapEx sender, Position center)
+        {
+            // Move the map center to the required position
+            if (this.Control != null)
+            {
+                var nativeMap = (MKMapView)this.Control;
+                nativeMap.SetCenterCoordinate(new CLLocationCoordinate2D(center.Latitude, center.Longitude), true);
+            }
         }
 
         /// <summary>
@@ -98,12 +131,12 @@ namespace AppLimpia.iOS
             }
 
             // If no annotation can be reused
-            MKAnnotationView annotationView = mapView.DequeueReusableAnnotation(customPin.Id);
-            System.Diagnostics.Debug.WriteLine("GetViewForAnnotation({0})", annotationView);
+            var reuseId = customPin.Type.ToString();
+            MKAnnotationView annotationView = mapView.DequeueReusableAnnotation(reuseId);
             if (annotationView == null)
             {
                 // Create a new annotation
-                annotationView = new MKAnnotationView(annotation, customPin.Id);
+                annotationView = new MKAnnotationView(annotation, reuseId);
                 var icon = customPin.Type == MapPinType.Vehicle
                                ? "Vehicle.png"
                                : (customPin.Type == MapPinType.Favorite ? "Favorite.png" : "DropPoint.png");
@@ -112,86 +145,114 @@ namespace AppLimpia.iOS
             }
 
             // Return the annotation
+            annotationView.Annotation = annotation;
             annotationView.CanShowCallout = true;
-            annotationView.DetailCalloutAccessoryView = this.DetailViewForAnnotation(anno);
+
+            // If the annotation is not a vehicle
+            if (customPin.Type != MapPinType.Vehicle)
+            {
+                // Set the left call-out views
+                var favorite = new UIButton(UIButtonType.Custom);
+                var favoriteImage = customPin.Type == MapPinType.DropPoint
+                                        ? "AddToFavorites.png"
+                                        : "RemoveFromFavorites.png";
+                var image = UIImage.FromFile(favoriteImage);
+                favorite.Frame = new CGRect(0, 0, image.Size.Width, image.Size.Height);
+                favorite.SetImage(UIImage.FromFile(favoriteImage), UIControlState.Normal);
+                annotationView.LeftCalloutAccessoryView = favorite;
+
+                // Set details view
+                annotationView.DetailCalloutAccessoryView = this.DetailViewForAnnotation(customPin);
+            }
+
+            // Return the provided annotation
             return annotationView;
         }
 
         /// <summary>
         /// Gets the detail view for annotation display.
         /// </summary>
-        /// <param name="annotation">The annotation to display.</param>
+        /// <param name="customPin">The custom pin to create annotation for.</param>
         /// <returns>The annotation detail view to display.</returns>
-        private UIView DetailViewForAnnotation(MKPointAnnotation annotation)
+        // ReSharper disable once MemberCanBeMadeStatic.Local
+        private UIView DetailViewForAnnotation(MapExPin customPin)
         {
             // Create a new view for annotation details
             // ReSharper disable once UseObjectOrCollectionInitializer
             var view = new UIView();
-            view.BackgroundColor = UIColor.Green;
+            view.BackgroundColor = UIColor.White;
             view.TranslatesAutoresizingMaskIntoConstraints = false;
 
-            // Create the label
-            // ReSharper disable once UseObjectOrCollectionInitializer
-            var label = new UILabel();
-            label.Text = annotation.Title;
-            label.TranslatesAutoresizingMaskIntoConstraints = false;
-            label.Font = UIFont.SystemFontOfSize(20);
-            view.AddSubview(label);
+            // Create the locate vehicle button
+            var buttonLocate = new UIButton(UIButtonType.Custom);
+            buttonLocate.SetTitle("Ubicar camion", UIControlState.Normal);
+            buttonLocate.SetTitleColor(UIColor.Blue, UIControlState.Normal);
+            buttonLocate.TranslatesAutoresizingMaskIntoConstraints = false;
+            buttonLocate.TouchUpInside += (s, e) => customPin.LocateVehicleCommand.Execute(null);
+            view.AddSubview(buttonLocate);
 
-            // Create the button
-            var button = new UIButton(UIButtonType.Custom);
-            button.SetTitle("Reportar", UIControlState.Normal);
-            button.TranslatesAutoresizingMaskIntoConstraints = false;
-            button.TouchUpInside += (s, e) => new UIAlertView("Touch2", "TouchUpInside handled", null, "OK", null).Show();
-            view.AddSubview(button);
+            // Create the report button
+            var buttonReport = new UIButton(UIButtonType.Custom);
+            buttonReport.SetTitle("Reportar", UIControlState.Normal);
+            buttonReport.SetTitleColor(UIColor.Blue, UIControlState.Normal);
+            buttonReport.TranslatesAutoresizingMaskIntoConstraints = false;
+            buttonReport.TouchUpInside += (s, e) => customPin.ReportIncidentCommand.Execute(null);
+            view.AddSubview(buttonReport);
 
-            ////NSDictionary* views = NSDictionaryOfVariableBindings(label, button);
+            // Create sub view dictionary
             NSDictionary views = NSDictionary.FromObjectsAndKeys(
-                new NSObject[] { label, button },
-                new NSObject[] { new NSString("label"), new NSString("button") });
-            
+                new NSObject[] { buttonLocate, buttonReport },
+                new NSObject[] { new NSString("buttonLocate"), new NSString("buttonReport") });
 
-            ////[view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[label]|" options:0 metrics:nil views:views]];
-            var constraint1 = NSLayoutConstraint.FromVisualFormat("H:|[label]|", 0, null, views);
-            view.AddConstraints(constraint1);
-             
-            ////[view addConstraint:[NSLayoutConstraint constraintWithItem:button attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:view attribute:NSLayoutAttributeCenterX multiplier:1 constant:0]];
-            var constraint2 = NSLayoutConstraint.Create(
-                button,
-                NSLayoutAttribute.CenterX,
-                NSLayoutRelation.Equal,
-                view,
-                NSLayoutAttribute.CenterX,
-                1,
-                0);
-            view.AddConstraint(constraint2);
-
-            ////[view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[label]-[button]|" options:0 metrics:nil views:views]];
-            var constraint3 = NSLayoutConstraint.FromVisualFormat("V:|[label]-[button]|", 0, null, views);
-            view.AddConstraints(constraint3);
-
-            ////var widthConstraint = NSLayoutConstraint.Create(
-            ////    view,
-            ////    NSLayoutAttribute.Width,
-            ////    NSLayoutRelation.Equal,
-            ////    null,
-            ////    NSLayoutAttribute.NoAttribute,
-            ////    1,
-            ////    100);
-            ////view.AddConstraint(widthConstraint);
-
-            ////var heightConstraint = NSLayoutConstraint.Create(
-            ////    view,
-            ////    NSLayoutAttribute.Height,
-            ////    NSLayoutRelation.Equal,
-            ////    null,
-            ////    NSLayoutAttribute.NoAttribute,
-            ////    1,
-            ////    100);
-            ////view.AddConstraint(heightConstraint);
+            // Add view constraints
+            view.AddConstraints(NSLayoutConstraint.FromVisualFormat("H:|[buttonLocate]|", 0, null, views));
+            view.AddConstraints(NSLayoutConstraint.FromVisualFormat("H:|[buttonReport]|", 0, null, views));
+            view.AddConstraints(
+                NSLayoutConstraint.FromVisualFormat("V:|[buttonLocate]-[buttonReport]|", 0, null, views));
 
             // Return the created view
             return view;
+        }
+
+        /// <summary>
+        /// Handles the CalloutAccessoryControlTapped event of MKMapView.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A <see cref="MKMapViewAccessoryTappedEventArgs"/> with arguments of the event.</param>
+        private void OnCalloutAccessoryControlTapped(object sender, MKMapViewAccessoryTappedEventArgs e)
+        {
+            // If annotation is a user location do nothing
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            if (e.View.Annotation is MKUserLocation)
+            {
+                return;
+            }
+
+            // Get the custom pin for annotation
+            var anno = e.View.Annotation as MKPointAnnotation;
+            if (anno == null)
+            {
+                return;
+            }
+
+            // Toggle pin favorite status
+            var customPin = (this.Element as MapEx)?.Pins?.FirstOrDefault(p => p.InternalId.Equals(anno));
+            customPin?.ToggleFavoriteCommand.Execute(null);
+        }
+
+        /// <summary>
+        /// Handles the DidUpdateUserLocation event of MKMapView.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A <see cref="MKUserLocationEventArgs"/> with arguments of the event.</param>
+        private void OnUpdateUserLocation(object sender, MKUserLocationEventArgs e)
+        {
+            // Report the new map coordinates
+            if (e.UserLocation.Location != null)
+            {
+                var location = e.UserLocation.Location.Coordinate;
+                ((MapEx)this.Element).UserPosition = new Position(location.Latitude, location.Longitude);
+            }
         }
 
         /// <summary>
@@ -302,34 +363,51 @@ namespace AppLimpia.iOS
         private void OnPinPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             // Get the pin and corresponding marker
-            System.Diagnostics.Debug.WriteLine("OnPinPropertyChanged({0})", e.PropertyName);
+            var pin = (MapExPin)sender;
+            var annotation = pin.InternalId as MKPointAnnotation;
+            if (annotation == null)
+            {
+                // Remove event handler
+                pin.PropertyChanged -= this.OnPinPropertyChanged;
+                return;
+            }
 
-            ////var pin = (MapExPin)sender;
-            ////var marker = this.markers?.FirstOrDefault(m => m.Id.Equals((string)pin.InternalId));
-            ////if (marker == null)
-            ////{
-            ////    // Remove event handler
-            ////    pin.PropertyChanged -= this.OnPinPropertyChanged;
-            ////    return;
-            ////}
+            // If pin label changed
+            if (e.PropertyName == MapExPin.LabelProperty.PropertyName)
+            {
+                annotation.Title = pin.Label;
+            }
 
-            ////// If pin label changed
-            ////if (e.PropertyName == MapExPin.LabelProperty.PropertyName)
-            ////{
-            ////    marker.Title = pin.Label;
-            ////}
+            // If the address property changed
+            if (e.PropertyName == MapExPin.AddressProperty.PropertyName)
+            {
+                annotation.Subtitle = pin.Address;
+            }
 
-            ////// If the address property changed
-            ////if (e.PropertyName == MapExPin.AddressProperty.PropertyName)
-            ////{
-            ////    marker.Snippet = pin.Address;
-            ////}
+            // If the position changed
+            if (e.PropertyName == MapExPin.PositionProperty.PropertyName)
+            {
+                annotation.SetCoordinate(new CLLocationCoordinate2D(pin.Position.Latitude, pin.Position.Longitude));
+            }
+            
+            // If the type changed
+            if (e.PropertyName == MapExPin.TypeProperty.PropertyName)
+            {
+                // Reload the marker
+                var nativeMap = this.Control as MKMapView;
+                if (nativeMap != null)
+                {
+                    var isSelected = object.ReferenceEquals(nativeMap.SelectedAnnotations.FirstOrDefault(), annotation);
+                    nativeMap.RemoveAnnotation(annotation);
+                    nativeMap.AddAnnotation(annotation);
 
-            ////// If the position changed
-            ////if (e.PropertyName == MapExPin.PositionProperty.PropertyName)
-            ////{
-            ////    marker.Position = new LatLng(pin.Position.Latitude, pin.Position.Longitude);
-            ////}
+                    // Select the new annotation
+                    if (isSelected)
+                    {
+                        nativeMap.SelectAnnotation(annotation, false);
+                    }
+                }
+            }
         }
     }
 }

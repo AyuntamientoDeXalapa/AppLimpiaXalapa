@@ -82,6 +82,12 @@ namespace AppLimpia
                     new NavigationPage(mainView),
                     mainView);
 
+                // Fix the navigation property for iOS
+                if (Device.OS == TargetPlatform.iOS)
+                {
+                    instance.MainViewModel.Navigation = instance.MainPage.Navigation;
+                }
+
                 // Android does not fire Appearing event so subscribe to Disappearing event
                 if (Device.OS != TargetPlatform.Android)
                 {

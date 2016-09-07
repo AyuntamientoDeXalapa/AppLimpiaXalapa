@@ -5,6 +5,19 @@
              x:Class="AppLimpia.App">
   <Application.Resources>
     <OnPlatform x:TypeArguments="ResourceDictionary">
+      <!-- iOS styles -->
+      <OnPlatform.iOS>
+        <ResourceDictionary>
+          <Style TargetType="local:FavoritesView">
+            <Setter Property="Padding" Value="0,20,0,0"/>
+          </Style>
+          <Style TargetType="ListView">
+            <Setter Property="SeparatorVisibility" Value="None"/>
+            <Setter Property="SeparatorColor" Value="Black"/>
+          </Style>
+        </ResourceDictionary>
+      </OnPlatform.iOS>
+      
       <!-- Android styles -->
       <OnPlatform.Android>
         <ResourceDictionary>
