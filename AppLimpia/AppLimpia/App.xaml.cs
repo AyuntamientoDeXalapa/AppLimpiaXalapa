@@ -35,13 +35,13 @@ namespace AppLimpia
         {
             get
             {
-                return Localization.Culture;
+                return AppLimpia.Properties.Localization.Culture;
             }
 
             set
             {
                 Debug.WriteLine("New culture {0}", value);
-                Localization.Culture = value;
+                AppLimpia.Properties.Localization.Culture = value;
             }
         }
 

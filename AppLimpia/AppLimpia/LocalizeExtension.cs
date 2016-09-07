@@ -48,7 +48,7 @@ namespace AppLimpia
             }
 
             // Get the resource manager
-            var manager = Localization.ResourceManager;
+            var manager = AppLimpia.Properties.Localization.ResourceManager;
 
             // Get the requested string
             var localization = manager.GetString(this.Text, this.currentCulture);

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AppLimpia {
+namespace AppLimpia.Properties {
     using System;
     using System.Reflection;
     
@@ -23,7 +23,7 @@ namespace AppLimpia {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Localization {
+    internal partial class Localization {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -40,7 +40,7 @@ namespace AppLimpia {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AppLimpia.Localization", typeof(Localization).GetTypeInfo().Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AppLimpia.Properties.Localization", typeof(Localization).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

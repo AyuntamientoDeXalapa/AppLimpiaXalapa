@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Reflection;
 
 using Windows.UI.Xaml.Navigation;
 
@@ -26,6 +27,12 @@ namespace AppLimpia.WinPhone
             // Initialize the application
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
+
+            // Change the resource manager
+            var manager = new WindowsRuntimeResourceManager(
+                typeof(AppLimpia.Properties.Localization).FullName,
+                typeof(AppLimpia.Properties.Localization).GetTypeInfo().Assembly);
+            AppLimpia.Properties.Localization.SetResourceManager(manager);
 
             // ReSharper disable once UseObjectOrCollectionInitializer
             var application = new AppLimpia.App();
