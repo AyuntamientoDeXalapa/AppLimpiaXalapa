@@ -50,12 +50,12 @@ namespace AppLimpia
         /// <summary>
         /// The get notifications URI.
         /// </summary>
-        public const string GetNotifications = Uris.Server + "applimpia-fake/getnotifications.php";
+        public const string GetNotifications = Uris.Server + "api/notificaciones";
 
         /// <summary>
         /// The get incident types URI.
         /// </summary>
-        public const string GetIncidentTypes = Uris.Server + "applimpia-fake/getincidenttypes.php";
+        public const string GetIncidentTypes = Uris.Server + "api/catalogos/incidencias";
 
         /// <summary>
         /// The get reports URI.

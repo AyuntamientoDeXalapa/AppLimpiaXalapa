@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 using AppLimpia.Json;
@@ -31,11 +30,6 @@ namespace AppLimpia
         }
 
         /// <summary>
-        /// The event that is raised when a ViewModel is reporting a error.
-        /// </summary>
-        public event EventHandler<ErrorReportEventArgs> ErrorReported;
-
-        /// <summary>
         /// Gets the collection of notifications.
         /// </summary>
         public ObservableCollection<Notification> Notifications { get; }
@@ -46,106 +40,58 @@ namespace AppLimpia
         public ICommand CloseCommand { get; }
 
         /// <summary>
-        /// Reports an error.
-        /// </summary>
-        /// <param name="args">A <see cref="ErrorReportEventArgs"/> with arguments of the event.</param>
-        public void ReportError(ErrorReportEventArgs args)
-        {
-            this.ErrorReported?.Invoke(this, args);
-        }
-
-        /// <summary>
         /// Gets the notifications from the server.
         /// </summary>
         private void GetNotifications()
         {
             // Get the favorites from the server
-            var task = WebHelper.GetAsync(new Uri(Uris.GetNotifications));
-
-            // Show the favorites on the map
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            task.ContinueWith(this.ParseServerData, scheduler);
+            WebHelper.GetAsync(new Uri(Uris.GetNotifications), this.ParseNotificationData);
         }
 
         /// <summary>
-        /// Parses the server data response.
+        /// Parsed the notification data returned by the server.
         /// </summary>
-        /// <param name="task">A task that represents the asynchronous server operation.</param>
-        private void ParseServerData(Task<JsonValue> task)
+        /// <param name="json">The notification data returned by the server.</param>
+        private void ParseNotificationData(JsonValue json)
         {
-            // If the task competed
-            System.Diagnostics.Debug.Assert(task.IsCompleted, "Asynchronous task must be completed.");
-            if (task.Status == TaskStatus.RanToCompletion)
-            {
-                this.ParseJson(task.Result);
-            }
-            else
-            {
-                // Since task can not be canceled, the only other result is that the task failed
-                foreach (var ex in task.Exception.InnerExceptions)
-                {
-                    this.ReportError(new ErrorReportEventArgs(ex));
-                }
-            }
-        }
+            // Process the HAL
+            string nextUri;
+            var notifications = WebHelper.ParseHalCollection(json, "notificaciones_usuario", out nextUri);
 
-        /// <summary>
-        /// Parsed the data returned by the server.
-        /// </summary>
-        /// <param name="json">The data in JSON format.</param>
-        private void ParseJson(JsonValue json)
-        {
-            // If the data is a GeoJson format
-            var type = json.GetItemOrDefault("type").GetStringValueOrDefault(string.Empty);
-            if (type == "NotificationCollection")
-            {
-                // Parse notifications collection
-                this.ParseNotificationCollection(json);
-            }
-            else
-            {
-                // Show the error reported by the server
-                // TODO: Add proper exception handling
-                var sb = new StringBuilder();
-                Json.Json.Write(json, sb);
-                this.ReportError(new ErrorReportEventArgs(new Exception(sb.ToString())));
-            }
-        }
-
-        /// <summary>
-        /// Parsed the notifications data returned by the server.
-        /// </summary>
-        /// <param name="geoJson">The data in GeoJson format.</param>
-        private void ParseNotificationCollection(JsonValue geoJson)
-        {
-            // Parse the notifications collection
-            var notifications = geoJson.GetItemOrDefault("notifications", null) as JsonArray;
-            if (notifications == null)
-            {
-                return;
-            }
-
-            // Parse each feature
-            Debug.WriteLine("Notifications: {0}", notifications.Count);
+            // Parse notification data
             foreach (var notification in notifications)
             {
                 // Get the notification field
                 var id = notification.GetItemOrDefault("id").GetStringValueOrDefault(null);
-                var dateString = notification.GetItemOrDefault("date").GetStringValueOrDefault(string.Empty);
-                var message = notification.GetItemOrDefault("message").GetStringValueOrDefault(null);
+                var dateString =
+                    notification.GetItemOrDefault("fecha")
+                        .GetItemOrDefault("date")
+                        .GetStringValueOrDefault(string.Empty);
+                var message = notification.GetItemOrDefault("mensaje").GetStringValueOrDefault(null);
 
-                // Parse notification data
+                // Parse notification date
                 DateTime date;
                 var result = DateTime.TryParseExact(
                     dateString,
-                    "dd/MM/yyyy HH:mm:ss",
+                    "yyyy-MM-dd HH:mm:ss.ffffff",
                     null,
                     DateTimeStyles.None,
                     out date);
+
+                // If all fields present
                 if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(message))
                 {
-                    this.Notifications.Add(new Notification { Id = id, Date = date.ToLocalTime(), Message = message });
+                    // Add new notification
+                    var notificationObject = new Notification { Id = id, Date = date.ToLocalTime(), Message = message };
+                    this.Notifications.Add(notificationObject);
                 }
+            }
+
+            // If new page is present
+            if (nextUri != null)
+            {
+                // Get the favorites from the server
+                WebHelper.GetAsync(new Uri(nextUri), this.ParseNotificationData);
             }
         }
 

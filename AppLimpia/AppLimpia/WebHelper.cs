@@ -17,6 +17,39 @@ namespace AppLimpia
     internal static class WebHelper
     {
         /// <summary>
+        /// Parses the Hypertext Application Language collection received from the server.
+        /// </summary>
+        /// <param name="hal">The Hypertext Application Language server response.</param>
+        /// <param name="collectionName">The name of the collection to retrieve.</param>
+        /// <param name="nextUri">The URI of the next page or <c>null</c> if the last page.</param>
+        /// <returns>The embedded collection data.</returns>
+        public static JsonArray ParseHalCollection(JsonValue hal, string collectionName, out string nextUri)
+        {
+            // Get the data from the current response
+            var array = new JsonArray();
+            var collection = hal.GetItemOrDefault("_embedded").GetItemOrDefault(collectionName) as JsonArray;
+            if (collection != null)
+            {
+                foreach (var item in collection)
+                {
+                    array.Add(item);
+                }
+            }
+            else
+            {
+                throw new FormatException("No embedded collection data");
+            }
+
+            // Get the next page URI
+            nextUri =
+                hal.GetItemOrDefault("_links")
+                    .GetItemOrDefault("next")
+                    .GetItemOrDefault("href")
+                    .GetStringValueOrDefault(null);
+            return array;
+        }
+
+        /// <summary>
         /// Asynchronously gets the data from the server with the GET method.
         /// </summary>
         /// <param name="uri">The server URI to retrieve data.</param>

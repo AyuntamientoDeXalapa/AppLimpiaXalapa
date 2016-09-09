@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-
-using AppLimpia.Json;
 using System.Windows.Input;
 
+using AppLimpia.Json;
+
 using Xamarin.Forms;
-using System.Threading;
 
 namespace AppLimpia
 {
@@ -20,15 +19,15 @@ namespace AppLimpia
     public class IncidentReportViewModel : ViewModelBase
     {
         /// <summary>
+        /// The incident types dictionary.
+        /// </summary>
+        private readonly Dictionary<string, string> typesDictionary;
+
+        /// <summary>
         /// The drop point to report incident.
         /// </summary>
         private MapExPin pin;
-
-        /// <summary>
-        /// The incident types dictionary.
-        /// </summary>
-        private Dictionary<string, string> typesDictionary;
-
+        
         /// <summary>
         /// The selected incident type.
         /// </summary>
@@ -40,7 +39,7 @@ namespace AppLimpia
         private string reportPhoto;
 
         /// <summary>
-        /// The report identifier
+        /// The report identifier.
         /// </summary>
         private string reportId;
 
@@ -117,17 +116,11 @@ namespace AppLimpia
         public ICommand ReportIncidentCommand { get; private set; }
 
         /// <summary>
-        /// The event that is raised when a ViewModel is reporting a error.
-        /// </summary>
-        public event EventHandler<ErrorReportEventArgs> ErrorReported;
-
-        /// <summary>
         /// Reports an error.
         /// </summary>
         /// <param name="args">A <see cref="ErrorReportEventArgs"/> with arguments of the event.</param>
         public void ReportError(ErrorReportEventArgs args)
         {
-            this.ErrorReported?.Invoke(this, args);
         }
 
         /// <summary>
@@ -160,12 +153,46 @@ namespace AppLimpia
         /// </summary>
         private void GetIncidentTypes()
         {
-            // Get the incident report types from the server
-            var task = WebHelper.GetAsync(new Uri(Uris.GetIncidentTypes));
+            // Get the incident types from the server
+            WebHelper.GetAsync(new Uri(Uris.GetIncidentTypes), this.ParseIncidentTypesData);
+        }
 
-            // Show the favorites on the map
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            task.ContinueWith(this.ParseServerData, scheduler);
+        /// <summary>
+        /// Parsed the incident type data returned by the server.
+        /// </summary>
+        /// <param name="json">The incident type data returned by the server.</param>
+        private void ParseIncidentTypesData(JsonValue json)
+        {
+            // Process the HAL
+            string nextUri;
+            var types = WebHelper.ParseHalCollection(json, "incidencias", out nextUri);
+
+            // Parse incident types data
+            foreach (var type in types)
+            {
+                // Get the incident type field
+                var id = type.GetItemOrDefault("id").GetStringValueOrDefault(null);
+                var incidentType = type.GetItemOrDefault("incidencia").GetStringValueOrDefault(null);
+
+                // If all fields present
+                if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(incidentType))
+                {
+                    // If incident type does not exists
+                    if (!this.typesDictionary.ContainsKey(incidentType))
+                    {
+                        // Add new incident type
+                        this.IncidentTypes.Add(incidentType);
+                        this.typesDictionary.Add(incidentType, id);
+                    }
+                }
+            }
+
+            // If new page is present
+            if (nextUri != null)
+            {
+                // Get the favorites from the server
+                WebHelper.GetAsync(new Uri(nextUri), this.ParseIncidentTypesData);
+            }
         }
 
         /// <summary>
@@ -224,28 +251,6 @@ namespace AppLimpia
         /// <param name="json">The data in JSON format.</param>
         private void ParseStringCollection(JsonValue json)
         {
-            // Parse the string collection
-            var strings = json.GetItemOrDefault("strings", null) as JsonArray;
-            if (strings == null)
-            {
-                return;
-            }
-
-            // Parse each feature
-            Debug.WriteLine("Strings: {0}", strings.Count);
-            foreach (var notification in strings)
-            {
-                // Get the string fields
-                var id = notification.GetItemOrDefault("id").GetStringValueOrDefault(null);
-                var text = notification.GetItemOrDefault("string").GetStringValueOrDefault(null);
-
-                // Parse string data
-                if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(text))
-                {
-                    this.IncidentTypes.Add(text);
-                    this.typesDictionary.Add(text, id);
-                }
-            }
         }
 
         /// <summary>

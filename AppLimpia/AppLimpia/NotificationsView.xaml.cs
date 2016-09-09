@@ -44,9 +44,6 @@ namespace AppLimpia
             if (this.currentBindingContext != null)
             {
                 this.currentBindingContext.Navigation = null;
-
-                // Remove events handler
-                this.currentBindingContext.ErrorReported -= this.OnErrorReported;
             }
 
             // Set up the event handling from the binding context
@@ -55,23 +52,10 @@ namespace AppLimpia
             {
                 // Set up navigation context
                 this.currentBindingContext.Navigation = this.Navigation;
-
-                // Set up event handlers
-                this.currentBindingContext.ErrorReported += this.OnErrorReported;
             }
 
             // Call the base member
             base.OnBindingContextChanged();
-        }
-
-        /// <summary>
-        /// Handles the ErrorReported event of ViewModel.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">A <see cref="EventArgs"/> with arguments of the event.</param>
-        private void OnErrorReported(object sender, ErrorReportEventArgs e)
-        {
-            this.DisplayAlert("Error", e.Exception.ToString(), "OK");
         }
    }
 }
