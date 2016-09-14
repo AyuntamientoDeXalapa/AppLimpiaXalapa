@@ -60,12 +60,12 @@ namespace AppLimpia
         /// <summary>
         /// The get reports URI.
         /// </summary>
-        public const string GetReports = Uris.Server + "applimpia-fake/getreports.php";
+        public const string GetReports = Uris.Server + "api/reportes";
 
         /// <summary>
         /// The submit report URI.
         /// </summary>
-        public const string SubmitReport = Uris.Server + "applimpia-fake/submitreport.php";
+        public const string SubmitReport = Uris.Server + "api/reportes";
 
         /// <summary>
         /// The get report status URI.

@@ -56,8 +56,77 @@ namespace AppLimpia
         /// <param name="action">An action to be performed on successful remote operation.</param>
         public static void GetAsync(Uri uri, Action<JsonValue> action)
         {
+            // Add the nonce to negate caching
+            var builder = new UriBuilder(uri);
+            if (string.IsNullOrEmpty(builder.Query))
+            {
+                builder.Query = "nonce=" + Guid.NewGuid();
+            }
+            else
+            {
+                var query = builder.Query;
+                if (query[0] == '?')
+                {
+                    query = query.Substring(1);
+                }
+
+                builder.Query = query + "&nonce=" + Guid.NewGuid();
+            }
+
+            var newUri = builder.Uri;
+            Debug.WriteLine("Original URI: {0}", uri);
+            Debug.WriteLine("Modified URI: {0}", newUri);
+
             // Get the task
-            var task = WebHelper.GetAsync(uri);
+            var task = WebHelper.GetAsync(newUri);
+
+            // Setup continuation
+            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            task.ContinueWith(
+                t => action(t.Result),
+                default(CancellationToken),
+                TaskContinuationOptions.OnlyOnRanToCompletion,
+                scheduler);
+
+            // Setup error handling
+            task.ContinueWith(
+                WebHelper.ParseTaskError,
+                default(CancellationToken),
+                TaskContinuationOptions.OnlyOnFaulted,
+                scheduler);
+        }
+
+        /// <summary>
+        /// Asynchronously gets the data from the server with the GET method.
+        /// </summary>
+        /// <param name="uri">The server URI to retrieve data.</param>
+        /// <param name="content">The content to post to server.</param>
+        /// <param name="action">An action to be performed on successful remote operation.</param>
+        public static void PostAsync(Uri uri, HttpContent content, Action<JsonValue> action)
+        {
+            // Add the nonce to negate caching
+            var builder = new UriBuilder(uri);
+            if (string.IsNullOrEmpty(builder.Query))
+            {
+                builder.Query = "nonce=" + Guid.NewGuid();
+            }
+            else
+            {
+                var query = builder.Query;
+                if (query[0] == '?')
+                {
+                    query = query.Substring(1);
+                }
+
+                builder.Query = query + "&nonce=" + Guid.NewGuid();
+            }
+
+            var newUri = builder.Uri;
+            Debug.WriteLine("Original URI: {0}", uri);
+            Debug.WriteLine("Modified URI: {0}", newUri);
+
+            // Get the task
+            var task = WebHelper.PostAsync(newUri, content);
 
             // Setup continuation
             var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -87,6 +156,28 @@ namespace AppLimpia
             {
                 // Send the GET request to the server
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                return await WebHelper.SendAsync(request);
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously posts the data to the server with the POST method.
+        /// </summary>
+        /// <param name="uri">The server URI to post data.</param>
+        /// <param name="content">The content to post to server.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        public static async Task<JsonValue> PostAsync(Uri uri, HttpContent content)
+        {
+            // Prepare the POST request
+            using (var request = new HttpRequestMessage(HttpMethod.Post, uri))
+            {
+                // Send the POST request to the server
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                // Prepare the request content
+                request.Content = content;
+
+                // Get server response
                 return await WebHelper.SendAsync(request);
             }
         }

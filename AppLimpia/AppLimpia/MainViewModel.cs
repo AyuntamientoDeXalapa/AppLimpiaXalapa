@@ -368,19 +368,67 @@ namespace AppLimpia
         /// </summary>
         private void GetMyReports()
         {
-            // Add the drop points to favorites on the server
-            var task = WebHelper.GetAsync(new Uri(Uris.GetReports));
+            // Get the favorites from the server
+            // TODO: Move to Login event
+            WebHelper.GetAsync(new Uri(Uris.GetReports), this.ParseMyReportsData);
+        }
 
-            // Parse the server response
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            var continuation = task.ContinueWith(this.ParseServerData, scheduler);
+        /// <summary>
+        /// Parsed the my reports data returned by the server.
+        /// </summary>
+        /// <param name="json">The my reports data returned by the server.</param>
+        private void ParseMyReportsData(JsonValue json)
+        {
+            // Process the HAL
+            string nextUri;
+            var reports = WebHelper.ParseHalCollection(json, "reportes", out nextUri);
 
-            // Setup error handling
-            continuation.ContinueWith(
-                this.ParseTaskError,
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnFaulted,
-                scheduler);
+            // Parse my reports data
+            foreach (var report in reports)
+            {
+                // Get my report field
+                var id = report.GetItemOrDefault("id").GetStringValueOrDefault(null);
+                var dateString =
+                    report.GetItemOrDefault("fecha")
+                        .GetItemOrDefault("date")
+                        .GetStringValueOrDefault(string.Empty);
+                var dropPoint = report.GetItemOrDefault("montonera").GetStringValueOrDefault(null);
+                var incident = report.GetItemOrDefault("incidencia").GetStringValueOrDefault(null);
+                //var statusString = report.GetItemOrDefault("status").GetStringValueOrDefault(null);
+
+                // Parse notification date
+                DateTime date;
+                var result = DateTime.TryParseExact(
+                    dateString,
+                    "yyyy-MM-dd HH:mm:ss.ffffff",
+                    null,
+                    DateTimeStyles.None,
+                    out date);
+
+                // If all fields present
+                if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(dropPoint) &&
+                    !string.IsNullOrEmpty(incident))
+                {
+                    // Add my report
+                    var reportObject = new MyReportsViewModel.IncidentReport
+                    {
+                        Id = id,
+                        Date = date.ToLocalTime(),
+                        DropPoint = dropPoint,
+                        Type = incident,
+                        Status = MyReportsViewModel.IncidentReportStatus.Received
+                    };
+                    this.myReports.Add(reportObject);
+                }
+            }
+
+            // If new page is present
+            ((Command)this.ShowMyReportsCommand).ChangeCanExecute();
+            if (nextUri != null)
+            {
+                // Get the favorites from the server
+                WebHelper.GetAsync(new Uri(nextUri), this.ParseMyReportsData);
+            }
         }
 
         /// <summary>

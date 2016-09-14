@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -36,7 +37,7 @@ namespace AppLimpia
         /// <summary>
         /// The encoded report photo.
         /// </summary>
-        private string reportPhoto;
+        private byte[] reportPhoto;
 
         /// <summary>
         /// The report identifier.
@@ -133,10 +134,9 @@ namespace AppLimpia
             if (stream != null)
             {
                 // Encode photo
-                var data = new byte[stream.Length];
+                this.reportPhoto = new byte[stream.Length];
                 stream.Position = 0;
-                stream.Read(data, 0, data.Length);
-                this.reportPhoto = Convert.ToBase64String(data);
+                stream.Read(this.reportPhoto, 0, this.reportPhoto.Length);
 
                 // Reset the stream position
                 stream.Position = 0;
@@ -273,32 +273,46 @@ namespace AppLimpia
         private void ReportIncident()
         {
             // Prepare report data
-            var report = new JsonObject { { "type", "Report" }, { "droppoint", this.pin.Id } };
-
-            // Save the incident type
-            var incidentType = this.IncidentTypes[this.incidentTypeIndex];
-            var incidentId = this.typesDictionary[incidentType];
-            report.Add("incident", incidentId);
-
-            // Add photo if any
-            if (!string.IsNullOrEmpty(this.reportPhoto))
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var report = new MultipartFormDataContent();
+            report.Add(new StringContent(DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")), "fecha");
+            report.Add(new StringContent(this.pin.Id), "montonera");
+            if (this.incidentTypeIndex != -1)
             {
-                report.Add("photo", this.reportPhoto);
+                report.Add(new StringContent(this.IncidentTypes[this.incidentTypeIndex]), "incidencia");
+            }
+
+            // TODO: Remove when they are retrieved from the server
+            report.Add(new StringContent($"Usuario de {Device.OS}"), "usuario");
+            report.Add(new StringContent($"Dispositivo: {Device.OS}"), "device");
+
+            // Add image if any
+            if (this.reportPhoto != null)
+            {
+                var imageContent = new ByteArrayContent(this.reportPhoto);
+                imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+                report.Add(new ByteArrayContent(this.reportPhoto), "imagen", "imagen.jpg");
             }
 
             // Send the report to the server
-            var task = WebHelper.PostAsync(new Uri(Uris.SubmitReport), report);
+            WebHelper.PostAsync(new Uri(Uris.SubmitReport), report, this.ParseNewIncidentData);
+        }
 
-            // Show the favorites on the map
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            var continuation = task.ContinueWith(this.ParseServerData, scheduler);
+        /// <summary>
+        /// Parsed the new incident data returned by the server.
+        /// </summary>
+        /// <param name="json">The new incident data returned by the server.</param>
+        private void ParseNewIncidentData(JsonValue json)
+        {
+            // Get the new incident report id
+            var id = json.GetItemOrDefault("id").GetStringValueOrDefault(null);
+            if (!string.IsNullOrEmpty(id))
+            {
+                this.ReportId = id;
+            }
 
             // Close the current view
-            continuation.ContinueWith(
-                _ => this.Navigation.PopModalAsync(),
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnRanToCompletion,
-                scheduler);
+            this.Navigation.PopModalAsync();
         }
     }
 }
