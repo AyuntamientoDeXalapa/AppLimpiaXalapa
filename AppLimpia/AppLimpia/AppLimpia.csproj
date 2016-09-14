@@ -47,6 +47,7 @@
       <DependentUpon>FavoritesView.xaml</DependentUpon>
     </Compile>
     <Compile Include="FavoritesViewModel.cs" />
+    <Compile Include="IncidentReport.cs" />
     <Compile Include="IncidentReportView.xaml.cs">
       <DependentUpon>IncidentReportView.xaml</DependentUpon>
     </Compile>

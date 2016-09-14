@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 using AppLimpia.Json;
@@ -40,9 +39,9 @@ namespace AppLimpia
         private byte[] reportPhoto;
 
         /// <summary>
-        /// The report identifier.
+        /// The date and time of the current incident report.
         /// </summary>
-        private string reportId;
+        private DateTime? reportDate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IncidentReportViewModel"/> class.
@@ -57,6 +56,11 @@ namespace AppLimpia
             // Setup commands
             this.ReportIncidentCommand = new Command(this.ReportIncident);
         }
+
+        /// <summary>
+        /// The event that is called when a new incident report is created.
+        /// </summary>
+        public event EventHandler<IncidentReport> OnIncidentReportCreated;
 
         /// <summary>
         /// Gets or sets the drop point for the incident report.
@@ -82,6 +86,7 @@ namespace AppLimpia
         /// <summary>
         /// Gets or sets the selected incident type.
         /// </summary>
+        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Used in data binding")]
         public int IncidentTypeIndex
         {
             get
@@ -96,33 +101,9 @@ namespace AppLimpia
         }
 
         /// <summary>
-        /// Gets the current report identifier.
-        /// </summary>
-        public string ReportId
-        {
-            get
-            {
-                return this.reportId;
-            }
-
-            private set
-            {
-                this.SetProperty(ref this.reportId, value, nameof(this.ReportId));
-            }
-        }
-
-        /// <summary>
         /// Gets the report incident command.
         /// </summary>
         public ICommand ReportIncidentCommand { get; private set; }
-
-        /// <summary>
-        /// Reports an error.
-        /// </summary>
-        /// <param name="args">A <see cref="ErrorReportEventArgs"/> with arguments of the event.</param>
-        public void ReportError(ErrorReportEventArgs args)
-        {
-        }
 
         /// <summary>
         /// Sets the incident report photo.
@@ -196,86 +177,20 @@ namespace AppLimpia
         }
 
         /// <summary>
-        /// Parses the server data response.
-        /// </summary>
-        /// <param name="task">A task that represents the asynchronous server operation.</param>
-        private void ParseServerData(Task<JsonValue> task)
-        {
-            // If the task competed
-            System.Diagnostics.Debug.Assert(task.IsCompleted, "Asynchronous task must be completed.");
-            if (task.Status == TaskStatus.RanToCompletion)
-            {
-                this.ParseJson(task.Result);
-            }
-            else
-            {
-                // Since task can not be canceled, the only other result is that the task failed
-                foreach (var ex in task.Exception.InnerExceptions)
-                {
-                    this.ReportError(new ErrorReportEventArgs(ex));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Parsed the data returned by the server.
-        /// </summary>
-        /// <param name="json">The data in JSON format.</param>
-        private void ParseJson(JsonValue json)
-        {
-            // If the data is a GeoJson format
-            var type = json.GetItemOrDefault("type").GetStringValueOrDefault(string.Empty);
-            if (type == "StringCollection")
-            {
-                // Parse string collection
-                this.ParseStringCollection(json);
-            }
-            else if (type == "Report")
-            {
-                // Parse report data
-                this.ParseReportData(json);
-            }
-            else
-            {
-                // Show the error reported by the server
-                // TODO: Add proper exception handling
-                var sb = new StringBuilder();
-                Json.Json.Write(json, sb);
-                this.ReportError(new ErrorReportEventArgs(new Exception(sb.ToString())));
-            }
-        }
-
-        /// <summary>
-        /// Parsed the string collection data returned by the server.
-        /// </summary>
-        /// <param name="json">The data in JSON format.</param>
-        private void ParseStringCollection(JsonValue json)
-        {
-        }
-
-        /// <summary>
-        /// Parsed the report data returned by the server.
-        /// </summary>
-        /// <param name="json">The data in JSON format.</param>
-        private void ParseReportData(JsonValue json)
-        {
-            // Get the report id
-            var id = json.GetItemOrDefault("id").GetStringValueOrDefault(null);
-            if (!string.IsNullOrEmpty(id))
-            {
-                this.ReportId = id;
-            }
-        }
-
-        /// <summary>
         /// Reports the incident.
         /// </summary>
         private void ReportIncident()
         {
+            // Save the report date
+            if (!this.reportDate.HasValue)
+            {
+                this.reportDate = DateTime.UtcNow;
+            }
+
             // Prepare report data
             // ReSharper disable once UseObjectOrCollectionInitializer
             var report = new MultipartFormDataContent();
-            report.Add(new StringContent(DateTime.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")), "fecha");
+            report.Add(new StringContent(this.reportDate.Value.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")), "fecha");
             report.Add(new StringContent(this.pin.Id), "montonera");
             if (this.incidentTypeIndex != -1)
             {
@@ -308,7 +223,18 @@ namespace AppLimpia
             var id = json.GetItemOrDefault("id").GetStringValueOrDefault(null);
             if (!string.IsNullOrEmpty(id))
             {
-                this.ReportId = id;
+                // Create a new incident report
+                var date = this.reportDate ?? DateTime.UtcNow;
+                var report = new IncidentReport(id)
+                                 {
+                                     Date = date.ToLocalTime(),
+                                     DropPoint = this.pin.Label,
+                                     Type = this.IncidentTypes[this.incidentTypeIndex],
+                                     Status = IncidentReportStatus.Received
+                                 };
+
+                // Raise incident reported created event
+                this.OnIncidentReportCreated?.Invoke(this, report);
             }
 
             // Close the current view

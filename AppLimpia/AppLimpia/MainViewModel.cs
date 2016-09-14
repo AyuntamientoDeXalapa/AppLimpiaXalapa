@@ -72,7 +72,7 @@ namespace AppLimpia
         /// </summary>
         private bool isActive;
 
-        private List<MyReportsViewModel.IncidentReport> myReports; 
+        private IList<IncidentReport> myReports; 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -87,7 +87,7 @@ namespace AppLimpia
             this.pinsDictionary = new Dictionary<string, MapExPin>();
             this.favoriteDropPoints = new List<MapExPin>();
             this.Pins = new ObservableCollection<MapExPin>();
-            this.myReports = new List<MyReportsViewModel.IncidentReport>();
+            this.myReports = new ObservableCollection<IncidentReport>();
             
             // Create commands
             this.SearchDropPointsCommand = new Command(this.SearchDropPoints);
@@ -98,6 +98,10 @@ namespace AppLimpia
             this.ShowNotificationsCommand = new Command(this.ShowNotifications);
             this.ShowMyReportsCommand = new Command(this.ShowMyReports, () => this.myReports.Count > 0);
             this.LogoutCommand = new Command(this.Logout);
+
+            // Setup command updates
+            ((ObservableCollection<IncidentReport>)this.myReports).CollectionChanged +=
+                (s, e) => ((Command)this.ShowMyReportsCommand).ChangeCanExecute();
         }
 
         /// <summary>
@@ -410,13 +414,12 @@ namespace AppLimpia
                     !string.IsNullOrEmpty(incident))
                 {
                     // Add my report
-                    var reportObject = new MyReportsViewModel.IncidentReport
+                    var reportObject = new IncidentReport(id)
                     {
-                        Id = id,
                         Date = date.ToLocalTime(),
                         DropPoint = dropPoint,
                         Type = incident,
-                        Status = MyReportsViewModel.IncidentReportStatus.Received
+                        Status = IncidentReportStatus.Received
                     };
                     this.myReports.Add(reportObject);
                 }
@@ -679,16 +682,15 @@ namespace AppLimpia
                     null,
                     DateTimeStyles.None,
                     out date);
-                MyReportsViewModel.IncidentReportStatus status;
+                IncidentReportStatus status;
                 result &= Enum.TryParse(statusString, out status);
 
                 // Add the report returned from the server
                 if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(dropPoint) &&
                     !string.IsNullOrEmpty(incident))
                 {
-                    var reportObject = new MyReportsViewModel.IncidentReport
+                    var reportObject = new IncidentReport(id)
                                            {
-                                               Id = id,
                                                Date = date,
                                                DropPoint = dropPoint,
                                                Type = incident,
@@ -888,24 +890,9 @@ namespace AppLimpia
             {
                 // Setup view model
                 var viewModel = new IncidentReportViewModel { Pin = pin };
-                // TODO: Improve
-                viewModel.PropertyChanged += (s, ea) =>
-                    {
-                        // Create a new incident report
-                        if (ea.PropertyName == nameof(IncidentReportViewModel.ReportId))
-                        {
-                            var report = new MyReportsViewModel.IncidentReport
-                                             {
-                                                 Id = viewModel.ReportId,
-                                                 Date = DateTime.Now,
-                                                 DropPoint = viewModel.Pin.Label,
-                                                 Type = viewModel.IncidentTypes[viewModel.IncidentTypeIndex],
-                                                 Status = MyReportsViewModel.IncidentReportStatus.Received
-                                             };
-                            this.myReports.Add(report);
-                            ((Command)this.ShowMyReportsCommand).ChangeCanExecute();
-                        }
-                    };
+
+                // Subscribe to incident report created event
+                viewModel.OnIncidentReportCreated += (s, report) => this.myReports.Add(report);
 
                 // Show incident report view
                 var view = new IncidentReportView { BindingContext = viewModel };

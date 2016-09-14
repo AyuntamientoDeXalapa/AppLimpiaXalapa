@@ -43,16 +43,19 @@
                                     <ic:DataTriggerBehavior Binding="{Binding IsFavorite}"
                                                             Value="True"
                                                             ComparisonCondition="Equal">
+                                        <!-- ReSharper disable once Xaml.InvalidType -->
                                         <ic:ChangePropertyAction PropertyName="Source"
                                                                  Value="Assets/Icons/RemoveFromFavorites.png"/>
                                     </ic:DataTriggerBehavior>
                                     <ic:DataTriggerBehavior Binding="{Binding IsFavorite}"
                                                             Value="False"
                                                             ComparisonCondition="Equal">
+                                        <!-- ReSharper disable once Xaml.InvalidType -->
                                         <ic:ChangePropertyAction PropertyName="Source"
                                                                  Value="Assets/Icons/AddToFavorites.png"/>
                                     </ic:DataTriggerBehavior>
                                     <ic:EventTriggerBehavior EventName="Tapped">
+                                        <!-- ReSharper disable once Xaml.InvalidType -->
                                         <ic:InvokeCommandAction Command="{Binding ToggleFavoriteCommand}"/>
                                     </ic:EventTriggerBehavior>
                                 </i:Interaction.Behaviors>
