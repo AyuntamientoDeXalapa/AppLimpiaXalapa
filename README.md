@@ -6,7 +6,7 @@ La App Limpia Xalapa ayudará a los ciudadanos a saber por donde viene su camió
 
 - Clona el repositorio: git clone https://github.com/AyuntamientoDeXalapa/AppLimpiaXalapa.git
 
-### Prerequisitos
+## Prerequisitos
 
 - Instalación en Windows:
   * Visual Studio 2015 o Xamarin Studio
@@ -28,24 +28,25 @@ La App Limpia Xalapa ayudará a los ciudadanos a saber por donde viene su camió
   
   Puedes basarate en el siguiente [instructivo](https://developer.xamarin.com/guides/ios/getting_started/installation/mac/)
 
-### Correr las apps
+## Correr las apps
 
 Para correr la aplicación de android es necesario generar las llaves:
-1.  Entrar a https://console.developers.google.com
-2.  Crear un nuevo proyecto
-3.  Activar Google Maps API for Android
-4.  En el archivo AppLimpia/AppLimpia.Droid/Properties/AssemblyInfo.cs cambiar 
+
+1. Entrar a https://console.developers.google.com
+2. Crear un nuevo proyecto
+3. Activar Google Maps API for Android
+4. En el archivo AppLimpia/AppLimpia.Droid/Properties/AssemblyInfo.cs cambiar 
 ```
 [assembly: MetaData("com.google.android.maps.v2.API_KEY", Value = "<TU llave para mapas>")]
 ```
 
 Las aplicaciones de Windows y iOS no requiren cambios.
 
-## Autores
+### Autores
 
 * **Arturo Soriano**  - *Desarrollador del proyecto* - [arturosm](https://github.com/arturosm)
 * **Grigory Evropeytsev**  - *Desarrollador móvil* - [grigorymx](https://github.com/grigorymx)
 
-## Licencia
+### Licencia
 
 Este proyecto está liberado bajo la licencia MIT.
