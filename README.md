@@ -4,7 +4,7 @@ La **App Limpia Xalapa** es un aplicación móvil desarrollada con el fin de ayu
 
 ## Primeros pasos
 
-- Clonar el repositorio: git clone https://github.com/AyuntamientoDeXalapa/AppLimpiaXalapa.git
+- Clonar el repositorio: ```git clone https://github.com/AyuntamientoDeXalapa/AppLimpiaXalapa.git```
 
 ## Prerequisitos
 
