@@ -42,6 +42,21 @@ Para correr la aplicación de Android es necesario generar las llaves:
 
 Las aplicaciones de Windows y iOS no requiren cambios.
 
+### Instalación de Google Play Services en emulador de Android
+
+Si en momento de abrir la aplicación el emulador de Adnroid dice que los Google Play Services no son instalados se puedes ser instalados con los siguientes pasos:
+
+1. Descargar una versión de *Google Play Services* de [http://www.teamandroid.com/gapps/] para la version de Android instalada en el emulador.
+2. Copiar el archivo descargado en la carpeta *Descargas* en el emulador.
+3. Desde la linea de comandos en la carpeta ```sdk\platform-tools``` de Android SDK ejecutar el comando ```adb devices```.
+4. Si el emulador aparece en la lista, pasar a paso 6.
+5. Si el emulador no aparece, ejecutar la siguiente comando: ```adb connect <emulator ip>:5555```. IP de emulador puede ser encontrado en: Settings -> About Phone -> Status and IP section.
+6. Ejecutar ```adb shell```. Este comando va a abrir la linea de comando de emulador.
+7. Verifica que archivo *gapps* esta presente: ```ls /sdcard/Download```
+8. Ejecuta ```install_zip.sh /sdcard/Download/<flashablezip>.zip```
+
+[Fuente](http://stackoverflow.com/questions/31550628/visual-studio-emulator-for-android-install-gapps-google-play-services)
+
 ### Autores
 
 * **Arturo Soriano**  - *Desarrollador del proyecto* - [arturosm](https://github.com/arturosm)
