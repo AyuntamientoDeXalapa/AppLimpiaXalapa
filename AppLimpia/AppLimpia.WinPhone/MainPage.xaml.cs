@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 
 using Windows.UI.Xaml.Navigation;
+using Windows.Web.Http.Filters;
 
 #if !DEBUG
 #error Generate map authentication token https://msdn.microsoft.com/en-us/library/dn741528.aspx
@@ -34,6 +35,9 @@ namespace AppLimpia.WinPhone
                 typeof(AppLimpia.Properties.Localization).GetTypeInfo().Assembly);
             AppLimpia.Properties.Localization.SetResourceManager(manager);
 
+            // Setup factory
+            AppLimpia.WebHelper.SetFactory(this.HttpClientFactory);
+
             // ReSharper disable once UseObjectOrCollectionInitializer
             var application = new AppLimpia.App();
             application.CurrentCultureInfo = CultureInfo.CurrentUICulture;
@@ -53,6 +57,17 @@ namespace AppLimpia.WinPhone
             // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
+        }
+
+        /// <summary>
+        /// Creates the instance of the <see cref="System.Net.Http.HttpClient"/>.
+        /// </summary>
+        /// <returns>A new instance of the <see cref="System.Net.Http.HttpClient"/>.</returns>
+        private System.Net.Http.HttpClient HttpClientFactory()
+        {
+            var filter = new HttpBaseProtocolFilter();
+            var client = new System.Net.Http.HttpClient(new WindowsHttpMessageHandler(filter));
+            return client;
         }
     }
 }

@@ -17,6 +17,11 @@ namespace AppLimpia
     internal static class WebHelper
     {
         /// <summary>
+        /// The factory to use for creating HttpClient instances.
+        /// </summary>
+        private static Func<HttpClient> factory = () => new HttpClient();
+
+        /// <summary>
         /// Parses the Hypertext Application Language collection received from the server.
         /// </summary>
         /// <param name="hal">The Hypertext Application Language server response.</param>
@@ -208,6 +213,22 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Sets the new factory to use to create HttpClient instances.
+        /// </summary>
+        /// <param name="newFactory">The factory method to use.</param>
+        public static void SetFactory(Func<HttpClient> newFactory)
+        {
+            // If factory is null
+            if (newFactory == null)
+            {
+                throw new ArgumentNullException(nameof(newFactory));
+            }
+
+            // Setup the new factory
+            WebHelper.factory = newFactory;
+        }
+
+        /// <summary>
         /// Asynchronously sends the request to the server.
         /// </summary>
         /// <param name="request">The request to be send to the server.</param>
@@ -215,8 +236,7 @@ namespace AppLimpia
         private static async Task<JsonValue> SendAsync(HttpRequestMessage request)
         {
             // Get server response
-            // ReSharper disable once UseObjectOrCollectionInitializer
-            var httpClient = new HttpClient();
+            var httpClient = WebHelper.factory();
             httpClient.Timeout = TimeSpan.FromSeconds(30);
             try
             {
@@ -251,9 +271,9 @@ namespace AppLimpia
                     }
                 }
             }
-            catch (HttpRequestException ex)
+            catch (Exception ex) when ((ex is WebException) || (ex is HttpRequestException))
             {
-                // Operation has timed out
+                // Response cannot be received
                 // TODO: Localize
                 throw new TimeoutException("No connectivity", ex);
             }

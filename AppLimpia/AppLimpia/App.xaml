@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
              x:Class="AppLimpia.App">
   <Application.Resources>
-    <OnPlatform x:TypeArguments="ResourceDictionary">
+    <OnPlatform x:Key="" x:TypeArguments="ResourceDictionary">
       <!-- iOS styles -->
       <OnPlatform.iOS>
         <ResourceDictionary>
