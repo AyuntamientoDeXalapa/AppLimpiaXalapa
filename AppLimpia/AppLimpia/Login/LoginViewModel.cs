@@ -29,7 +29,7 @@ namespace AppLimpia.Login
             this.LoginCommand = new Command(this.Login);
             this.RegisterCommand = new Command(this.Register);
             this.LoginWithCommand = new Command(par => this.LoginWith((string)par));
-            this.RestorePasswordCommand = new Command(this.RestorePassword);
+            this.RecoverPasswordCommand = new Command(this.RecoverPassword);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace AppLimpia.Login
         /// <summary>
         /// Gets the restore password command.
         /// </summary>
-        public ICommand RestorePasswordCommand { get; private set; }
+        public ICommand RecoverPasswordCommand { get; private set; }
 
         /// <summary>
         /// Logs in the user with the provided credentials.
@@ -179,13 +179,14 @@ namespace AppLimpia.Login
         /// <summary>
         /// Restores the user password.
         /// </summary>
-        private void RestorePassword()
+        private void RecoverPassword()
         {
             // Create the register completion source
             System.Diagnostics.Debug.WriteLine("Restore password");
 
             // Show Register view
-            var view = new RecoverPasswordView();
+            var viewModel = new RecoverPasswordViewModel();
+            var view = new RecoverPasswordView { BindingContext = viewModel };
             this.Navigation.PushModalAsync(view);
         }
     }

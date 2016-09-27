@@ -151,6 +151,10 @@
     <None Include="Assets\AboutAssets.txt" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidResource Include="Resources\drawable-hdpi\app_logo.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\app_logo.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\app_logo.png" />
+    <AndroidResource Include="Resources\drawable\app_logo.png" />
     <AndroidResource Include="Resources\drawable\icon.png" />
     <AndroidResource Include="Resources\drawable-hdpi\icon.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\icon.png" />
@@ -181,19 +185,10 @@
     <AndroidResource Include="Resources\layout\drop_point_annotation.axml" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\title_logo.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon_notifications.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon_vehicle.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\app_logo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\app_logo_wide.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\facebook.png" />
@@ -229,31 +224,31 @@
     <AndroidResource Include="Resources\drawable\set.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\app_logo.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\facebook.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\app_logo.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\facebook.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\app_logo.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\facebook.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\app_logo_wide.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\google.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\app_logo_wide.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\twitter.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\app_logo_wide.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\google.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-hdpi\title_logo.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\twitter.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xhdpi\title_logo.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\google.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable-xxhdpi\title_logo.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\twitter.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets" Condition="Exists('..\..\packages\Xamarin.Android.Support.Vector.Drawable.23.3.0\build\Xamarin.Android.Support.Vector.Drawable.targets')" />

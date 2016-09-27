@@ -26,7 +26,7 @@ namespace AppLimpia.Login
             this.completionSource = completionSource;
 
             // Setup default values
-            this.UserEmail = string.Empty;
+            this.Login = string.Empty;
             this.Password = string.Empty;
             this.PasswordConfirm = string.Empty;
 
@@ -36,9 +36,14 @@ namespace AppLimpia.Login
         }
 
         /// <summary>
-        /// Gets or sets the user email for registration.
+        /// Gets or sets the full user name.
         /// </summary>
-        public string UserEmail { get; set; }
+        public string FullName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user name (login) for registration.
+        /// </summary>
+        public string Login { get; set; }
 
         /// <summary>
         /// Gets or sets the user password.
@@ -49,16 +54,6 @@ namespace AppLimpia.Login
         /// Gets or sets the user password confirmation.
         /// </summary>
         public string PasswordConfirm { private get; set; }
-
-        /// <summary>
-        /// Gets or sets the user name.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets the user phone number.
-        /// </summary>
-        public string PhoneNumber { get; set; }
 
         /// <summary>
         /// Gets the register command.

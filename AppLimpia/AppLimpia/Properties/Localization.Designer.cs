@@ -62,11 +62,128 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Inicio.
+        ///   Looks up a localized string similar to Calcelar.
         /// </summary>
-        internal static string ButtonStart {
+        internal static string Cancel {
             get {
-                return ResourceManager.GetString("ButtonStart", resourceCulture);
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmar contraseña.
+        /// </summary>
+        internal static string ConfirmPassword {
+            get {
+                return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ingresa con.
+        /// </summary>
+        internal static string EnterWith {
+            get {
+                return ResourceManager.GetString("EnterWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ¿Olvidaste tu contaseña?.
+        /// </summary>
+        internal static string ForgetPassword {
+            get {
+                return ResourceManager.GetString("ForgetPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nombre completo.
+        /// </summary>
+        internal static string FullName {
+            get {
+                return ResourceManager.GetString("FullName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entrar.
+        /// </summary>
+        internal static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contraseña.
+        /// </summary>
+        internal static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recuperar.
+        /// </summary>
+        internal static string RecoverPassword {
+            get {
+                return ResourceManager.GetString("RecoverPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RECUPERAR CONTRASEÑA.
+        /// </summary>
+        internal static string RecoverPasswordTitle {
+            get {
+                return ResourceManager.GetString("RecoverPasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Regístrate aquí.
+        /// </summary>
+        internal static string RegisterHere {
+            get {
+                return ResourceManager.GetString("RegisterHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registrarse.
+        /// </summary>
+        internal static string RegisterNow {
+            get {
+                return ResourceManager.GetString("RegisterNow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to REGISTRO.
+        /// </summary>
+        internal static string RegisterTitle {
+            get {
+                return ResourceManager.GetString("RegisterTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        internal static string UserLogin {
+            get {
+                return ResourceManager.GetString("UserLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BIENVENIDO.
+        /// </summary>
+        internal static string WelcomeTitle {
+            get {
+                return ResourceManager.GetString("WelcomeTitle", resourceCulture);
             }
         }
     }

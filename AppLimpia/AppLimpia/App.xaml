@@ -23,22 +23,31 @@
         <ResourceDictionary>
           <Style TargetType="Label">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="TextColor" Value="Black"/>
+            <Setter Property="TextColor" Value="White"/>
           </Style>
           <Style x:Key="LabelSmallStyle" TargetType="Label">
             <Setter Property="FontSize" Value="12"/>
           </Style>
           <Style x:Key="LabelTitleStyle" TargetType="Label">
             <Setter Property="FontSize" Value="26"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
           </Style>
           <Style TargetType="Button">
-            <Setter Property="BackgroundColor" Value="Silver"/>
-            <Setter Property="TextColor" Value="Black"/>
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
+          <Style x:Key="GreenButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#42C268"/>
+          </Style>
+          <Style x:Key="BlueButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#3680BE"/>
+          </Style>
+          <Style x:Key="TransparentButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
           </Style>
           <Style TargetType="Entry">
-            <Setter Property="BackgroundColor" Value="Silver"/>
-            <Setter Property="PlaceholderColor" Value="Gray"/>
-            <Setter Property="TextColor" Value="Black"/>
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="PlaceholderColor" Value="#598498"/>
+            <Setter Property="TextColor" Value="White"/>
           </Style>
           <Style TargetType="local:PickerEx">
             <Setter Property="BackgroundColor" Value="Silver"/>
@@ -57,23 +66,33 @@
         <ResourceDictionary>
           <Style TargetType="Label">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="TextColor" Value="Black"/>
+            <Setter Property="TextColor" Value="White"/>
           </Style>
           <Style x:Key="LabelSmallStyle" TargetType="Label">
             <Setter Property="FontSize" Value="12"/>
           </Style>
           <Style x:Key="LabelTitleStyle" TargetType="Label">
             <Setter Property="FontSize" Value="26"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
           </Style>
           <Style TargetType="Button">
-            <Setter Property="BorderColor" Value="Black"/>
-            <Setter Property="BackgroundColor" Value="White"/>
-            <Setter Property="TextColor" Value="Black"/>
+            <Setter Property="BorderColor" Value="Transparent"/>
+            <Setter Property="BorderWidth" Value="0"/>
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
+          <Style x:Key="GreenButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#42C268"/>
+          </Style>
+          <Style x:Key="BlueButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#3680BE"/>
+          </Style>
+          <Style x:Key="TransparentButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
           </Style>
           <Style TargetType="Entry">
-            <Setter Property="BackgroundColor" Value="Silver"/>
-            <Setter Property="PlaceholderColor" Value="Gray"/>
-            <Setter Property="TextColor" Value="Black"/>
+            <Setter Property="BackgroundColor" Value="#598498"/>
+            <Setter Property="PlaceholderColor" Value="Silver"/>
+            <Setter Property="TextColor" Value="White"/>
           </Style>
           <Style TargetType="local:PickerEx">
             <Setter Property="BackgroundColor" Value="Silver"/>

@@ -22,6 +22,12 @@ namespace AppLimpia.Droid
             // Call the base member
             base.OnCreate(bundle);
 
+            var display = this.WindowManager.DefaultDisplay;
+            var size = new Android.Graphics.Point();
+            display.GetSize(size);
+            System.Diagnostics.Debug.WriteLine("Width = {0}, Height = {1}", size.X, size.Y);
+            System.Diagnostics.Debug.WriteLine("Density = {0}", this.Resources.DisplayMetrics.Density);
+
             // Initialize the platform dependent components
             Xamarin.FormsMaps.Init(this, bundle);
             Xamarin.Forms.Forms.Init(this, bundle);

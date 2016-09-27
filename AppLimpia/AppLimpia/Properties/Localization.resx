@@ -117,8 +117,60 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ButtonStart" xml:space="preserve">
-    <value>Inicio</value>
-    <comment>The start button on first screen text</comment>
+  <data name="Cancel" xml:space="preserve">
+    <value>Calcelar</value>
+    <comment>The cancel button</comment>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirmar contraseña</value>
+    <comment>The password confirm for registration</comment>
+  </data>
+  <data name="EnterWith" xml:space="preserve">
+    <value>Ingresa con</value>
+    <comment>The enter with text</comment>
+  </data>
+  <data name="ForgetPassword" xml:space="preserve">
+    <value>¿Olvidaste tu contaseña?</value>
+    <comment>The forget password button on the login screen</comment>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Nombre completo</value>
+    <comment>The users full name</comment>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Entrar</value>
+    <comment>The login button text</comment>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+    <comment>The password used to enter the application</comment>
+  </data>
+  <data name="RecoverPassword" xml:space="preserve">
+    <value>Recuperar</value>
+    <comment>The recover password button on recover screen</comment>
+  </data>
+  <data name="RecoverPasswordTitle" xml:space="preserve">
+    <value>RECUPERAR CONTRASEÑA</value>
+    <comment>The recover password screen title</comment>
+  </data>
+  <data name="RegisterHere" xml:space="preserve">
+    <value>Regístrate aquí</value>
+    <comment>The register here button on the login screen</comment>
+  </data>
+  <data name="RegisterNow" xml:space="preserve">
+    <value>Registrarse</value>
+    <comment>The register button on the register screen</comment>
+  </data>
+  <data name="RegisterTitle" xml:space="preserve">
+    <value>REGISTRO</value>
+    <comment>The register page title</comment>
+  </data>
+  <data name="UserLogin" xml:space="preserve">
+    <value>Email</value>
+    <comment>The user name (login) used to enter the application</comment>
+  </data>
+  <data name="WelcomeTitle" xml:space="preserve">
+    <value>BIENVENIDO</value>
+    <comment>The welcome text on the main screen</comment>
   </data>
 </root>

@@ -76,11 +76,11 @@
     <Compile Include="Login\RecoverPasswordView.xaml.cs">
       <DependentUpon>RecoverPasswordView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Login\RecoverPasswordViewModel.cs" />
     <Compile Include="Login\RegisterView.xaml.cs">
       <DependentUpon>RegisterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Login\RegisterViewModel.cs" />
-    <Compile Include="Login\StartViewModel.cs" />
     <Compile Include="MyReportsView.xaml.cs">
       <DependentUpon>MyReportsView.xaml</DependentUpon>
     </Compile>
@@ -113,9 +113,6 @@
     </Compile>
     <Compile Include="Properties\Localization.cs">
       <DependentUpon>Localization.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Login\StartView.xaml.cs">
-      <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Uris.cs" />
     <Compile Include="ViewModelBase.cs" />
@@ -157,12 +154,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="IncidentReportView.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Login\StartView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

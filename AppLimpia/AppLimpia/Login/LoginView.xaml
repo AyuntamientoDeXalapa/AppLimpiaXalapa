@@ -3,120 +3,164 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:AppLimpia.Login;assembly=AppLimpia"
+             xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
+             xmlns:login="clr-namespace:AppLimpia.Login;assembly=AppLimpia"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance local:LoginViewModel}"
+             d:DataContext="{d:DesignInstance login:LoginViewModel}"
              x:Class="AppLimpia.Login.LoginView"
-             BackgroundColor="White">
-  <StackLayout Orientation="Vertical"
-               HorizontalOptions="Fill"
-               VerticalOptions="Fill"
-               Padding="10">
-    <!-- Application logo -->
-    <Image Margin="0,20">
-      <Image.Source>
-        <OnPlatform x:TypeArguments="ImageSource"
-                    iOS="AppLogoWide.png"
-                    Android="app_logo_wide.png"
-                    WinPhone="Assets/AppLogoWide.png"/>
-      </Image.Source>
-    </Image>
-    <Label HorizontalOptions="CenterAndExpand"
-           Style="{DynamicResource LabelTitleStyle}"
-           Text="Bienvenido"/>
-
-    <!-- User login and password boxes -->
+             BackgroundColor="#004D72">
+  <ScrollView Orientation="Vertical"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill">
     <StackLayout Orientation="Vertical"
-                 HorizontalOptions="Fill">
-      <Label Text="Email"/>
-      <Entry x:Name="EntryUserName"
-             HorizontalOptions="FillAndExpand"
-             Placeholder="Email"
-             Text="{Binding UserName}"/>
-      <Label Text="Contraseña"/>
-      <Entry x:Name="EntryPassword"
-             HorizontalOptions="FillAndExpand"
-             Placeholder="Contraseña"
-             IsPassword="True"
-             Text="{Binding Password,Mode=OneWayToSource}"/>
-    </StackLayout>
+                 HorizontalOptions="FillAndExpand"
+                 VerticalOptions="FillAndExpand">
+      <!-- Application logo -->
+      <StackLayout Orientation="Vertical"
+                   Padding="0,10"
+                   BackgroundColor="#F4BF54">
+        <Image>
+          <Image.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="160" Android="160" WinPhone="240"/>
+          </Image.WidthRequest>
+          <Image.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="160" Android="160" WinPhone="240"/>
+          </Image.HeightRequest>
+          <Image.Source>
+            <OnPlatform x:TypeArguments="ImageSource"
+                        iOS="AppLogo.png"
+                        Android="app_logo.png"
+                        WinPhone="Assets/AppLogo.png"/>
+          </Image.Source>
+        </Image>
+        <Label HorizontalOptions="CenterAndExpand"
+               Style="{DynamicResource LabelTitleStyle}"
+               Text="{local:Localize WelcomeTitle}"/>
+      </StackLayout>
+
+      <!-- User login and password boxes -->
+      <StackLayout Orientation="Vertical"
+                   HorizontalOptions="Fill"
+                   Padding="30,10">
+        <Entry x:Name="EntryUserName"
+               HorizontalOptions="FillAndExpand"
+               Placeholder="{local:Localize UserLogin}"
+               Text="{Binding UserName}"/>
+        <Entry x:Name="EntryPassword"
+               HorizontalOptions="FillAndExpand"
+               Placeholder="{local:Localize Password}"
+               IsPassword="True"
+               Text="{Binding Password,Mode=OneWayToSource}"/>
+
+        <!-- Login and register buttons -->
+        <Button x:Name="ButtonLogin"
+                Style="{DynamicResource GreenButton}"
+                HorizontalOptions="FillAndExpand"
+                Text="{local:Localize Login}"
+                Command="{Binding LoginCommand}"/>
+        <Label HorizontalOptions="CenterAndExpand"
+               Margin="0,10"
+               Text="{local:Localize ForgetPassword}">
+          <Label.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding RecoverPasswordCommand}"/>
+          </Label.GestureRecognizers>
+        </Label>
+        <Button Style="{DynamicResource BlueButton}"
+                HorizontalOptions="FillAndExpand"
+                Text="{local:Localize RegisterHere}"
+                Command="{Binding RegisterCommand}"/>
     
-    <!-- Login and register buttons -->
-    <Grid HorizontalOptions="FillAndExpand">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Button Grid.Column="0"
-              Margin="5"
-              Text="Registrarse"
-              Command="{Binding RegisterCommand}"/>
-      <Button x:Name="ButtonLogin"
-              Grid.Column="1"
-              Margin="5"
-              Text="Entrar"
-              Command="{Binding LoginCommand}"/>
-    </Grid>
-    <Label HorizontalOptions="End"
-           Text="Olvidaste tu contraseña?">
-      <Label.Style>
-        <Style TargetType="Label">
-          <Setter Property="TextColor" Value="Blue"/>
-          <Setter Property="FontAttributes" Value="Italic"/>
-          <Setter Property="FontSize" Value="16"/>
-        </Style>
-      </Label.Style>
-      <Label.GestureRecognizers>
-        <TapGestureRecognizer Command="{Binding RestorePasswordCommand}"/>
-      </Label.GestureRecognizers>
-    </Label>
-  
-    <!-- Enter with buttons -->
-    <Label HorizontalOptions="CenterAndExpand"
-           FontSize="14"
-           Text="Entrar con"/>
-    <Grid>
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Image Grid.Column="0">
-        <Image.Source>
-          <OnPlatform x:TypeArguments="ImageSource"
-                      iOS="Google.png"
-                      Android="google.png"
-                      WinPhone="Assets/Google.png"/>
-        </Image.Source>
-        <Image.GestureRecognizers>
-          <TapGestureRecognizer Command="{Binding LoginWithCommand}"
-                                CommandParameter="google"/>
-        </Image.GestureRecognizers>
-      </Image>
-      <Image Grid.Column="1">
-        <Image.Source>
-          <OnPlatform x:TypeArguments="ImageSource"
-                      iOS="Facebook.png"
-                      Android="facebook.png"
-                      WinPhone="Assets/Facebook.png"/>
-        </Image.Source>
-        <Image.GestureRecognizers>
-          <TapGestureRecognizer Command="{Binding LoginWithCommand}"
-                                CommandParameter="facebook"/>
-        </Image.GestureRecognizers>
-      </Image>
-      <Image Grid.Column="2">
-        <Image.Source>
-          <OnPlatform x:TypeArguments="ImageSource"
-                      iOS="Twitter.png"
-                      Android="twitter.png"
-                      WinPhone="Assets/Twitter.png"/>
-        </Image.Source>
-        <Image.GestureRecognizers>
-          <TapGestureRecognizer Command="{Binding LoginWithCommand}"
-                                CommandParameter="twitter"/>
-        </Image.GestureRecognizers>
-      </Image>
-    </Grid>
-  </StackLayout>
+        <!-- Enter with label -->
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <BoxView Grid.Column="0"
+                   VerticalOptions="Center"
+                   Color="#7DA4B7"
+                   HeightRequest="2"/>
+          <Label Grid.Column="1"
+                 VerticalOptions="CenterAndExpand"
+                 Text="{local:Localize EnterWith}"/>
+          <BoxView Grid.Column="2"
+                   VerticalOptions="Center"
+                   Color="#7DA4B7"
+                   HeightRequest="2"/>
+        </Grid>
+      </StackLayout>
+    
+      <!-- Enter with buttons -->
+      <Grid HorizontalOptions="Center">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <!-- Enter with Facebook -->
+        <Image Grid.Column="0"
+               Margin="10,0">
+          <Image.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.WidthRequest>
+          <Image.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.HeightRequest>
+          <Image.Source>
+            <OnPlatform x:TypeArguments="ImageSource"
+                        iOS="Facebook.png"
+                        Android="facebook.png"
+                        WinPhone="Assets/Facebook.png"/>
+          </Image.Source>
+          <Image.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding LoginWithCommand}"
+                                  CommandParameter="facebook"/>
+          </Image.GestureRecognizers>
+        </Image>
+      
+        <!-- Enter with Twitter -->
+        <Image Grid.Column="1"
+               Margin="10,0">
+          <Image.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.WidthRequest>
+          <Image.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.HeightRequest>
+          <Image.Source>
+            <OnPlatform x:TypeArguments="ImageSource"
+                        iOS="Twitter.png"
+                        Android="twitter.png"
+                        WinPhone="Assets/Twitter.png"/>
+          </Image.Source>
+          <Image.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding LoginWithCommand}"
+                                  CommandParameter="twitter"/>
+          </Image.GestureRecognizers>
+        </Image>
+      
+        <!-- Enter with Google -->
+        <Image Grid.Column="2"
+               Margin="10,0">
+          <Image.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.WidthRequest>
+          <Image.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.HeightRequest>
+          <Image.Source>
+            <OnPlatform x:TypeArguments="ImageSource"
+                        iOS="Google.png"
+                        Android="google.png"
+                        WinPhone="Assets/Google.png"/>
+          </Image.Source>
+          <Image.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding LoginWithCommand}"
+                                  CommandParameter="google"/>
+          </Image.GestureRecognizers>
+        </Image>
+      </Grid>
+    </StackLayout>
+  </ScrollView>
 </ContentPage>

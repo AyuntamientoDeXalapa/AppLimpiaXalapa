@@ -35,11 +35,10 @@ namespace AppLimpia.Login
             }
 
             // Set interaction order
-            this.EntryEmail.Completed += (s, e) => this.EntryPassword.Focus();
+            this.EntryFullName.Completed += (s, e) => this.EntryUserName.Focus();
+            this.EntryUserName.Completed += (s, e) => this.EntryPassword.Focus();
             this.EntryPassword.Completed += (s, e) => this.EntryPasswordConfirm.Focus();
-            this.EntryPasswordConfirm.Completed += (s, e) => this.EntryName.Focus();
-            this.EntryName.Completed += (s, e) => this.EntryPhoneNumber.Focus();
-            this.EntryPhoneNumber.Completed += (s, e) => this.ButtonRegister.Focus();
+            this.EntryPasswordConfirm.Completed += (s, e) => this.ButtonRegister.Focus();
         }
 
         /// <summary>

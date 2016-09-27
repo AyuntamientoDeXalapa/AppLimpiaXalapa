@@ -23,8 +23,8 @@ namespace AppLimpia
             this.InitializeComponent();
 
             // Show the start page
-            var startViewModel = new Login.StartViewModel();
-            var startPage = new Login.StartView { BindingContext = startViewModel };
+            var startViewModel = new Login.LoginViewModel();
+            var startPage = new Login.LoginView { BindingContext = startViewModel };
             this.MainPage = startPage;
         }
 
