@@ -22,6 +22,7 @@ namespace AppLimpia.Droid
             // Call the base member
             base.OnCreate(bundle);
 
+            // TODO: Remove after testing
             var display = this.WindowManager.DefaultDisplay;
             var size = new Android.Graphics.Point();
             display.GetSize(size);

@@ -141,6 +141,14 @@
     <value>Entrar</value>
     <comment>The login button text</comment>
   </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Salir</value>
+    <comment>The logout button text</comment>
+  </data>
+  <data name="MoreOptionsTitle" xml:space="preserve">
+    <value>Más opciones</value>
+    <comment>The more options screen title</comment>
+  </data>
   <data name="Password" xml:space="preserve">
     <value>Contraseña</value>
     <comment>The password used to enter the application</comment>
@@ -168,6 +176,14 @@
   <data name="UserLogin" xml:space="preserve">
     <value>Email</value>
     <comment>The user name (login) used to enter the application</comment>
+  </data>
+  <data name="ViewNotifications" xml:space="preserve">
+    <value>Ver notificaciones</value>
+    <comment>The view notifications button text</comment>
+  </data>
+  <data name="ViewReports" xml:space="preserve">
+    <value>Ver mis reportes</value>
+    <comment>The view my reports button text</comment>
   </data>
   <data name="WelcomeTitle" xml:space="preserve">
     <value>BIENVENIDO</value>

@@ -23,12 +23,16 @@
         <ResourceDictionary>
           <Style TargetType="Label">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="TextColor" Value="#555656"/>
           </Style>
           <Style x:Key="LabelSmallStyle" TargetType="Label">
             <Setter Property="FontSize" Value="12"/>
           </Style>
-          <Style x:Key="LabelTitleStyle" TargetType="Label">
+          <Style x:Key="LabelTitle" TargetType="Label">
+            <Setter Property="FontSize" Value="26"/>
+          </Style>
+          <Style x:Key="LoginTitleLabel" TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
             <Setter Property="FontSize" Value="26"/>
             <Setter Property="FontAttributes" Value="Bold"/>
           </Style>
@@ -66,12 +70,16 @@
         <ResourceDictionary>
           <Style TargetType="Label">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="TextColor" Value="#555656"/>
           </Style>
           <Style x:Key="LabelSmallStyle" TargetType="Label">
             <Setter Property="FontSize" Value="12"/>
           </Style>
-          <Style x:Key="LabelTitleStyle" TargetType="Label">
+          <Style x:Key="LabelTitle" TargetType="Label">
+            <Setter Property="FontSize" Value="26"/>
+          </Style>
+          <Style x:Key="LoginTitleLabel" TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
             <Setter Property="FontSize" Value="26"/>
             <Setter Property="FontAttributes" Value="Bold"/>
           </Style>

@@ -79,7 +79,7 @@ namespace AppLimpia
                 var mainView = new MainView { BindingContext = instance.MainViewModel };
                 instance.MainPage = Device.OnPlatform<Page>(
                     new NavigationPage(mainView),
-                    new NavigationPage(mainView),
+                    mainView,
                     mainView);
 
                 // Fix the navigation property for iOS
@@ -88,7 +88,7 @@ namespace AppLimpia
                     instance.MainViewModel.Navigation = instance.MainPage.Navigation;
                 }
 
-                // Android does not fire Appearing event so subscribe to Disappearing event
+                // Android does not fire Appearing event
                 if (Device.OS != TargetPlatform.Android)
                 {
                     // Initialize the main view model when the main view is loaded

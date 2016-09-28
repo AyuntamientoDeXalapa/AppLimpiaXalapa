@@ -7,8 +7,6 @@ using System.Linq;
 using Windows.Devices.Geolocation;
 using Windows.UI;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Maps;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -41,21 +39,6 @@ namespace AppLimpia.WinPhone
         private Geolocator geolocator;
 
         /// <summary>
-        /// The current user location.
-        /// </summary>
-        private Geopoint currentUserLocation;
-
-        /// <summary>
-        /// The grid containing the control for the map.
-        /// </summary>
-        private Grid controlsGrid;
-
-        /// <summary>
-        /// The move to current location control.
-        /// </summary>
-        private FrameworkElement moveToCurrentLocationControl;
-
-        /// <summary>
         /// The map annotation.
         /// </summary>
         private MapExAnnotation annotation;
@@ -76,7 +59,6 @@ namespace AppLimpia.WinPhone
                 if (this.Control != null)
                 {
                     this.Control.MapTapped -= this.OnMapTapped;
-                    this.Control.SizeChanged -= this.OnSizeChanged;
                 }
 
                 var pins = (ObservableCollection<MapExPin>)((MapEx)e.OldElement).Pins;
@@ -90,13 +72,9 @@ namespace AppLimpia.WinPhone
                 System.Diagnostics.Debug.Assert(this.Control != null, "Control is not created");
                 Xamarin.Forms.MessagingCenter.Subscribe(this, "CenterMap", new Action<MapEx, Position>(this.CenterMap));
                 this.Control.MapTapped += this.OnMapTapped;
-                this.Control.SizeChanged += this.OnSizeChanged;
 
                 var pins = (ObservableCollection<MapExPin>)((MapEx)e.NewElement).Pins;
                 pins.CollectionChanged += this.OnCollectionChanged;
-
-                // Create the control grid
-                this.CreateControlsGrid();
 
                 // Load pins already resent in collection
                 foreach (var pin in pins)
@@ -123,74 +101,6 @@ namespace AppLimpia.WinPhone
             if (e.PropertyName == MapEx.ShowUserPositionProperty.PropertyName)
             {
                 this.UpdateUserPosition();
-            }
-        }
-
-        /// <summary>
-        /// Creates the controls grid to be shown on current map.
-        /// </summary>
-        private void CreateControlsGrid()
-        {
-            // Create the grid with 3 rows and columns
-            this.controlsGrid = new Grid();
-            this.controlsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            this.controlsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            this.controlsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-
-            this.controlsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-            this.controlsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-            this.controlsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
-
-            // Add the grid to map control
-            this.Control.Children.Add(this.controlsGrid);
-
-            // Add the center on user location button
-            var uri = new Uri("ms-appx:///Assets/Icons/MoveToCurrentLocation.png");
-            var bitmap = new Windows.UI.Xaml.Media.Imaging.BitmapImage(uri);
-            this.moveToCurrentLocationControl = new Windows.UI.Xaml.Controls.Image
-                                                    {
-                                                        Source = bitmap,
-                                                        Margin = new Windows.UI.Xaml.Thickness(10)
-                                                    };
-            this.moveToCurrentLocationControl.Tapped += this.OnMoveToCurrentLocationTapped;
-
-            // Show/hide move to current location control
-            this.moveToCurrentLocationControl.Visibility = this.currentUserLocation != null
-                                                               ? Visibility.Visible
-                                                               : Visibility.Collapsed;
-
-            // Add the button to grid
-            Grid.SetColumn(this.moveToCurrentLocationControl, 0);
-            Grid.SetRow(this.moveToCurrentLocationControl, 0);
-            this.controlsGrid.Children.Add(this.moveToCurrentLocationControl);
-        }
-
-        /// <summary>
-        /// Handles the Tapped event of the MovetoCurrentLocation button.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">A <see cref="TappedRoutedEventArgs"/> with arguments of the event.</param>
-        private async void OnMoveToCurrentLocationTapped(object sender, TappedRoutedEventArgs e)
-        {
-            // Move to current user location if any
-            if (this.currentUserLocation != null)
-            {
-                await this.Control.TrySetViewAsync(this.currentUserLocation);
-            }
-        }
-
-        /// <summary>
-        /// Handles the SizeChanged event of the MapControl.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">A <see cref="SizeChangedEventArgs"/> with arguments of the event.</param>
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            // Resize the control grid
-            if (this.controlsGrid != null)
-            {
-                this.controlsGrid.Width = e.NewSize.Width;
-                this.controlsGrid.Height = e.NewSize.Height - 85; // App bar height
             }
         }
 
@@ -246,10 +156,6 @@ namespace AppLimpia.WinPhone
                     // Remove the user position circle
                     this.Control.Children.Remove(this.userPositionCircle);
                     this.userPositionCircle = null;
-                    if (this.moveToCurrentLocationControl != null)
-                    {
-                        this.moveToCurrentLocationControl.Visibility = Visibility.Collapsed;
-                    }
                 }
             }
         }
@@ -296,13 +202,6 @@ namespace AppLimpia.WinPhone
                                                   Width = 20.0,
                                                   Opacity = 50.0
                                               };
-            }
-
-            // Save the current user location
-            this.currentUserLocation = geopoint;
-            if (this.moveToCurrentLocationControl != null)
-            {
-                this.moveToCurrentLocationControl.Visibility = Visibility.Visible;
             }
 
             // Update current position of the control

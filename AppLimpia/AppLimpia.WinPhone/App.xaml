@@ -134,17 +134,22 @@
 
             <!-- Drop point push pin template -->
             <DataTemplate x:Key="DropPointPushPinTemplate">
-                <Image Source="Assets/Icons/DropPoint.png"/>
+                <Image Source="Assets/Pins/DropPoint.png"/>
             </DataTemplate>
         
             <!-- Favorite drop point push pin template -->
             <DataTemplate x:Key="FavoritePushPinTemplate">
-                <Image Source="Assets/Icons/Favorite.png"/>
+                <Image Source="Assets/Pins/Favorite.png"/>
             </DataTemplate>
-            
-            <!-- Vehicl push pin template -->
+
+            <!-- Primary favorite drop point push pin template -->
+            <DataTemplate x:Key="PrimaryFavoritePushPinTemplate">
+                <Image Source="Assets/Pins/PrimaryFavorite.png"/>
+            </DataTemplate>
+
+            <!-- Vehicle push pin template -->
             <DataTemplate x:Key="VehiclePushPinTemplate">
-                <Image Source="Assets/Icons/Vehicle.png"/>
+                <Image Source="Assets/Pins/Vehicle.png"/>
             </DataTemplate>
 
             <!-- Custom combo box style -->

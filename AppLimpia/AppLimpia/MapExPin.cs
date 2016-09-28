@@ -23,6 +23,11 @@ namespace AppLimpia
         Favorite,
 
         /// <summary>
+        /// The map pin is a primary favorite.
+        /// </summary>
+        PrimaryFavorite,
+
+        /// <summary>
         /// The map pin is a vehicle.
         /// </summary>
         Vehicle

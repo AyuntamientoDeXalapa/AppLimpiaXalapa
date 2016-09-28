@@ -34,7 +34,7 @@
           </Image.Source>
         </Image>
         <Label HorizontalOptions="CenterAndExpand"
-               Style="{DynamicResource LabelTitleStyle}"
+               Style="{DynamicResource LoginTitleLabel}"
                Text="{local:Localize WelcomeTitle}"/>
       </StackLayout>
 
@@ -58,13 +58,10 @@
                 HorizontalOptions="FillAndExpand"
                 Text="{local:Localize Login}"
                 Command="{Binding LoginCommand}"/>
-        <Label HorizontalOptions="CenterAndExpand"
-               Margin="0,10"
-               Text="{local:Localize ForgetPassword}">
-          <Label.GestureRecognizers>
-            <TapGestureRecognizer Command="{Binding RecoverPasswordCommand}"/>
-          </Label.GestureRecognizers>
-        </Label>
+        <Button Style="{DynamicResource TransparentButton}"
+                HorizontalOptions="FillAndExpand"
+                Text="{local:Localize ForgetPassword}"
+                Command="{Binding RecoverPasswordCommand}"/>
         <Button Style="{DynamicResource BlueButton}"
                 HorizontalOptions="FillAndExpand"
                 Text="{local:Localize RegisterHere}"

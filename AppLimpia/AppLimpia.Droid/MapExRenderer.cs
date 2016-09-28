@@ -207,6 +207,26 @@ namespace AppLimpia.Droid
         }
 
         /// <summary>
+        /// Gets the resource ID for the provided pin type.
+        /// </summary>
+        /// <param name="pinType">Pin type to get image resource.</param>
+        /// <returns>Image resource identifier.</returns>
+        private static int GetResourceId(MapPinType pinType)
+        {
+            switch (pinType)
+            {
+                case MapPinType.DropPoint:
+                    return Resource.Drawable.pin_drop_point;
+                case MapPinType.Favorite:
+                    return Resource.Drawable.pin_favorite;
+                case MapPinType.PrimaryFavorite:
+                    return Resource.Drawable.pin_primary_favorite;
+                default:
+                    return Resource.Drawable.pin_vehicle;
+            }
+        }
+
+        /// <summary>
         /// Centers the map on the required point.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
@@ -271,10 +291,9 @@ namespace AppLimpia.Droid
                 var point = this.map.Projection.ToScreenLocation(this.selectedMarker.Position);
 
                 // Adjust motion event
-                // 39 - default marker height (10 is the half size of point)
                 // 20 - offset between the default InfoWindow bottom edge and it's content bottom edge
                 var scale = this.Context.Resources.DisplayMetrics.Density;
-                var bottomOffsetPixels = ((10 + 20) * scale) + 0.5f;
+                var bottomOffsetPixels = (20 * scale) + 0.5f;
                 var eventCopy = MotionEvent.Obtain(e.Event);
                 eventCopy.OffsetLocation(
                     -point.X + (this.selectedAnnotation.Width / 2),
@@ -356,11 +375,10 @@ namespace AppLimpia.Droid
             markerOptions.Anchor(0.5f, 0.5f);
             markerOptions.SetTitle(pin.Label);
             markerOptions.SetSnippet(pin.Address);
+            markerOptions.InfoWindowAnchor(0.5f, 0.5f);
 
             // Setup marker icon
-            var icon = pin.Type == MapPinType.Vehicle
-                           ? Resource.Drawable.Vehicle
-                           : (pin.Type == MapPinType.Favorite ? Resource.Drawable.Favorite : Resource.Drawable.DropPoint);
+            var icon = MapExRenderer.GetResourceId(pin.Type);
             markerOptions.SetIcon(BitmapDescriptorFactory.FromResource(icon));
 
             // Add marker to the map
@@ -463,9 +481,7 @@ namespace AppLimpia.Droid
             if (e.PropertyName == MapExPin.TypeProperty.PropertyName)
             {
                 // Change the marker icon
-                var icon = pin.Type == MapPinType.Vehicle
-                               ? Resource.Drawable.Vehicle
-                               : (pin.Type == MapPinType.Favorite ? Resource.Drawable.Favorite : Resource.Drawable.DropPoint);
+                var icon = MapExRenderer.GetResourceId(pin.Type);
                 marker.SetIcon(BitmapDescriptorFactory.FromResource(icon));
 
                 // If the marker info window is shown

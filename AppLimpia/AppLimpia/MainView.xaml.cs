@@ -136,5 +136,16 @@ namespace AppLimpia
                 "No se pudo conectar con el servidor. Por favor verifica que esta conectado al Internet o intenta más tarde.",
                 "OK");
         }
+
+        /// <summary>
+        /// Handles the Tapped event of MoreCommand button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A <see cref="EventArgs"/> with arguments of the event.</param>
+        private void OnMoreCommandsTapped(object sender, EventArgs e)
+        {
+            this.MoreCommands.IsVisible = !this.MoreCommands.IsVisible;
+            this.BoxViewMoreCommands.IsVisible = this.MoreCommands.IsVisible;
+        }
     }
 }

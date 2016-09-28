@@ -6,95 +6,218 @@
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:MainViewModel}"
-             x:Class="AppLimpia.MainView">
-  <ContentPage.ToolbarItems>
-    <!-- Search drop points menu item -->
-    <ToolbarItem Text="Buscar"
-                 Order="Primary"
-                 Priority="0"
-                 Command="{Binding SearchDropPointsCommand}">
-      <ToolbarItem.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                    iOS="{x:Null}"
-                    Android="icon_search"
-                    WinPhone="Assets/AppBar/IconSearch.png"/>
-      </ToolbarItem.Icon>
-    </ToolbarItem>
-
-    <!-- Locate vehicle menu item -->
-    <ToolbarItem Text="Ubicar"
-                 Order="Primary"
-                 Priority="1"
-                 Command="{Binding LocateVehicleForPrimaryFavoriteCommand}">
-      <ToolbarItem.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                    iOS="{x:Null}"
-                    Android="icon_vehicle"
-                    WinPhone="Assets/AppBar/IconVehicle.png"/>
-      </ToolbarItem.Icon>
-    </ToolbarItem>
-
-    <!-- View favorites menu item -->
-    <ToolbarItem Text="Favoritos"
-                 Order="Primary"
-                 Priority="2"
-                 Command="{Binding ShowFavoritesCommand}">
-      <ToolbarItem.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                    iOS="{x:Null}"
-                    Android="icon_favorites"
-                    WinPhone="Assets/AppBar/IconFavorites.png"/>
-      </ToolbarItem.Icon>
-    </ToolbarItem>
-
-    <!-- View notifications menu item -->
-    <ToolbarItem Text="Ver notificaciones"
-                 Order="Secondary"
-                 Priority="0"
-                 Command="{Binding ShowNotificationsCommand}">
-      <ToolbarItem.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                    iOS="{x:Null}"
-                    Android="icon_notifications"
-                    WinPhone="Assets/AppBar/IconNotifications.png"/>
-      </ToolbarItem.Icon>
-    </ToolbarItem>
-
-    <!-- View my reports menu item -->
-    <ToolbarItem Text="Ver mis reportes"
-                 Order="Secondary"
-                 Priority="1"
-                 Command="{Binding ShowMyReportsCommand}">
-      <ToolbarItem.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                    iOS="{x:Null}"
-                    Android="icon_reports"
-                    WinPhone="Assets/AppBar/IconReports.png"/>
-      </ToolbarItem.Icon>
-    </ToolbarItem>
-
-    <!-- View my reports menu item -->
-    <ToolbarItem Text="Salir"
-                 Order="Secondary"
-                 Priority="2"
-                 Command="{Binding LogoutCommand}">
-      <ToolbarItem.Icon>
-        <OnPlatform x:TypeArguments="FileImageSource"
-                    iOS="{x:Null}"
-                    Android="icon_logout"
-                    WinPhone="Assets/AppBar/IconLogout.png"/>
-      </ToolbarItem.Icon>
-    </ToolbarItem>
-  </ContentPage.ToolbarItems>
-
+             x:Class="AppLimpia.MainView"
+             BackgroundColor="#E3E4E5">
   <!-- Main view -->
-  <Grid>
+  <Grid ColumnSpacing="1"
+        RowSpacing="1">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <!-- Main map -->
     <local:MapEx x:Name="MapView"
                  Grid.Column="0"
                  Grid.Row="0"
+                 Grid.ColumnSpan="4"
                  VerticalOptions="FillAndExpand"
                  HorizontalOptions="FillAndExpand"
                  ShowUserPosition="true"
                  UserPosition="{Binding UserPosition,Mode=OneWayToSource}"/>
+    
+    <!-- Search drop points command button -->
+    <BoxView Grid.Column="0"
+             Grid.Row="1"
+             BackgroundColor="#42C268"/>
+    <Image Grid.Column="0"
+           Grid.Row="1"
+           Margin="0,5">
+      <Image.WidthRequest>
+        <OnPlatform x:TypeArguments="x:Double" iOS="40" Android="40" WinPhone="60"/>
+      </Image.WidthRequest>
+      <Image.HeightRequest>
+        <OnPlatform x:TypeArguments="x:Double" iOS="40" Android="40" WinPhone="60"/>
+      </Image.HeightRequest>
+      <Image.Source>
+        <OnPlatform x:TypeArguments="ImageSource"
+                    iOS="IconMyLocation.png"
+                    Android="icon_my_location.png"
+                    WinPhone="Assets/IconMyLocation.png"/>
+      </Image.Source>
+      <Image.GestureRecognizers>
+        <TapGestureRecognizer Command="{Binding SearchDropPointsCommand}"/>
+      </Image.GestureRecognizers>
+    </Image>
+
+    <!-- Locate vehicle command button -->
+    <BoxView Grid.Column="1"
+             Grid.Row="1"
+             BackgroundColor="#42C268"/>
+    <Image Grid.Column="1"
+           Grid.Row="1"
+           Margin="0,5">
+      <Image.WidthRequest>
+        <OnPlatform x:TypeArguments="x:Double" iOS="40" Android="40" WinPhone="60"/>
+      </Image.WidthRequest>
+      <Image.HeightRequest>
+        <OnPlatform x:TypeArguments="x:Double" iOS="40" Android="40" WinPhone="60"/>
+      </Image.HeightRequest>
+      <Image.Source>
+        <OnPlatform x:TypeArguments="ImageSource"
+                    iOS="IconLocateVehicle.png"
+                    Android="icon_locate_vehicle.png"
+                    WinPhone="Assets/IconLocateVehicle.png"/>
+      </Image.Source>
+      <Image.GestureRecognizers>
+        <TapGestureRecognizer Command="{Binding LocateVehicleForPrimaryFavoriteCommand}"/>
+      </Image.GestureRecognizers>
+    </Image>
+
+    <!-- Show favorites command button -->
+    <BoxView Grid.Column="2"
+             Grid.Row="1"
+             BackgroundColor="#42C268"/>
+    <Image Grid.Column="2"
+           Grid.Row="1"
+           Margin="0,5">
+      <Image.WidthRequest>
+        <OnPlatform x:TypeArguments="x:Double" iOS="40" Android="40" WinPhone="60"/>
+      </Image.WidthRequest>
+      <Image.HeightRequest>
+        <OnPlatform x:TypeArguments="x:Double" iOS="40" Android="40" WinPhone="60"/>
+      </Image.HeightRequest>
+      <Image.Source>
+        <OnPlatform x:TypeArguments="ImageSource"
+                    iOS="IconFavorites.png"
+                    Android="icon_favorites.png"
+                    WinPhone="Assets/IconFavorites.png"/>
+      </Image.Source>
+      <Image.GestureRecognizers>
+        <TapGestureRecognizer Command="{Binding ShowFavoritesCommand}"/>
+      </Image.GestureRecognizers>
+    </Image>
+
+    <!-- More commands button -->
+    <BoxView Grid.Column="3"
+             Grid.Row="1"
+             BackgroundColor="#42C268"/>
+    <BoxView x:Name="BoxViewMoreCommands"
+             Grid.Column="3"
+             Grid.Row="1"
+             BackgroundColor="#004D72"
+             IsVisible="False"/>
+    <Image Grid.Column="3"
+           Grid.Row="1"
+           Margin="0,5">
+      <Image.WidthRequest>
+        <OnPlatform x:TypeArguments="x:Double" iOS="40" Android="40" WinPhone="60"/>
+      </Image.WidthRequest>
+      <Image.HeightRequest>
+        <OnPlatform x:TypeArguments="x:Double" iOS="40" Android="40" WinPhone="60"/>
+      </Image.HeightRequest>
+      <Image.Source>
+        <OnPlatform x:TypeArguments="ImageSource"
+                    iOS="IconMoreCommands.png"
+                    Android="icon_more_commands.png"
+                    WinPhone="Assets/IconMoreCommands.png"/>
+      </Image.Source>
+      <Image.GestureRecognizers>
+        <TapGestureRecognizer Tapped="OnMoreCommandsTapped"/>
+      </Image.GestureRecognizers>
+    </Image>
+  
+    <!-- More commands screen -->
+    <StackLayout x:Name="MoreCommands"
+                 Grid.Column="0"
+                 Grid.Row="0"
+                 Grid.ColumnSpan="4"
+                 VerticalOptions="FillAndExpand"
+                 HorizontalOptions="FillAndExpand"
+                 Spacing="0"
+                 BackgroundColor="#E3E4E5"
+                 IsVisible="False">
+      <Grid BackgroundColor="#004D72">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <BoxView Grid.Column="0"
+                 Grid.Row="0"
+                 BackgroundColor="#3680BE"/>
+        <Image Grid.Column="0"
+               Grid.Row="0"
+               Margin="5">
+          <Image.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.WidthRequest>
+          <Image.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.HeightRequest>
+          <Image.Source>
+            <OnPlatform x:TypeArguments="ImageSource"
+                        iOS="BackButton.png"
+                        Android="back_button.png"
+                        WinPhone="Assets/BackButton.png"/>
+          </Image.Source>
+          <Image.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnMoreCommandsTapped"/>
+          </Image.GestureRecognizers>
+        </Image>
+        <Label Grid.Column="1"
+               Grid.Row="0"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               Style="{DynamicResource LoginTitleLabel}"
+               Text="{local:Localize MoreOptionsTitle}"/>
+      </Grid>
+    
+      <!-- View notifications command -->
+      <Grid HorizontalOptions="StartAndExpand"
+            BackgroundColor="#D9DADB">
+        <Label HorizontalOptions="StartAndExpand"
+               VerticalOptions="Center"
+               Margin="20,10,0,10"
+               InputTransparent="True"
+               Style="{DynamicResource LabelTitle}"
+               Text="{local:Localize ViewNotifications}"/>
+        <Grid.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding ShowNotificationsCommand}"/>
+        </Grid.GestureRecognizers>
+      </Grid>
+      
+      <!-- View reports command -->
+      <Grid HorizontalOptions="StartAndExpand"
+            BackgroundColor="#E3E4E5">
+        <Label HorizontalOptions="StartAndExpand"
+               VerticalOptions="Center"
+               Margin="20,10,0,10"
+               InputTransparent="True"
+               Style="{DynamicResource LabelTitle}"
+               Text="{local:Localize ViewReports}"/>
+        <Grid.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding ShowReportsCommand}"/>
+        </Grid.GestureRecognizers>
+      </Grid>
+
+      <!-- Logout command -->
+      <Grid HorizontalOptions="StartAndExpand"
+            BackgroundColor="#D9DADB">
+        <Label HorizontalOptions="StartAndExpand"
+               VerticalOptions="Center"
+               Margin="20,10,0,10"
+               InputTransparent="True"
+               Style="{DynamicResource LabelTitle}"
+               Text="{local:Localize Logout}"/>
+        <Grid.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding LogoutCommand}"/>
+        </Grid.GestureRecognizers>
+      </Grid>
+    </StackLayout>
   </Grid>
 </ContentPage>

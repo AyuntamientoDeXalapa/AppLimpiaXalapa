@@ -2,6 +2,7 @@
 
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -100,7 +101,7 @@ namespace AppLimpia.WinPhone
         /// </summary>
         /// <param name="sender">The object where the handler is attached.</param>
         /// <param name="e">Details about the navigation event.</param>
-        private void OnRootFrameFirstNavigated(object sender, NavigationEventArgs e)
+        private async void OnRootFrameFirstNavigated(object sender, NavigationEventArgs e)
         {
             var rootFrame = sender as Frame;
             if (rootFrame != null)
@@ -109,6 +110,10 @@ namespace AppLimpia.WinPhone
                                                ?? new TransitionCollection { new NavigationThemeTransition() };
                 rootFrame.Navigated -= this.OnRootFrameFirstNavigated;
             }
+
+            // Exclude the status bar
+            ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
+            await StatusBar.GetForCurrentView().HideAsync();
         }
 
         /// <summary>

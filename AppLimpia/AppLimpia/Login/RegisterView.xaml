@@ -34,7 +34,7 @@
           </Image.Source>
         </Image>
         <Label HorizontalOptions="CenterAndExpand"
-               Style="{DynamicResource LabelTitleStyle}"
+               Style="{DynamicResource LoginTitleLabel}"
                Text="{local:Localize RegisterTitle}"/>
       </StackLayout>
 

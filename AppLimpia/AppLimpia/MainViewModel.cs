@@ -96,12 +96,12 @@ namespace AppLimpia
                 () => this.primaryFavorite != null);
             this.ShowFavoritesCommand = new Command(this.ShowFavorites);
             this.ShowNotificationsCommand = new Command(this.ShowNotifications);
-            this.ShowMyReportsCommand = new Command(this.ShowMyReports, () => this.myReports.Count > 0);
+            this.ShowReportsCommand = new Command(this.ShowReports, () => this.myReports.Count > 0);
             this.LogoutCommand = new Command(this.Logout);
 
             // Setup command updates
             ((ObservableCollection<IncidentReport>)this.myReports).CollectionChanged +=
-                (s, e) => ((Command)this.ShowMyReportsCommand).ChangeCanExecute();
+                (s, e) => ((Command)this.ShowReportsCommand).ChangeCanExecute();
         }
 
         /// <summary>
@@ -198,9 +198,9 @@ namespace AppLimpia
         public ICommand ShowNotificationsCommand { get; }
 
         /// <summary>
-        /// Gets the show my reports command.
+        /// Gets the show reports command.
         /// </summary>
-        public ICommand ShowMyReportsCommand { get; }
+        public ICommand ShowReportsCommand { get; }
 
         /// <summary>
         /// Gets the logout command.
@@ -426,7 +426,7 @@ namespace AppLimpia
             }
 
             // If new page is present
-            ((Command)this.ShowMyReportsCommand).ChangeCanExecute();
+            ((Command)this.ShowReportsCommand).ChangeCanExecute();
             if (nextUri != null)
             {
                 // Get the favorites from the server
@@ -701,7 +701,7 @@ namespace AppLimpia
             }
 
             // Update command status
-            ((Command)this.ShowMyReportsCommand).ChangeCanExecute();
+            ((Command)this.ShowReportsCommand).ChangeCanExecute();
         }
 
         /// <summary>
@@ -969,9 +969,9 @@ namespace AppLimpia
         }
 
         /// <summary>
-        /// Shows the my reports view.
+        /// Shows the reports view.
         /// </summary>
-        private void ShowMyReports()
+        private void ShowReports()
         {
             // Show notifications view
             var viewModel = new MyReportsViewModel(this.myReports);

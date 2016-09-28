@@ -116,6 +116,24 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Salir.
+        /// </summary>
+        internal static string Logout {
+            get {
+                return ResourceManager.GetString("Logout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Más opciones.
+        /// </summary>
+        internal static string MoreOptionsTitle {
+            get {
+                return ResourceManager.GetString("MoreOptionsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contraseña.
         /// </summary>
         internal static string Password {
@@ -175,6 +193,24 @@ namespace AppLimpia.Properties {
         internal static string UserLogin {
             get {
                 return ResourceManager.GetString("UserLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ver notificaciones.
+        /// </summary>
+        internal static string ViewNotifications {
+            get {
+                return ResourceManager.GetString("ViewNotifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ver mis reportes.
+        /// </summary>
+        internal static string ViewReports {
+            get {
+                return ResourceManager.GetString("ViewReports", resourceCulture);
             }
         }
         
