@@ -624,7 +624,7 @@ namespace AppLimpia
                 else if (string.Compare(subtype, "Primary Favorite", StringComparison.CurrentCultureIgnoreCase) == 0)
                 {
                     // Add the pin to the favorites
-                    pin.Type = MapPinType.Favorite;
+                    pin.Type = MapPinType.PrimaryFavorite;
                     this.favoriteDropPoints.Add(pin);
                     this.SetPrimaryFavorite(pin);
                 }
@@ -843,8 +843,18 @@ namespace AppLimpia
         /// <param name="favorite">The favorite drop point to set as primary.</param>
         private void SetPrimaryFavorite(MapExPin favorite)
         {
+            // Unset the current primary favorite
+            if (this.primaryFavorite != null)
+            {
+                this.primaryFavorite.Type = MapPinType.Favorite;
+            }
+
             // Set the drop point as primary favorite
             this.primaryFavorite = favorite;
+            if (this.primaryFavorite != null)
+            {
+                this.primaryFavorite.Type = MapPinType.PrimaryFavorite;
+            }
 
             // Update commands
             ((Command)this.LocateVehicleForPrimaryFavoriteCommand).ChangeCanExecute();

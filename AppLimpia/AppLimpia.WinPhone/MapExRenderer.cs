@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 
 using Windows.Devices.Geolocation;
@@ -148,6 +149,7 @@ namespace AppLimpia.WinPhone
                 {
                     // Subscribe to position updates
                     this.geolocator.ReportInterval = 30000; // Half minute
+                    this.geolocator.DesiredAccuracy = PositionAccuracy.High;
                     this.geolocator.PositionChanged += this.GeolocatorOnPositionChanged;
                 }
             }
@@ -188,6 +190,12 @@ namespace AppLimpia.WinPhone
         /// <param name="center"><c>true</c> to center the map on user position; <c>false</c> to leave map.</param>
         private void ShowUserPosition(Geocoordinate userCoordinate, bool center)
         {
+            // If the position is not accurate
+            if (userCoordinate.Accuracy > 100.0f)
+            {
+                return;
+            }
+
             // Get the point for user coordinates
             var geopoint =
                 new Geopoint(

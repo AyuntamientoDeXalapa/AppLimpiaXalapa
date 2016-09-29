@@ -59,7 +59,8 @@ namespace AppLimpia
         /// </summary>
         /// <param name="uri">The server URI to retrieve data.</param>
         /// <param name="action">An action to be performed on successful remote operation.</param>
-        public static void GetAsync(Uri uri, Action<JsonValue> action)
+        /// <param name="failAction">An action to be executed on failed request.</param>
+        public static void GetAsync(Uri uri, Action<JsonValue> action, Action failAction = null)
         {
             // Add the nonce to negate caching
             var builder = new UriBuilder(uri);
@@ -94,11 +95,17 @@ namespace AppLimpia
                 scheduler);
 
             // Setup error handling
-            task.ContinueWith(
+            var continuation = task.ContinueWith(
                 WebHelper.ParseTaskError,
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);
+
+            // Setup error continuation
+            if (failAction != null)
+            {
+                continuation.ContinueWith(t => failAction());
+            }
         }
 
         /// <summary>
@@ -107,7 +114,8 @@ namespace AppLimpia
         /// <param name="uri">The server URI to retrieve data.</param>
         /// <param name="content">The content to post to server.</param>
         /// <param name="action">An action to be performed on successful remote operation.</param>
-        public static void PostAsync(Uri uri, HttpContent content, Action<JsonValue> action)
+        /// <param name="failAction">An action to be executed on failed request.</param>
+        public static void PostAsync(Uri uri, HttpContent content, Action<JsonValue> action, Action failAction = null)
         {
             // Add the nonce to negate caching
             var builder = new UriBuilder(uri);
@@ -142,11 +150,17 @@ namespace AppLimpia
                 scheduler);
 
             // Setup error handling
-            task.ContinueWith(
+            var continuation = task.ContinueWith(
                 WebHelper.ParseTaskError,
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);
+
+            // Setup error continuation
+            if (failAction != null)
+            {
+                continuation.ContinueWith(t => failAction());
+            }
         }
 
         /// <summary>

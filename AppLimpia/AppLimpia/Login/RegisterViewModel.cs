@@ -23,6 +23,11 @@ namespace AppLimpia.Login
         private readonly TaskCompletionSource<bool> completionSource;
 
         /// <summary>
+        /// A value indicating whether the registration process is in progress.
+        /// </summary>
+        private bool isRegistering;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RegisterViewModel"/> class.
         /// </summary>
         /// <param name="completionSource">The register task completion source.</param>
@@ -30,6 +35,7 @@ namespace AppLimpia.Login
         {
             // Store the completion source
             this.completionSource = completionSource;
+            this.isRegistering = false;
 
             // Setup default values
             this.Login = string.Empty;
@@ -82,6 +88,12 @@ namespace AppLimpia.Login
         /// </summary>
         private void Register()
         {
+            // If already registering
+            if (this.isRegistering)
+            {
+                return;
+            }
+
             // Validate that the user full name is not empty
             if (this.FullName.Length < 2)
             {
@@ -132,7 +144,12 @@ namespace AppLimpia.Login
             var request = new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
 
             // Send request to the server
-            WebHelper.PostAsync(new Uri(Uris.Register), request, this.ProcessRegistrationResults);
+            this.isRegistering = true;
+            WebHelper.PostAsync(
+                new Uri(Uris.Register),
+                request,
+                this.ProcessRegistrationResults,
+                () => this.isRegistering = false);
         }
 
         /// <summary>
@@ -146,6 +163,9 @@ namespace AppLimpia.Login
             this.UserId = result.GetItemOrDefault("id").GetStringValueOrDefault(string.Empty);
             Settings.Instance.SetValue(Settings.UserId, this.UserId);
             Debug.WriteLine("User ID = " + this.UserId);
+
+            // End the registration process
+            this.isRegistering = false;
 
             // Return to login view
             this.Navigation.PopModalAsync();

@@ -21,6 +21,11 @@ namespace AppLimpia.Login
         private string userName;
 
         /// <summary>
+        /// A value indicating whether the login process is in progress.
+        /// </summary>
+        private bool isLoggingIn;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LoginViewModel"/> class.
         /// </summary>
         public LoginViewModel()
@@ -28,6 +33,7 @@ namespace AppLimpia.Login
             // Reset user name and password
             this.userName = string.Empty;
             this.Password = string.Empty;
+            this.isLoggingIn = false;
 
             // Setup commands
             this.LoginCommand = new Command(this.Login);
@@ -85,6 +91,12 @@ namespace AppLimpia.Login
             // Login the user
             System.Diagnostics.Debug.WriteLine("{0}:{1}", this.UserName, this.Password);
 
+            // If already logging in
+            if (this.isLoggingIn)
+            {
+                return;
+            }
+
             // Validate that the user name is a valid email
             // TODO: Change to email or phone number
             var isEmail = Regex.IsMatch(
@@ -111,9 +123,11 @@ namespace AppLimpia.Login
             var password = System.Net.WebUtility.UrlEncode(this.Password);
 
             // Send request to the server
+            this.isLoggingIn = true;
             WebHelper.GetAsync(
                 new Uri($"{Uris.Login}?username={user}&password={password}"),
-                this.ProcessLoginResults);
+                this.ProcessLoginResults,
+                () => this.isLoggingIn = false);
         }
 
         /// <summary>
@@ -127,6 +141,9 @@ namespace AppLimpia.Login
             var userId = result.GetItemOrDefault("id").GetStringValueOrDefault(string.Empty);
             Settings.Instance.SetValue(Settings.UserId, userId);
             Debug.WriteLine("User ID = " + userId);
+
+            // End the registration process
+            this.isLoggingIn = false;
 
             // Show the main view
             App.ShowMainView();

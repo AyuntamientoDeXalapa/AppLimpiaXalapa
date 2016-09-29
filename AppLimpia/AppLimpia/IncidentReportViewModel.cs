@@ -44,6 +44,11 @@ namespace AppLimpia
         private DateTime? reportDate;
 
         /// <summary>
+        /// A value indicating whether the submission process is in progress.
+        /// </summary>
+        private bool isSubmitting;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="IncidentReportViewModel"/> class.
         /// </summary>
         public IncidentReportViewModel()
@@ -51,6 +56,7 @@ namespace AppLimpia
             // Get incident types from the server
             this.typesDictionary = new Dictionary<string, string>();
             this.IncidentTypes = new ObservableCollection<string>();
+            this.isSubmitting = false;
             this.GetIncidentTypes();
 
             // Setup commands
@@ -187,6 +193,12 @@ namespace AppLimpia
         /// </summary>
         private void ReportIncident()
         {
+            // If already submitting
+            if (this.isSubmitting)
+            {
+                return;
+            }
+
             // Save the report date
             if (!this.reportDate.HasValue)
             {
@@ -222,7 +234,12 @@ namespace AppLimpia
             }
 
             // Send the report to the server
-            WebHelper.PostAsync(new Uri(Uris.SubmitReport), report, this.ParseNewIncidentData);
+            this.isSubmitting = true;
+            WebHelper.PostAsync(
+                new Uri(Uris.SubmitReport),
+                report,
+                this.ParseNewIncidentData,
+                () => this.isSubmitting = false);
         }
 
         /// <summary>
@@ -248,6 +265,9 @@ namespace AppLimpia
                 // Raise incident reported created event
                 this.OnIncidentReportCreated?.Invoke(this, report);
             }
+
+            // End the submission process
+            this.isSubmitting = false;
 
             // Close the current view
             this.Navigation.PopModalAsync();
