@@ -116,6 +116,15 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Tipo de incidencia.
+        /// </summary>
+        internal static string IncidentType {
+            get {
+                return ResourceManager.GetString("IncidentType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Entrar.
         /// </summary>
         internal static string Login {

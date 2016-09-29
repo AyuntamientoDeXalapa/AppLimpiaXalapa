@@ -19,6 +19,14 @@ namespace AppLimpia
             Color.Default);
 
         /// <summary>
+        /// The text of the placeholder in the current picker.
+        /// </summary>
+        public static readonly BindableProperty PlaceholderTextProperty = BindableProperty.Create(
+            "PlaceholderText",
+            typeof(string),
+            typeof(PickerEx));
+
+        /// <summary>
         /// The color of the placeholder in the current picker.
         /// </summary>
         public static readonly BindableProperty PlaceholderColorProperty = BindableProperty.Create(
@@ -40,6 +48,22 @@ namespace AppLimpia
             set
             {
                 this.SetValue(PickerEx.TextColorProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the text of the placeholder in the current picker.
+        /// </summary>
+        public string PlaceholderText
+        {
+            get
+            {
+                return (string)this.GetValue(PickerEx.PlaceholderTextProperty);
+            }
+
+            set
+            {
+                this.SetValue(PickerEx.PlaceholderTextProperty, value);
             }
         }
 

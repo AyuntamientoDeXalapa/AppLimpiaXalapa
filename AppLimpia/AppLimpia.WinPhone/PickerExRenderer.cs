@@ -38,8 +38,10 @@ namespace AppLimpia.WinPhone
                 System.Diagnostics.Debug.Assert(this.Control != null, "Control is not created");
                 this.Control.DropDownClosed += this.OnDropDownClosed;
                 this.Control.SelectionChanged += this.OnSelectionChanged;
+                System.Diagnostics.Debug.WriteLine(this.Control.PlaceholderText);
 
                 // Configure the control
+                this.UpdatePlaceholderText();
                 this.UpdateTextColor();
                 this.UpdateForecolor();
             }
@@ -59,6 +61,10 @@ namespace AppLimpia.WinPhone
             if (e.PropertyName == PickerEx.TextColorProperty.PropertyName)
             {
                 this.UpdateTextColor();
+            }
+            else if (e.PropertyName == PickerEx.PlaceholderTextProperty.PropertyName)
+            {
+                this.UpdatePlaceholderText();
             }
             else if (e.PropertyName == PickerEx.PlaceholderColorProperty.PropertyName)
             {
@@ -107,6 +113,22 @@ namespace AppLimpia.WinPhone
             System.Diagnostics.Debug.Assert(combobox != null, "Invalid sender");
             this.handle = !combobox.IsDropDownOpen;
             this.UpdateForecolor();
+        }
+
+        /// <summary>
+        /// Sets the text of the placeholder for the current control.
+        /// </summary>
+        private void UpdatePlaceholderText()
+        {
+            var element = (PickerEx)this.Element;
+            if (element.PlaceholderText != null)
+            {
+                this.Control.PlaceholderText = element.PlaceholderText;
+            }
+            else
+            {
+                this.Control.ClearValue(ComboBox.PlaceholderTextProperty);
+            }
         }
 
         /// <summary>

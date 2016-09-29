@@ -153,6 +153,12 @@ namespace AppLimpia
             {
                 // Get the incident type field
                 var id = type.GetItemOrDefault("id").GetStringValueOrDefault(null);
+                // TODO: Remove when fixed
+                if (id == null)
+                {
+                    id = Guid.NewGuid().ToString();
+                }
+
                 var incidentType = type.GetItemOrDefault("incidencia").GetStringValueOrDefault(null);
 
                 // If all fields present
@@ -198,7 +204,13 @@ namespace AppLimpia
             }
 
             // TODO: Remove when they are retrieved from the server
-            report.Add(new StringContent($"Usuario de {Device.OS}"), "usuario");
+            var uid = $"Usuario de {Device.OS}";
+            if (Settings.Instance.Contains(Settings.UserId))
+            {
+                uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+            }
+
+            report.Add(new StringContent(uid), "usuario");
             report.Add(new StringContent($"Dispositivo: {Device.OS}"), "device");
 
             // Add image if any

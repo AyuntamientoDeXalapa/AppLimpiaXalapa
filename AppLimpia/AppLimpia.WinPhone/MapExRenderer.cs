@@ -63,6 +63,13 @@ namespace AppLimpia.WinPhone
 
                 var pins = (ObservableCollection<MapExPin>)((MapEx)e.OldElement).Pins;
                 pins.CollectionChanged -= this.OnCollectionChanged;
+
+                // Remove the location service
+                if (this.geolocator != null)
+                {
+                    this.geolocator.PositionChanged -= this.GeolocatorOnPositionChanged;
+                    this.geolocator = null;
+                }
             }
 
             // If new element is present

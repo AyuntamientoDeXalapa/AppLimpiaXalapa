@@ -237,8 +237,15 @@ namespace AppLimpia
             this.haveFavorites = false;
 
             // Get the favorites from the server
+            var uri = new Uri(Uris.GetFavorites);
+            if (Settings.Instance.Contains(Settings.UserId))
+            {
+                var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+                uri = new Uri($"{Uris.GetFavorites}?uid={uid}");
+            }
+
             WebHelper.GetAsync(
-                new Uri(Uris.GetFavorites),
+                uri,
                 json =>
                     {
                         this.ParseJson(json);
@@ -265,6 +272,12 @@ namespace AppLimpia
         {
             // Add the drop points to favorites on the server
             var uri = $"{Uris.AddFavorites}?id={id}";
+            if (Settings.Instance.Contains(Settings.UserId))
+            {
+                var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+                uri = $"{Uris.AddFavorites}?uid={uid}&id={id}";
+            }
+
             var task = WebHelper.GetAsync(new Uri(uri));
 
             // Parse the server response
@@ -294,6 +307,12 @@ namespace AppLimpia
         {
             // Remove the drop points from favorites on the server
             var uri = $"{Uris.RemoveFavorites}?id={id}";
+            if (Settings.Instance.Contains(Settings.UserId))
+            {
+                var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+                uri = $"{Uris.RemoveFavorites}?uid={uid}&id={id}";
+            }
+
             var task = WebHelper.GetAsync(new Uri(uri));
 
             // Parse the server response
@@ -387,6 +406,12 @@ namespace AppLimpia
             string nextUri;
             var reports = WebHelper.ParseHalCollection(json, "reportes", out nextUri);
 
+            var uid = string.Empty;
+            if (Settings.Instance.Contains(Settings.UserId))
+            {
+                uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+            }
+
             // Parse my reports data
             foreach (var report in reports)
             {
@@ -398,30 +423,33 @@ namespace AppLimpia
                         .GetStringValueOrDefault(string.Empty);
                 var dropPoint = report.GetItemOrDefault("montonera").GetStringValueOrDefault(null);
                 var incident = report.GetItemOrDefault("incidencia").GetStringValueOrDefault(null);
-                //var statusString = report.GetItemOrDefault("status").GetStringValueOrDefault(null);
+                var user = report.GetItemOrDefault("usuario").GetStringValueOrDefault(string.Empty);
 
-                // Parse notification date
-                DateTime date;
-                var result = DateTime.TryParseExact(
-                    dateString,
-                    "yyyy-MM-dd HH:mm:ss.ffffff",
-                    null,
-                    DateTimeStyles.None,
-                    out date);
-
-                // If all fields present
-                if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(dropPoint) &&
-                    !string.IsNullOrEmpty(incident))
+                if (string.IsNullOrEmpty(uid) || (user == uid))
                 {
-                    // Add my report
-                    var reportObject = new IncidentReport(id)
+                    // Parse notification date
+                    DateTime date;
+                    var result = DateTime.TryParseExact(
+                        dateString,
+                        "yyyy-MM-dd HH:mm:ss.ffffff",
+                        null,
+                        DateTimeStyles.None,
+                        out date);
+
+                    // If all fields present
+                    if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(dropPoint)
+                        && !string.IsNullOrEmpty(incident))
                     {
-                        Date = date.ToLocalTime(),
-                        DropPoint = dropPoint,
-                        Type = incident,
-                        Status = IncidentReportStatus.Received
-                    };
-                    this.myReports.Add(reportObject);
+                        // Add my report
+                        var reportObject = new IncidentReport(id)
+                                               {
+                                                   Date = date.ToLocalTime(),
+                                                   DropPoint = dropPoint,
+                                                   Type = incident,
+                                                   Status = IncidentReportStatus.Received
+                                               };
+                        this.myReports.Add(reportObject);
+                    }
                 }
             }
 
@@ -986,6 +1014,9 @@ namespace AppLimpia
         {
             // Deactivate current view model
             this.IsActive = false;
+
+            // Logout user
+            Settings.Instance.Clear();
 
             // Return to login view
             var viewModel = new LoginViewModel();

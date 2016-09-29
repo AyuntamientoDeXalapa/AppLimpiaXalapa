@@ -40,6 +40,7 @@ namespace AppLimpia.iOS
             Xamarin.Forms.Forms.Init();
             Xamarin.FormsMaps.Init();
             MediaPicker.Instance = new Media.MediaPickerIOS();
+            Settings.Instance = new SettingsIOS();
 
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer

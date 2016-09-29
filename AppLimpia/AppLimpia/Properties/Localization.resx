@@ -141,6 +141,10 @@
     <value>Nombre completo</value>
     <comment>The users full name</comment>
   </data>
+  <data name="IncidentType" xml:space="preserve">
+    <value>Tipo de incidencia</value>
+    <comment>The incident type for report</comment>
+  </data>
   <data name="Login" xml:space="preserve">
     <value>Entrar</value>
     <comment>The login button text</comment>

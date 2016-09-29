@@ -50,7 +50,7 @@
                HorizontalOptions="FillAndExpand"
                Placeholder="{local:Localize Password}"
                IsPassword="True"
-               Text="{Binding Password,Mode=OneWayToSource}"/>
+               Text="{Binding Password}"/>
 
         <!-- Login and register buttons -->
         <Button x:Name="ButtonLogin"

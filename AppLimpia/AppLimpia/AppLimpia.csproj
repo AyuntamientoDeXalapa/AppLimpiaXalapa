@@ -87,6 +87,7 @@
     <Compile Include="MyReportsViewModel.cs" />
     <Compile Include="PickerEx.cs" />
     <Compile Include="RemoteServerException.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="UserDataView.xaml.cs">
       <DependentUpon>UserDataView.xaml</DependentUpon>
     </Compile>

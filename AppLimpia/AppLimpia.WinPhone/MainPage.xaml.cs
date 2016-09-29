@@ -24,6 +24,7 @@ namespace AppLimpia.WinPhone
             // Initialize the platform dependent components
             Xamarin.FormsMaps.Init(string.Empty);
             Media.MediaPicker.Instance = new MediaPickerWinPhone();
+            Settings.Instance = new SettingsWinPhone();
 
             // Initialize the application
             this.InitializeComponent();

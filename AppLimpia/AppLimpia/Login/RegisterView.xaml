@@ -54,12 +54,12 @@
                HorizontalOptions="FillAndExpand"
                Placeholder="{local:Localize Password}"
                IsPassword="True"
-               Text="{Binding Password,Mode=OneWayToSource}"/>
+               Text="{Binding Password}"/>
         <Entry x:Name="EntryPasswordConfirm"
                HorizontalOptions="FillAndExpand"
                Placeholder="{local:Localize ConfirmPassword}"
                IsPassword="True"
-               Text="{Binding PasswordConfirm,Mode=OneWayToSource}"/>
+               Text="{Binding PasswordConfirm}"/>
       
         <!-- Register and cancel buttons -->
         <Button x:Name="ButtonRegister"

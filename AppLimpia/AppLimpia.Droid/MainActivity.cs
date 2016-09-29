@@ -33,6 +33,7 @@ namespace AppLimpia.Droid
             Xamarin.FormsMaps.Init(this, bundle);
             Xamarin.Forms.Forms.Init(this, bundle);
             Media.MediaPicker.Instance = new MediaPickerDroid();
+            Settings.Instance = new SettingsAndroid();
 
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer

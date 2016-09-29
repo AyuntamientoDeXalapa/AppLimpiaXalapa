@@ -73,6 +73,16 @@ namespace AppLimpia
         public const string GetReportStatus = Uris.Server + "applimpia-fake/getreportstatus.php";
 
         /// <summary>
+        /// The user login URI.
+        /// </summary>
+        public const string Login = Uris.Server + "api/usuarios";
+
+        /// <summary>
+        /// The user registration URI.
+        /// </summary>
+        public const string Register = Uris.Server + "api/usuarios";
+
+        /// <summary>
         /// The OAUTH start URI.
         /// </summary>
         public const string OauthStart = Uris.Server + "applimpia-fake/oauth2_start.php";

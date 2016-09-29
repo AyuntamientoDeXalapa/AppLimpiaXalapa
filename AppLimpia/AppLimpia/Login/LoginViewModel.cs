@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
+
+using AppLimpia.Json;
 
 using Xamarin.Forms;
 
@@ -81,6 +85,49 @@ namespace AppLimpia.Login
             // Login the user
             System.Diagnostics.Debug.WriteLine("{0}:{1}", this.UserName, this.Password);
 
+            // Validate that the user name is a valid email
+            // TODO: Change to email or phone number
+            var isEmail = Regex.IsMatch(
+                this.UserName,
+                @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z",
+                RegexOptions.IgnoreCase);
+            if (!isEmail)
+            {
+                // TODO: Localize
+                App.DisplayAlert("Error", "Debe de proporcionar un email valido", "OK");
+                return;
+            }
+
+            // Validate that the password is present
+            if (this.Password.Length <= 2)
+            {
+                // TODO: Localize
+                App.DisplayAlert("Error", "Debe de proporcionar una contraseña valida", "OK");
+                return;
+            }
+
+            // Prepare the data to be send to the server
+            var user = System.Net.WebUtility.UrlEncode(this.UserName);
+            var password = System.Net.WebUtility.UrlEncode(this.Password);
+
+            // Send request to the server
+            WebHelper.GetAsync(
+                new Uri($"{Uris.Login}?username={user}&password={password}"),
+                this.ProcessLoginResults);
+        }
+
+        /// <summary>
+        /// Processes the login result returned by the server.
+        /// </summary>
+        /// <param name="result">The login result.</param>
+        private void ProcessLoginResults(JsonValue result)
+        {
+            // The register user ID
+            // TODO: Change to OAUTH token
+            var userId = result.GetItemOrDefault("id").GetStringValueOrDefault(string.Empty);
+            Settings.Instance.SetValue(Settings.UserId, userId);
+            Debug.WriteLine("User ID = " + userId);
+
             // Show the main view
             App.ShowMainView();
         }
@@ -91,6 +138,10 @@ namespace AppLimpia.Login
         /// <param name="provider">User credentials provider.</param>
         private void LoginWith(string provider)
         {
+            // TODO: Localize
+            App.DisplayAlert("Error", "Esta función todavia no esta disponible", "OK");
+            return;
+
             // Create the OAUTH login completion source
             var completionSource = new TaskCompletionSource<bool>();
 

@@ -22,10 +22,26 @@ namespace AppLimpia
             // Parse the XAML file
             this.InitializeComponent();
 
-            // Show the start page
-            var startViewModel = new Login.LoginViewModel();
-            var startPage = new Login.LoginView { BindingContext = startViewModel };
-            this.MainPage = startPage;
+            // Get the stored user identifier
+            var userId = string.Empty;
+            if (Settings.Instance.Contains(Settings.UserId))
+            {
+                userId = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+                Debug.WriteLine("User ID = " + userId);
+            }
+
+            // If user is not logged in
+            if (string.IsNullOrEmpty(userId))
+            {
+                // Show the login page
+                var startViewModel = new Login.LoginViewModel();
+                var startPage = new Login.LoginView { BindingContext = startViewModel };
+                this.MainPage = startPage;
+            }
+            else
+            {
+                App.ShowMainView();
+            }
         }
 
         /// <summary>

@@ -205,6 +205,12 @@ namespace AppLimpia
 
                 // Set the drop point as primary on the server
                 var uri = $"{Uris.SetPrimaryFavorite}?id={this.favorite.Id}";
+                if (Settings.Instance.Contains(Settings.UserId))
+                {
+                    var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+                    uri = $"{Uris.SetPrimaryFavorite}?uid={uid}&id={this.favorite.Id}";
+                }
+
                 var task = WebHelper.GetAsync(new Uri(uri));
 
                 // Parse the server response
@@ -233,6 +239,12 @@ namespace AppLimpia
             {
                 // Remove the drop points from favorites on the server
                 var uri = $"{Uris.RemoveFavorites}?id={this.favorite.Id}";
+                if (Settings.Instance.Contains(Settings.UserId))
+                {
+                    var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+                    uri = $"{Uris.RemoveFavorites}?uid={uid}&id={this.favorite.Id}";
+                }
+
                 var task = WebHelper.GetAsync(new Uri(uri));
 
                 // Parse the server response
