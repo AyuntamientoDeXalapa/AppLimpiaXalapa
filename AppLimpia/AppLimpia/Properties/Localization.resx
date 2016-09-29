@@ -129,6 +129,10 @@
     <value>Ingresa con</value>
     <comment>The enter with text</comment>
   </data>
+  <data name="FavoritesTitle" xml:space="preserve">
+    <value>Favoritos</value>
+    <comment>The favorites page title</comment>
+  </data>
   <data name="ForgetPassword" xml:space="preserve">
     <value>¿Olvidaste tu contaseña?</value>
     <comment>The forget password button on the login screen</comment>
@@ -142,12 +146,16 @@
     <comment>The login button text</comment>
   </data>
   <data name="Logout" xml:space="preserve">
-    <value>Salir</value>
+    <value>Cerrar sesión</value>
     <comment>The logout button text</comment>
   </data>
   <data name="MoreOptionsTitle" xml:space="preserve">
     <value>Más opciones</value>
     <comment>The more options screen title</comment>
+  </data>
+  <data name="NotificationsTitle" xml:space="preserve">
+    <value>Notificaciones</value>
+    <comment>The notifications page title</comment>
   </data>
   <data name="Password" xml:space="preserve">
     <value>Contraseña</value>
@@ -172,6 +180,18 @@
   <data name="RegisterTitle" xml:space="preserve">
     <value>REGISTRO</value>
     <comment>The register page title</comment>
+  </data>
+  <data name="ReportsTitle" xml:space="preserve">
+    <value>Mis reportes</value>
+    <comment>The reports page title</comment>
+  </data>
+  <data name="SendReport" xml:space="preserve">
+    <value>Enviar reporte</value>
+    <comment>The send report button on the incident screen</comment>
+  </data>
+  <data name="TakePhoto" xml:space="preserve">
+    <value>Agregar foto</value>
+    <comment>The take photo button on the incident screen</comment>
   </data>
   <data name="UserLogin" xml:space="preserve">
     <value>Email</value>

@@ -7,24 +7,57 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:FavoritesViewModel}"
              x:Class="AppLimpia.FavoritesView"
-             BackgroundColor="White">
-  <Grid VerticalOptions="FillAndExpand"
-        HorizontalOptions="FillAndExpand"
-        Margin="5">
+             BackgroundColor="#E3E4E5">
+  <Grid HorizontalOptions="Fill"
+        VerticalOptions="Fill"
+        RowSpacing="0">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
-    <!-- Header -->
-    <Label HorizontalOptions="Center"
-           Style="{DynamicResource LabelTitleStyle}"
-           Text="Favoritos"/>
+    <!-- View header -->
+    <Grid Grid.Column="0"
+          Grid.Row="0"
+          BackgroundColor="#004D72">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <BoxView Grid.Column="0"
+               Grid.Row="0"
+               BackgroundColor="#3680BE"/>
+      <Image Grid.Column="0"
+             Grid.Row="0"
+             Margin="5">
+        <Image.WidthRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+        </Image.WidthRequest>
+        <Image.HeightRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+        </Image.HeightRequest>
+        <Image.Source>
+          <OnPlatform x:TypeArguments="ImageSource"
+                      iOS="BackButton.png"
+                      Android="back_button.png"
+                      WinPhone="Assets/BackButton.png"/>
+        </Image.Source>
+        <Image.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding CancelCommand}"/>
+        </Image.GestureRecognizers>
+      </Image>
+      <Label Grid.Column="1"
+             Grid.Row="0"
+             HorizontalOptions="Center"
+             VerticalOptions="Center"
+             Style="{DynamicResource LoginTitleLabel}"
+             Text="{local:Localize FavoritesTitle}"/>
+    </Grid>
 
     <!-- Favorites list -->
     <ListView Grid.Column="0"
               Grid.Row="1"
+              BackgroundColor="#E3E4E5"
               ItemsSource="{Binding Favorites}"
               HasUnevenRows="True">
       <ListView.ItemTemplate>
@@ -37,41 +70,50 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
               </Grid.ColumnDefinitions>
-              <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-              </Grid.RowDefinitions>
               <!-- Favorite information -->
               <Label Grid.Column="0"
                      Grid.Row="0"
+                     VerticalOptions="Center"
                      Text="{Binding Label}"/>
-              <Label Grid.Column="0"
-                     Grid.Row="1"
-                     Text="Principal">
-                <Label.Style>
-                  <Style TargetType="Label">
-                    <Setter Property="IsVisible" Value="False"/>
-                  </Style>
-                </Label.Style>
-                <Label.Triggers>
-                  <DataTrigger TargetType="Label"
-                               Binding="{Binding IsPrimary}"
-                               Value="True">
-                    <Setter Property="IsVisible" Value="True"/>
-                  </DataTrigger>
-                </Label.Triggers>
-              </Label>
 
               <!-- Set as favorite button -->
               <Image Grid.Column="1"
                      Grid.Row="0"
-                     Grid.RowSpan="2"
                      Margin="5">
+                <Image.WidthRequest>
+                  <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+                </Image.WidthRequest>
+                <Image.HeightRequest>
+                  <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+                </Image.HeightRequest>
                 <Image.Source>
                   <OnPlatform x:TypeArguments="ImageSource"
-                              iOS="Set.png"
-                              Android="set.png"
-                              WinPhone="Assets/Icons/Set.png"/>
+                              iOS="IsPrimary.png"
+                              Android="is_primary.png"
+                              WinPhone="Assets/Icons/IsPrimary.png"/>
+                </Image.Source>
+                <Image.Triggers>
+                  <DataTrigger TargetType="Image"
+                               Binding="{Binding IsPrimary}"
+                               Value="False">
+                    <Setter Property="IsVisible" Value="False"/>
+                  </DataTrigger>
+                </Image.Triggers>
+              </Image>
+              <Image Grid.Column="1"
+                     Grid.Row="0"
+                     Margin="5">
+                <Image.WidthRequest>
+                  <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+                </Image.WidthRequest>
+                <Image.HeightRequest>
+                  <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+                </Image.HeightRequest>
+                <Image.Source>
+                  <OnPlatform x:TypeArguments="ImageSource"
+                              iOS="SetAsPrimary.png"
+                              Android="set_as_primary.png"
+                              WinPhone="Assets/Icons/SetAsPrimary.png"/>
                 </Image.Source>
                 <Image.Triggers>
                   <DataTrigger TargetType="Image"
@@ -80,75 +122,35 @@
                     <Setter Property="IsVisible" Value="False"/>
                   </DataTrigger>
                 </Image.Triggers>
+                <Image.GestureRecognizers>
+                  <TapGestureRecognizer Command="{Binding SetAsPrimaryCommand}"/>
+                </Image.GestureRecognizers>
               </Image>
-              <Button Grid.Column="1"
-                      Grid.Row="0"
-                      Grid.RowSpan="2"
-                      WidthRequest="32"
-                      HeightRequest="32"
-                      Command="{Binding SetAsPrimaryCommand}">
-                <Button.Style>
-                  <Style TargetType="Button">
-                    <Setter Property="BorderWidth" Value="0"/>
-                    <Setter Property="BorderColor" Value="Transparent"/>
-                    <Setter Property="BackgroundColor" Value="Transparent"/>
-                  </Style>
-                </Button.Style>
-                <Button.Triggers>
-                  <DataTrigger TargetType="Button"
-                               Binding="{Binding IsPrimary}"
-                               Value="True">
-                    <Setter Property="IsVisible" Value="False"/>
-                  </DataTrigger>
-                </Button.Triggers>
-              </Button>
 
               <!-- Remove favorite button -->
               <Image Grid.Column="2"
                      Grid.Row="0"
-                     Grid.RowSpan="2"
                      Margin="5">
+                <Image.WidthRequest>
+                  <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+                </Image.WidthRequest>
+                <Image.HeightRequest>
+                  <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+                </Image.HeightRequest>
                 <Image.Source>
                   <OnPlatform x:TypeArguments="ImageSource"
                               iOS="Remove.png"
                               Android="remove.png"
                               WinPhone="Assets/Icons/Remove.png"/>
                 </Image.Source>
+                <Image.GestureRecognizers>
+                  <TapGestureRecognizer Command="{Binding RemoveFavoriteCommand}"/>
+                </Image.GestureRecognizers>
               </Image>
-              <Button Grid.Column="2"
-                      Grid.Row="0"
-                      Grid.RowSpan="2"
-                      WidthRequest="32"
-                      HeightRequest="32"
-                      Command="{Binding RemoveFavoriteCommand}">
-                <Button.Style>
-                  <Style TargetType="Button">
-                    <Setter Property="BorderWidth" Value="0"/>
-                    <Setter Property="BorderColor" Value="Transparent"/>
-                    <Setter Property="BackgroundColor" Value="Transparent"/>
-                  </Style>
-                </Button.Style>
-              </Button>
             </Grid>
           </ViewCell>
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
-
-    <!-- Control buttons -->
-    <Grid Grid.Column="0"
-          Grid.Row="2"
-          HorizontalOptions="FillAndExpand">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Button Grid.Column="0"
-              Grid.Row="0"
-              Margin="5"
-              HorizontalOptions="FillAndExpand"
-              Text="Cerrar"
-              Command="{Binding CancelCommand}"/>
-    </Grid>
   </Grid>
 </ContentPage>

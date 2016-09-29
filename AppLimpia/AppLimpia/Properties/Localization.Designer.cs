@@ -89,6 +89,15 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Favoritos.
+        /// </summary>
+        internal static string FavoritesTitle {
+            get {
+                return ResourceManager.GetString("FavoritesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ¿Olvidaste tu contaseña?.
         /// </summary>
         internal static string ForgetPassword {
@@ -116,7 +125,7 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Salir.
+        ///   Looks up a localized string similar to Cerrar sesión.
         /// </summary>
         internal static string Logout {
             get {
@@ -130,6 +139,15 @@ namespace AppLimpia.Properties {
         internal static string MoreOptionsTitle {
             get {
                 return ResourceManager.GetString("MoreOptionsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notificaciones.
+        /// </summary>
+        internal static string NotificationsTitle {
+            get {
+                return ResourceManager.GetString("NotificationsTitle", resourceCulture);
             }
         }
         
@@ -184,6 +202,33 @@ namespace AppLimpia.Properties {
         internal static string RegisterTitle {
             get {
                 return ResourceManager.GetString("RegisterTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mis reportes.
+        /// </summary>
+        internal static string ReportsTitle {
+            get {
+                return ResourceManager.GetString("ReportsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enviar reporte.
+        /// </summary>
+        internal static string SendReport {
+            get {
+                return ResourceManager.GetString("SendReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Agregar foto.
+        /// </summary>
+        internal static string TakePhoto {
+            get {
+                return ResourceManager.GetString("TakePhoto", resourceCulture);
             }
         }
         

@@ -7,41 +7,74 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:IncidentReportViewModel}"
              x:Class="AppLimpia.IncidentReportView"
-             BackgroundColor="White">
+             BackgroundColor="#E3E4E5">
   <StackLayout Orientation="Vertical"
                HorizontalOptions="Fill"
-               VerticalOptions="Fill"
-               Padding="10">
+               VerticalOptions="Fill">
     <!-- View header -->
-    <Label HorizontalOptions="CenterAndExpand"
-           Style="{DynamicResource SubtitleStyle}"
-           Text="Incidencia"/>
-
-    <!-- Incident report fields -->
-    <Label Text="Tipo de incidencia"/>
-    <local:PickerEx x:Name="PickerIncidentTypes"
-                    HorizontalOptions="FillAndExpand"
-                    SelectedIndex="{Binding IncidentTypeIndex}"/>
-
-    <!-- Incident report photo -->
-    <Image x:Name="Image1" HeightRequest="300" WidthRequest="300" IsVisible="False"/>
-
-    <!-- Report and cancel buttons -->
-    <Grid>
+    <Grid BackgroundColor="#004D72">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
-      <Button Grid.Column="1" Grid.Row="0" Text="Agregar foto" Clicked="OnTakePhoto"/>
-      <Button Grid.Column="0" Grid.Row="1" Text="Cancelar" Clicked="OnCanceled"/>
-      <Button Grid.Column="1"
-              Grid.Row="1"
-              Text="Enviar"
-              Command="{Binding ReportIncidentCommand}"/>
+      <BoxView Grid.Column="0"
+               Grid.Row="0"
+               BackgroundColor="#3680BE"/>
+      <Image Grid.Column="0"
+             Grid.Row="0"
+             Margin="5">
+        <Image.WidthRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+        </Image.WidthRequest>
+        <Image.HeightRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+        </Image.HeightRequest>
+        <Image.Source>
+          <OnPlatform x:TypeArguments="ImageSource"
+                      iOS="BackButton.png"
+                      Android="back_button.png"
+                      WinPhone="Assets/BackButton.png"/>
+        </Image.Source>
+        <Image.GestureRecognizers>
+          <TapGestureRecognizer Tapped="OnCanceled"/>
+        </Image.GestureRecognizers>
+      </Image>
+      <Label Grid.Column="1"
+             Grid.Row="0"
+             HorizontalOptions="Center"
+             VerticalOptions="Center"
+             Style="{DynamicResource LoginTitleLabel}"
+             Text="{Binding Pin.Label}"/>
     </Grid>
+
+    <!-- Main content -->
+    <StackLayout Orientation="Vertical"
+                 HorizontalOptions="Fill"
+                 Padding="30,10">
+      <!-- Incident report fields -->
+      <Label Text="Tipo de incidencia"/>
+      <local:PickerEx x:Name="PickerIncidentTypes"
+                      HorizontalOptions="FillAndExpand"
+                      SelectedIndex="{Binding IncidentTypeIndex}"/>
+      
+      <!-- Incident report photo -->
+      <Image x:Name="Image1" HeightRequest="300" WidthRequest="300" IsVisible="False"/>
+      
+      <!-- Control buttons -->
+      <!-- TODO: Convert to command -->
+      <Button Style="{DynamicResource BlueButton}"
+              HorizontalOptions="FillAndExpand"
+              Text="{local:Localize TakePhoto}"
+              Clicked="OnTakePhoto"/>
+      <Button Style="{DynamicResource GreenButton}"
+              HorizontalOptions="FillAndExpand"
+              Text="{local:Localize SendReport}"
+              Command="{Binding ReportIncidentCommand}"/>
+      <!-- TODO: Convert to command -->
+      <Button Style="{DynamicResource CancelButton}"
+              HorizontalOptions="FillAndExpand"
+              Text="{local:Localize Cancel}"
+              Clicked="OnCanceled"/>
+    </StackLayout>
   </StackLayout>
 </ContentPage>

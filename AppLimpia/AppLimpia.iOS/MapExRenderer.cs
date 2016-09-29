@@ -137,9 +137,20 @@ namespace AppLimpia.iOS
             {
                 // Create a new annotation
                 annotationView = new MKAnnotationView(annotation, reuseId);
-                var icon = customPin.Type == MapPinType.Vehicle
-                               ? "Vehicle.png"
-                               : (customPin.Type == MapPinType.Favorite ? "Favorite.png" : "DropPoint.png");
+                var icon = "Vehicle.png";
+                switch (customPin.Type)
+                {
+                    case MapPinType.DropPoint:
+                        icon = "DropPoint.png";
+                        break;
+                    case MapPinType.Favorite:
+                        icon = "Favorite.png";
+                        break;
+                    case MapPinType.PrimaryFavorite:
+                        icon = "PrimaryFavorite.png";
+                        break;
+                }
+                
                 annotationView.Image = UIImage.FromFile(icon);
                 annotationView.CenterOffset = new CGPoint(0, 0);
             }

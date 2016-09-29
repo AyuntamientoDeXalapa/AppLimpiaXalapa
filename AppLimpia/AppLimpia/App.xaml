@@ -8,9 +8,41 @@
       <!-- iOS styles -->
       <OnPlatform.iOS>
         <ResourceDictionary>
-          <Style TargetType="local:FavoritesView">
-            <Setter Property="Padding" Value="0,20,0,0"/>
+          <Style TargetType="Label">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="TextColor" Value="#555656"/>
           </Style>
+          <Style x:Key="LabelSmallStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="12"/>
+          </Style>
+          <Style x:Key="LabelTitle" TargetType="Label">
+            <Setter Property="FontSize" Value="26"/>
+          </Style>
+          <Style x:Key="WhiteLable" TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
+          <Style x:Key="LoginTitleLabel" TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="FontSize" Value="26"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+          </Style>
+          <Style TargetType="Button">
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
+          <Style x:Key="GreenButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#42C268"/>
+          </Style>
+          <Style x:Key="BlueButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#3680BE"/>
+          </Style>
+          <Style x:Key="TransparentButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+          </Style>
+          <Style x:Key="CancelButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="TextColor" Value="#8E8E8E"/>
+          </Style>
+
           <Style TargetType="ListView">
             <Setter Property="SeparatorVisibility" Value="None"/>
             <Setter Property="SeparatorColor" Value="Black"/>
@@ -31,6 +63,9 @@
           <Style x:Key="LabelTitle" TargetType="Label">
             <Setter Property="FontSize" Value="26"/>
           </Style>
+          <Style x:Key="WhiteLable" TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
           <Style x:Key="LoginTitleLabel" TargetType="Label">
             <Setter Property="TextColor" Value="White"/>
             <Setter Property="FontSize" Value="26"/>
@@ -47,6 +82,10 @@
           </Style>
           <Style x:Key="TransparentButton" TargetType="Button">
             <Setter Property="BackgroundColor" Value="Transparent"/>
+          </Style>
+          <Style x:Key="CancelButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="TextColor" Value="#8E8E8E"/>
           </Style>
           <Style TargetType="Entry">
             <Setter Property="BackgroundColor" Value="Transparent"/>
@@ -78,6 +117,9 @@
           <Style x:Key="LabelTitle" TargetType="Label">
             <Setter Property="FontSize" Value="26"/>
           </Style>
+          <Style x:Key="WhiteLable" TargetType="Label">
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
           <Style x:Key="LoginTitleLabel" TargetType="Label">
             <Setter Property="TextColor" Value="White"/>
             <Setter Property="FontSize" Value="26"/>
@@ -96,6 +138,10 @@
           </Style>
           <Style x:Key="TransparentButton" TargetType="Button">
             <Setter Property="BackgroundColor" Value="Transparent"/>
+          </Style>
+          <Style x:Key="CancelButton" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="TextColor" Value="#8E8E8E"/>
           </Style>
           <Style TargetType="Entry">
             <Setter Property="BackgroundColor" Value="#598498"/>

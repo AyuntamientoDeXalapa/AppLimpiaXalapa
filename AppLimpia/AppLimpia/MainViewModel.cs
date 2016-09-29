@@ -643,7 +643,7 @@ namespace AppLimpia
             else
             {
                 // TODO: Localize
-                pin.Label = "Montonera " + properties.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                pin.Label = "Punto de recolección " + properties.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
                 pin.Address = string.Empty; // pin.Type == MapPinType.DropPoint ? "Montonera" : "Favorita";
             }
         }

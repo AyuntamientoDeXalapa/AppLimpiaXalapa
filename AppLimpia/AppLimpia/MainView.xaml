@@ -9,8 +9,8 @@
              x:Class="AppLimpia.MainView"
              BackgroundColor="#E3E4E5">
   <!-- Main view -->
-  <Grid ColumnSpacing="1"
-        RowSpacing="1">
+  <Grid ColumnSpacing="2"
+        RowSpacing="2">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>
       <ColumnDefinition Width="*"/>
