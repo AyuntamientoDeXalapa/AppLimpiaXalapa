@@ -38,7 +38,6 @@ namespace AppLimpia.WinPhone
                 System.Diagnostics.Debug.Assert(this.Control != null, "Control is not created");
                 this.Control.DropDownClosed += this.OnDropDownClosed;
                 this.Control.SelectionChanged += this.OnSelectionChanged;
-                System.Diagnostics.Debug.WriteLine(this.Control.PlaceholderText);
 
                 // Configure the control
                 this.UpdatePlaceholderText();

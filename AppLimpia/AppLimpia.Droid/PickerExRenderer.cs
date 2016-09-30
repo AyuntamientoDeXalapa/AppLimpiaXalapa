@@ -2,6 +2,7 @@
 using System.ComponentModel;
 
 using Android.Content.Res;
+using Android.Text;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
@@ -41,6 +42,8 @@ namespace AppLimpia.Droid
                 System.Diagnostics.Debug.Assert(this.Control != null, "Control is not created");
 
                 // Configure the control
+                this.Control.ClearFocus();
+                this.UpdatePlaceholderText();
                 this.UpdateTextColor();
                 this.UpdatePlaceholderColor();
             }
@@ -61,10 +64,23 @@ namespace AppLimpia.Droid
             {
                 this.UpdateTextColor();
             }
+            else if (e.PropertyName == PickerEx.PlaceholderTextProperty.PropertyName)
+            {
+                this.UpdatePlaceholderText();
+            }
             else if (e.PropertyName == PickerEx.PlaceholderColorProperty.PropertyName)
             {
                 this.UpdatePlaceholderColor();
             }
+        }
+
+        /// <summary>
+        /// Sets the text of the placeholder for the current control.
+        /// </summary>
+        private void UpdatePlaceholderText()
+        {
+            var element = (PickerEx)this.Element;
+            element.Title = element.PlaceholderText;
         }
 
         /// <summary>

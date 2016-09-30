@@ -93,8 +93,8 @@
             <Setter Property="TextColor" Value="White"/>
           </Style>
           <Style TargetType="local:PickerEx">
-            <Setter Property="BackgroundColor" Value="Silver"/>
-            <Setter Property="PlaceholderColor" Value="Gray"/>
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="PlaceholderColor" Value="#B3B3B4"/>
             <Setter Property="TextColor" Value="Black"/>
           </Style>
           <Style TargetType="ListView">
