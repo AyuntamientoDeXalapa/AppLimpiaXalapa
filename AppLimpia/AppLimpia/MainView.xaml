@@ -51,7 +51,8 @@
                     WinPhone="Assets/IconMyLocation.png"/>
       </Image.Source>
       <Image.GestureRecognizers>
-        <TapGestureRecognizer Command="{Binding SearchDropPointsCommand}"/>
+        <TapGestureRecognizer Command="{Binding SearchDropPointsCommand}"
+                              Tapped="OnCommandTapped"/>
       </Image.GestureRecognizers>
     </Image>
 
@@ -75,7 +76,8 @@
                     WinPhone="Assets/IconLocateVehicle.png"/>
       </Image.Source>
       <Image.GestureRecognizers>
-        <TapGestureRecognizer Command="{Binding LocateVehicleForPrimaryFavoriteCommand}"/>
+        <TapGestureRecognizer Command="{Binding LocateVehicleForPrimaryFavoriteCommand}"
+                              Tapped="OnCommandTapped"/>
       </Image.GestureRecognizers>
     </Image>
 
@@ -99,7 +101,8 @@
                     WinPhone="Assets/IconFavorites.png"/>
       </Image.Source>
       <Image.GestureRecognizers>
-        <TapGestureRecognizer Command="{Binding ShowFavoritesCommand}"/>
+        <TapGestureRecognizer Command="{Binding ShowFavoritesCommand}"
+                              Tapped="OnCommandTapped"/>
       </Image.GestureRecognizers>
     </Image>
 
@@ -187,7 +190,8 @@
                Style="{DynamicResource LabelTitle}"
                Text="{local:Localize ViewNotifications}"/>
         <Grid.GestureRecognizers>
-          <TapGestureRecognizer Command="{Binding ShowNotificationsCommand}"/>
+          <TapGestureRecognizer Command="{Binding ShowNotificationsCommand}"
+                                Tapped="OnCommandTapped"/>
         </Grid.GestureRecognizers>
       </Grid>
       
@@ -201,7 +205,8 @@
                Style="{DynamicResource LabelTitle}"
                Text="{local:Localize ViewReports}"/>
         <Grid.GestureRecognizers>
-          <TapGestureRecognizer Command="{Binding ShowReportsCommand}"/>
+          <TapGestureRecognizer Command="{Binding ShowReportsCommand}"
+                                Tapped="OnCommandTapped"/>
         </Grid.GestureRecognizers>
       </Grid>
 
@@ -215,7 +220,8 @@
                Style="{DynamicResource LabelTitle}"
                Text="{local:Localize Logout}"/>
         <Grid.GestureRecognizers>
-          <TapGestureRecognizer Command="{Binding LogoutCommand}"/>
+          <TapGestureRecognizer Command="{Binding LogoutCommand}"
+                                Tapped="OnCommandTapped"/>
         </Grid.GestureRecognizers>
       </Grid>
     </StackLayout>

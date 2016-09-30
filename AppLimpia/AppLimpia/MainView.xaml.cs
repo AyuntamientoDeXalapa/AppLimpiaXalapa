@@ -147,5 +147,17 @@ namespace AppLimpia
             this.MoreCommands.IsVisible = !this.MoreCommands.IsVisible;
             this.BoxViewMoreCommands.IsVisible = this.MoreCommands.IsVisible;
         }
+
+        /// <summary>
+        /// Handles the Tapped event of any command button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A <see cref="EventArgs"/> with arguments of the event.</param>
+        private void OnCommandTapped(object sender, EventArgs e)
+        {
+            // Hide more commands view
+            this.MoreCommands.IsVisible = false;
+            this.BoxViewMoreCommands.IsVisible = this.MoreCommands.IsVisible;
+        }
     }
 }
