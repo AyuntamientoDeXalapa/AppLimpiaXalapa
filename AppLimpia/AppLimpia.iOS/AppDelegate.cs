@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 
 using AppLimpia.Media;
 
@@ -41,6 +43,10 @@ namespace AppLimpia.iOS
             Xamarin.FormsMaps.Init();
             MediaPicker.Instance = new Media.MediaPickerIOS();
             Settings.Instance = new SettingsIOS();
+
+            // Setup exception handler
+            AppDomain.CurrentDomain.UnhandledException += AppDelegate.CurrentDomainOnUnhandledException;
+            AppDelegate.DisplayCrashReport();
 
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer
@@ -86,6 +92,69 @@ namespace AppLimpia.iOS
             }
 
             return ci;
+        }
+
+        /// <summary>
+        /// Handles the UnhandledException event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A <see cref="UnhandledExceptionEventArgs"/> with arguments of the event.</param>
+        private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var newExc = new Exception("CurrentDomainOnUnhandledException", e.ExceptionObject as Exception);
+            AppDelegate.LogUnhandledException(newExc);
+        }
+
+        /// <summary>
+        /// Logs the unhandled exception to the log file.
+        /// </summary>
+        /// <param name="exception">The exception to log.</param>
+        private static void LogUnhandledException(Exception exception)
+        {
+            try
+            {
+                // Write exception data to log
+                const string ErrorFileName = "Fatal.log";
+                var libraryPath = Environment.GetFolderPath(Environment.SpecialFolder.Resources);
+                var errorFilePath = Path.Combine(libraryPath, ErrorFileName);
+                var errorMessage = $"Time: {DateTime.Now}\r\nError: Unhandled Exception\r\n{exception}";
+                File.WriteAllText(errorFilePath, errorMessage);
+            }
+            catch
+            {
+                // Ignored
+            }
+        }
+
+        /// <summary>
+        /// Displays the crash report of the last unhandled exception.
+        /// </summary>
+        [Conditional("DEBUG")]
+        private static void DisplayCrashReport()
+        {
+            // If error file does not exist
+            const string ErrorFileName = "Fatal.log";
+            var libraryPath = Environment.GetFolderPath(Environment.SpecialFolder.Resources);
+            var errorFilePath = Path.Combine(libraryPath, ErrorFileName);
+            if (!File.Exists(errorFilePath))
+            {
+                return;
+            }
+
+            // Show the last exception data
+            var errorText = File.ReadAllText(errorFilePath);
+            var alertView = new UIAlertView("Crash Report", errorText, null, "Close", "Clear")
+                                {
+                                    UserInteractionEnabled = true
+                                };
+            alertView.Clicked += (sender, args) =>
+                {
+                    if (args.ButtonIndex != 0)
+                    {
+                        File.Delete(errorFilePath);
+                    }
+                };
+            alertView.Show();
         }
     }
 }
