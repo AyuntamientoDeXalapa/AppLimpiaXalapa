@@ -8,11 +8,18 @@
              d:DataContext="{d:DesignInstance local:IncidentReportViewModel}"
              x:Class="AppLimpia.IncidentReportView"
              BackgroundColor="#E3E4E5">
-  <StackLayout Orientation="Vertical"
-               HorizontalOptions="Fill"
-               VerticalOptions="Fill">
+  <Grid HorizontalOptions="Fill"
+        VerticalOptions="Fill"
+        RowSpacing="0">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    
     <!-- View header -->
-    <Grid BackgroundColor="#004D72">
+    <Grid Grid.Column="0"
+          Grid.Row="0"
+          BackgroundColor="#004D72">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
@@ -48,7 +55,9 @@
     </Grid>
 
     <!-- Main content -->
-    <StackLayout Orientation="Vertical"
+    <StackLayout Grid.Column="0"
+                 Grid.Row="1"
+                 Orientation="Vertical"
                  HorizontalOptions="Fill"
                  Padding="30,10">
       <!-- Incident report fields -->
@@ -77,5 +86,26 @@
               Text="{local:Localize Cancel}"
               Clicked="OnCanceled"/>
     </StackLayout>
-  </StackLayout>
+
+    <!-- Activity indicator -->
+    <Grid Grid.Column="0"
+          Grid.Row="0"
+          Grid.RowSpan="2">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <ActivityIndicator Grid.Column="1"
+                         Grid.Row="1"
+                         HeightRequest="64"
+                         WidthRequest="64"
+                         IsRunning="{Binding IsBusy}"/>
+    </Grid>
+  </Grid>
 </ContentPage>

@@ -197,6 +197,12 @@ namespace AppLimpia
             /// </summary>
             private void SetAsPrimary()
             {
+                // If the current view model is busy do nothing
+                if (this.viewModel.IsBusy)
+                {
+                    return;
+                }
+
                 // If the current favorite is primary
                 if (this.IsPrimary)
                 {
@@ -204,6 +210,7 @@ namespace AppLimpia
                 }
 
                 // Set the drop point as primary on the server
+                this.viewModel.IsBusy = true;
                 var uri = $"{Uris.SetPrimaryFavorite}?id={this.favorite.Id}";
                 if (Settings.Instance.Contains(Settings.UserId))
                 {
@@ -219,14 +226,22 @@ namespace AppLimpia
 
                 // Update pin status
                 continuation.ContinueWith(
-                    _ => this.IsPrimary = true,
+                    _ =>
+                        {
+                            this.IsPrimary = true;
+                            this.viewModel.IsBusy = false;
+                        },
                     default(CancellationToken),
                     TaskContinuationOptions.OnlyOnRanToCompletion,
                     scheduler);
 
                 // Setup error handling
                 continuation.ContinueWith(
-                    this.ParseTaskError,
+                    t =>
+                        {
+                            this.ParseTaskError(t);
+                            this.viewModel.IsBusy = false;
+                        },
                     default(CancellationToken),
                     TaskContinuationOptions.OnlyOnFaulted,
                     scheduler);
@@ -237,7 +252,14 @@ namespace AppLimpia
             /// </summary>
             private void RemoveFavorite()
             {
+                // If the current view model is busy do nothing
+                if (this.viewModel.IsBusy)
+                {
+                    return;
+                }
+
                 // Remove the drop points from favorites on the server
+                this.viewModel.IsBusy = true;
                 var uri = $"{Uris.RemoveFavorites}?id={this.favorite.Id}";
                 if (Settings.Instance.Contains(Settings.UserId))
                 {
@@ -253,14 +275,22 @@ namespace AppLimpia
 
                 // Update pin status
                 continuation.ContinueWith(
-                    _ => this.OnFavoriteRemoved(),
+                    _ =>
+                        {
+                            this.OnFavoriteRemoved();
+                            this.viewModel.IsBusy = false;
+                        },
                     default(CancellationToken),
                     TaskContinuationOptions.OnlyOnRanToCompletion,
                     scheduler);
 
                 // Setup error handling
                 continuation.ContinueWith(
-                    this.ParseTaskError,
+                    t =>
+                        {
+                            this.ParseTaskError(t);
+                            this.viewModel.IsBusy = false;
+                        },
                     default(CancellationToken),
                     TaskContinuationOptions.OnlyOnFaulted,
                     scheduler);

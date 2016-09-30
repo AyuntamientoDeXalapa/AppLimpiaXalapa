@@ -57,7 +57,7 @@ namespace AppLimpia.Droid
             this.map = googleMap;
             this.map.MyLocationChange += this.OnLocationChange;
             this.map.SetInfoWindowAdapter(this);
-            
+
             // Load pins already resent in collection
             var pins = ((MapEx)this.Element).Pins;
             foreach (var pin in pins)

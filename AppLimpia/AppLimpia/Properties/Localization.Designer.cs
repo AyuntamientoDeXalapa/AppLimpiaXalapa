@@ -98,7 +98,7 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ¿Olvidaste tu contaseña?.
+        ///   Looks up a localized string similar to ¿Olvidaste tu contraseña?.
         /// </summary>
         internal static string ForgetPassword {
             get {

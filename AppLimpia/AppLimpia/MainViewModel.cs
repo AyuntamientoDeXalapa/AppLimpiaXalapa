@@ -270,7 +270,14 @@ namespace AppLimpia
         /// <param name="id">The id of drop point to add.</param>
         private void AddToFavorite(string id)
         {
+            // If the current view model is busy do nothing
+            if (this.IsBusy)
+            {
+                return;
+            }
+
             // Add the drop points to favorites on the server
+            this.IsBusy = true;
             var uri = $"{Uris.AddFavorites}?id={id}";
             if (Settings.Instance.Contains(Settings.UserId))
             {
@@ -286,14 +293,22 @@ namespace AppLimpia
 
             // Update pin status
             continuation.ContinueWith(
-                _ => this.SetFavoriteStatus(id, true),
+                _ =>
+                    {
+                        this.SetFavoriteStatus(id, true);
+                        this.IsBusy = false;
+                    },
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnRanToCompletion,
                 scheduler);
 
             // Setup error handling
             continuation.ContinueWith(
-                this.ParseTaskError,
+                t =>
+                    {
+                        this.ParseTaskError(t);
+                        this.IsBusy = false;
+                    },
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);
@@ -305,7 +320,14 @@ namespace AppLimpia
         /// <param name="id">The id of drop point to remove.</param>
         private void RemoveFromFavorite(string id)
         {
+            // If the current view model is busy do nothing
+            if (this.IsBusy)
+            {
+                return;
+            }
+
             // Remove the drop points from favorites on the server
+            this.IsBusy = true;
             var uri = $"{Uris.RemoveFavorites}?id={id}";
             if (Settings.Instance.Contains(Settings.UserId))
             {
@@ -321,14 +343,22 @@ namespace AppLimpia
 
             // Update pin status
             continuation.ContinueWith(
-                _ => this.SetFavoriteStatus(id, false),
+                _ =>
+                    {
+                        this.SetFavoriteStatus(id, false);
+                        this.IsBusy = false;
+                    },
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnRanToCompletion,
                 scheduler);
 
             // Setup error handling
             continuation.ContinueWith(
-                this.ParseTaskError,
+                t =>
+                    {
+                        this.ParseTaskError(t);
+                        this.IsBusy = false;
+                    },
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);
@@ -340,7 +370,14 @@ namespace AppLimpia
         /// <param name="id">The id of drop point to locate vehicle.</param>
         private void LocateVehicleForDropPoint(string id)
         {
+            // If the current view model is busy do nothing
+            if (this.IsBusy)
+            {
+                return;
+            }
+
             // Remove the drop points from favorites on the server
+            this.IsBusy = true;
             var uri = $"{Uris.LocateVehicle}?id={id}";
             var task = WebHelper.GetAsync(new Uri(uri));
 
@@ -350,14 +387,22 @@ namespace AppLimpia
 
             // Show vehicle pin on the map
             continuation.ContinueWith(
-                _ => this.ShowVehiclePosition(),
+                _ =>
+                    {
+                        this.ShowVehiclePosition();
+                        this.IsBusy = false;
+                    },
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnRanToCompletion,
                 scheduler);
 
             // Setup error handling
             continuation.ContinueWith(
-                this.ParseTaskError,
+                t =>
+                    {
+                        this.ParseTaskError(t);
+                        this.IsBusy = false;
+                    },
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);

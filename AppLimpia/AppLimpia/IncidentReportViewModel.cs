@@ -44,11 +44,6 @@ namespace AppLimpia
         private DateTime? reportDate;
 
         /// <summary>
-        /// A value indicating whether the submission process is in progress.
-        /// </summary>
-        private bool isSubmitting;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="IncidentReportViewModel"/> class.
         /// </summary>
         public IncidentReportViewModel()
@@ -56,7 +51,6 @@ namespace AppLimpia
             // Get incident types from the server
             this.typesDictionary = new Dictionary<string, string>();
             this.IncidentTypes = new ObservableCollection<string>();
-            this.isSubmitting = false;
             this.GetIncidentTypes();
 
             // Setup commands
@@ -140,8 +134,14 @@ namespace AppLimpia
         /// </summary>
         private void GetIncidentTypes()
         {
+            // If the current view model is busy do nothing
+            if (this.IsBusy)
+            {
+                return;
+            }
+
             // Get the incident types from the server
-            WebHelper.GetAsync(new Uri(Uris.GetIncidentTypes), this.ParseIncidentTypesData);
+            WebHelper.GetAsync(new Uri(Uris.GetIncidentTypes), this.ParseIncidentTypesData, () => this.IsBusy = false);
         }
 
         /// <summary>
@@ -184,7 +184,12 @@ namespace AppLimpia
             if (nextUri != null)
             {
                 // Get the favorites from the server
-                WebHelper.GetAsync(new Uri(nextUri), this.ParseIncidentTypesData);
+                WebHelper.GetAsync(new Uri(nextUri), this.ParseIncidentTypesData, () => this.IsBusy = false);
+            }
+            else
+            {
+                // Hide the progress indicator
+                this.IsBusy = false;
             }
         }
 
@@ -193,8 +198,8 @@ namespace AppLimpia
         /// </summary>
         private void ReportIncident()
         {
-            // If already submitting
-            if (this.isSubmitting)
+            // If the current view model is busy do nothing
+            if (this.IsBusy)
             {
                 return;
             }
@@ -234,12 +239,12 @@ namespace AppLimpia
             }
 
             // Send the report to the server
-            this.isSubmitting = true;
+            this.IsBusy = true;
             WebHelper.PostAsync(
                 new Uri(Uris.SubmitReport),
                 report,
                 this.ParseNewIncidentData,
-                () => this.isSubmitting = false);
+                () => this.IsBusy = false);
         }
 
         /// <summary>
@@ -267,7 +272,7 @@ namespace AppLimpia
             }
 
             // End the submission process
-            this.isSubmitting = false;
+            this.IsBusy = false;
 
             // Close the current view
             this.Navigation.PopModalAsync();

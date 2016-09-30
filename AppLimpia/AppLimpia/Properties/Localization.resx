@@ -134,7 +134,7 @@
     <comment>The favorites page title</comment>
   </data>
   <data name="ForgetPassword" xml:space="preserve">
-    <value>¿Olvidaste tu contaseña?</value>
+    <value>¿Olvidaste tu contraseña?</value>
     <comment>The forget password button on the login screen</comment>
   </data>
   <data name="FullName" xml:space="preserve">

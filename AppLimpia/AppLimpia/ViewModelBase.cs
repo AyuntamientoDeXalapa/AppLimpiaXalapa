@@ -12,9 +12,30 @@ namespace AppLimpia
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
         /// <summary>
+        /// A value indicating whether the current view model is busy processing data.
+        /// </summary>
+        private bool isBusy;
+
+        /// <summary>
         /// Occurs when a property value changes.
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the current view model is busy processing data.
+        /// </summary>
+        public bool IsBusy
+        {
+            get
+            {
+                return this.isBusy;
+            }
+
+            set
+            {
+                this.SetProperty(ref this.isBusy, value, nameof(this.IsBusy));
+            }
+        }
 
         /// <summary>
         /// Gets or sets the navigation manager for the current view model.
