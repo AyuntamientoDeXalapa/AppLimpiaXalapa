@@ -96,12 +96,8 @@ namespace AppLimpia
                 () => this.primaryFavorite != null);
             this.ShowFavoritesCommand = new Command(this.ShowFavorites);
             this.ShowNotificationsCommand = new Command(this.ShowNotifications);
-            this.ShowReportsCommand = new Command(this.ShowReports, () => this.myReports.Count > 0);
+            this.ShowReportsCommand = new Command(this.ShowReports);
             this.LogoutCommand = new Command(this.Logout);
-
-            // Setup command updates
-            ((ObservableCollection<IncidentReport>)this.myReports).CollectionChanged +=
-                (s, e) => ((Command)this.ShowReportsCommand).ChangeCanExecute();
         }
 
         /// <summary>
@@ -499,7 +495,6 @@ namespace AppLimpia
             }
 
             // If new page is present
-            ((Command)this.ShowReportsCommand).ChangeCanExecute();
             if (nextUri != null)
             {
                 // Get the favorites from the server
@@ -772,9 +767,6 @@ namespace AppLimpia
                     this.myReports.Add(reportObject);
                 }
             }
-
-            // Update command status
-            ((Command)this.ShowReportsCommand).ChangeCanExecute();
         }
 
         /// <summary>
@@ -1056,10 +1048,19 @@ namespace AppLimpia
         /// </summary>
         private void ShowReports()
         {
-            // Show notifications view
-            var viewModel = new MyReportsViewModel(this.myReports);
-            var view = new MyReportsView { BindingContext = viewModel };
-            this.Navigation.PushModalAsync(view);
+            // TODO: Move to reports view
+            if (this.myReports.Count > 0)
+            {
+                // Show notifications view
+                var viewModel = new MyReportsViewModel(this.myReports);
+                var view = new MyReportsView { BindingContext = viewModel };
+                this.Navigation.PushModalAsync(view);
+            }
+            else
+            {
+                // TODO: Localize
+                App.DisplayAlert("Reportes", "Usted todavía no ha enviado ningun reporte", "OK");
+            }
         }
 
         /// <summary>

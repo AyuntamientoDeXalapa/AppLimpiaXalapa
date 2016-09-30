@@ -136,16 +136,26 @@
     </Image>
   
     <!-- More commands screen -->
-    <StackLayout x:Name="MoreCommands"
-                 Grid.Column="0"
-                 Grid.Row="0"
-                 Grid.ColumnSpan="4"
-                 VerticalOptions="FillAndExpand"
-                 HorizontalOptions="FillAndExpand"
-                 Spacing="0"
-                 BackgroundColor="#E3E4E5"
-                 IsVisible="False">
-      <Grid BackgroundColor="#004D72">
+    <Grid x:Name="MoreCommands"
+          Grid.Column="0"
+          Grid.Row="0"
+          Grid.ColumnSpan="4"
+          VerticalOptions="FillAndExpand"
+          HorizontalOptions="FillAndExpand"
+          RowSpacing="0"
+          BackgroundColor="#E3E4E5"
+          IsVisible="False">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Grid Grid.Column="0"
+            Grid.Row="0"
+            BackgroundColor="#004D72">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="*"/>
@@ -181,7 +191,9 @@
       </Grid>
     
       <!-- View notifications command -->
-      <Grid HorizontalOptions="StartAndExpand"
+      <Grid Grid.Column="0"
+            Grid.Row="1"
+            HorizontalOptions="FillAndExpand"
             BackgroundColor="#D9DADB">
         <Label HorizontalOptions="StartAndExpand"
                VerticalOptions="Center"
@@ -196,7 +208,9 @@
       </Grid>
       
       <!-- View reports command -->
-      <Grid HorizontalOptions="StartAndExpand"
+      <Grid Grid.Column="0"
+            Grid.Row="2"
+            HorizontalOptions="FillAndExpand"
             BackgroundColor="#E3E4E5">
         <Label HorizontalOptions="StartAndExpand"
                VerticalOptions="Center"
@@ -211,7 +225,9 @@
       </Grid>
 
       <!-- Logout command -->
-      <Grid HorizontalOptions="StartAndExpand"
+      <Grid Grid.Column="0"
+            Grid.Row="3"
+            HorizontalOptions="FillAndExpand"
             BackgroundColor="#D9DADB">
         <Label HorizontalOptions="StartAndExpand"
                VerticalOptions="Center"
@@ -224,7 +240,25 @@
                                 Tapped="OnCommandTapped"/>
         </Grid.GestureRecognizers>
       </Grid>
-    </StackLayout>
+
+      <!-- City hall logo -->
+      <Image Grid.Column="0"
+             Grid.Row="5"
+             Margin="0,10">
+        <Image.WidthRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="175" Android="175" WinPhone="262"/>
+        </Image.WidthRequest>
+        <Image.HeightRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="60" Android="60" WinPhone="90"/>
+        </Image.HeightRequest>
+        <Image.Source>
+          <OnPlatform x:TypeArguments="ImageSource"
+                      iOS="XalapaGray.png"
+                      Android="xalapa_gray.png"
+                      WinPhone="Assets/XalapaGray.png"/>
+        </Image.Source>
+      </Image>
+    </Grid>
   
     <!-- Activity indicator -->
     <Grid Grid.Column="0"
