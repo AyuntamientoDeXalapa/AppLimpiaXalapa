@@ -1,8 +1,11 @@
 ﻿using System;
+using System.IO;
 
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
+
+using Environment = System.Environment;
 
 namespace AppLimpia.Droid
 {
@@ -35,6 +38,10 @@ namespace AppLimpia.Droid
             Media.MediaPicker.Instance = new MediaPickerDroid();
             Settings.Instance = new SettingsAndroid();
 
+            // Setup exception handler
+            AppDomain.CurrentDomain.UnhandledException += MainActivity.CurrentDomainOnUnhandledException;
+            this.DisplayCrashReport();
+
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer
             var application = new App();
@@ -51,6 +58,67 @@ namespace AppLimpia.Droid
             var androidLocale = Java.Util.Locale.Default;
             var netLanguage = androidLocale.ToString().Replace("_", "-");
             return new System.Globalization.CultureInfo(netLanguage);
+        }
+
+        /// <summary>
+        /// Handles the UnhandledException event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A <see cref="UnhandledExceptionEventArgs"/> with arguments of the event.</param>
+        private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var newExc = new Exception("CurrentDomainOnUnhandledException", e.ExceptionObject as Exception);
+            MainActivity.LogUnhandledException(newExc);
+        }
+
+        /// <summary>
+        /// Logs the unhandled exception to the log file.
+        /// </summary>
+        /// <param name="exception">The exception to log.</param>
+        private static void LogUnhandledException(Exception exception)
+        {
+            try
+            {
+                // Write exception data to log
+                const string ErrorFileName = "Fatal.log";
+                var libraryPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+                var errorFilePath = Path.Combine(libraryPath, ErrorFileName);
+                var errorMessage = $"Time: {DateTime.Now}\r\nError: Unhandled Exception\r\n{exception}";
+                File.WriteAllText(errorFilePath, errorMessage);
+            }
+            catch
+            {
+                // Ignored
+            }
+        }
+
+        /// <summary>
+        /// Displays the crash report of the last unhandled exception.
+        /// </summary>
+        private void DisplayCrashReport()
+        {
+            // If error file does not exist
+            const string ErrorFileName = "Fatal.log";
+            var libraryPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+            var errorFilePath = Path.Combine(libraryPath, ErrorFileName);
+            if (!File.Exists(errorFilePath))
+            {
+                return;
+            }
+
+            // Show the last exception data
+            var errorText = File.ReadAllText(errorFilePath);
+            new AlertDialog.Builder(this).SetPositiveButton(
+                "Limpiar",
+                (sender, args) =>
+                    {
+                        File.Delete(errorFilePath);
+                    }).SetNegativeButton(
+                "Cerrar",
+                (sender, args) =>
+                    {
+                        // User pressed Close.
+                    }).SetMessage(errorText).SetTitle("Crash Report").Show();
         }
     }
 }

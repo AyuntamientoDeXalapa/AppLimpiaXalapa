@@ -129,7 +129,6 @@ namespace AppLimpia.iOS
         /// <summary>
         /// Displays the crash report of the last unhandled exception.
         /// </summary>
-        [Conditional("DEBUG")]
         private static void DisplayCrashReport()
         {
             // If error file does not exist
@@ -143,7 +142,7 @@ namespace AppLimpia.iOS
 
             // Show the last exception data
             var errorText = File.ReadAllText(errorFilePath);
-            var alertView = new UIAlertView("Crash Report", errorText, null, "Close", "Clear")
+            var alertView = new UIAlertView("Crash Report", errorText, null, "Cerrar", "Limpiar")
                                 {
                                     UserInteractionEnabled = true
                                 };
