@@ -99,8 +99,9 @@ namespace AppLimpia.Login
 
             // Validate that the user name is a valid email
             // TODO: Change to email or phone number
+            var user = this.UserName.Trim().ToLower();
             var isEmail = Regex.IsMatch(
-                this.UserName,
+                user,
                 @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z",
                 RegexOptions.IgnoreCase);
             if (!isEmail)
@@ -119,13 +120,13 @@ namespace AppLimpia.Login
             }
 
             // Prepare the data to be send to the server
-            var user = System.Net.WebUtility.UrlEncode(this.UserName);
+            user = System.Net.WebUtility.UrlEncode(user);
             var password = System.Net.WebUtility.UrlEncode(this.Password);
 
             // Send request to the server
             this.isLoggingIn = true;
             WebHelper.GetAsync(
-                new Uri($"{Uris.Login}?username={user.ToLower()}&password={password}"),
+                new Uri($"{Uris.Login}?username={user}&password={password}"),
                 this.ProcessLoginResults,
                 () => this.isLoggingIn = false);
         }

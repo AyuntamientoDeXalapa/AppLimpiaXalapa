@@ -82,5 +82,33 @@
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
+    
+    <!-- City hall logo -->
+    <Grid Grid.Column="0"
+          Grid.Row="0"
+          Grid.RowSpan="2"
+          InputTransparent="True">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Image Grid.Column="0"
+             Grid.Row="1"
+             Margin="0,10"
+             InputTransparent="True">
+        <Image.WidthRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="175" Android="175" WinPhone="262"/>
+        </Image.WidthRequest>
+        <Image.HeightRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="60" Android="60" WinPhone="90"/>
+        </Image.HeightRequest>
+        <Image.Source>
+          <OnPlatform x:TypeArguments="ImageSource"
+                      iOS="XalapaGray.png"
+                      Android="xalapa_gray.png"
+                      WinPhone="Assets/XalapaGray.png"/>
+        </Image.Source>
+      </Image>
+    </Grid>
   </Grid>
 </ContentPage>

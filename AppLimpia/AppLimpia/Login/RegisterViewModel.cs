@@ -104,8 +104,9 @@ namespace AppLimpia.Login
 
             // Validate that the user name is a valid email
             // TODO: Change to email or phone number
+            var login = this.Login.Trim().ToLower();
             var isEmail = Regex.IsMatch(
-                this.Login,
+                login,
                 @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z",
                 RegexOptions.IgnoreCase);
             if (!isEmail)
@@ -134,8 +135,8 @@ namespace AppLimpia.Login
             // Prepare the data to be send to the server
             var registrationForm = new Json.JsonObject
                                        {
-                                               { "username", this.Login.ToLower() },
-                                               { "name", this.FullName },
+                                               { "username", login },
+                                               { "name", this.FullName.Trim() },
                                                { "password", this.Password }
                                        };
             var builder = new StringBuilder();

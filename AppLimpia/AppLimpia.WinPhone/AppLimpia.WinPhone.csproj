@@ -194,6 +194,12 @@
     <Content Include="Assets\WideLogo.scale-100.png" />
     <Content Include="Assets\WideLogo.scale-140.png" />
     <Content Include="Assets\WideLogo.scale-240.png" />
+    <Content Include="Assets\XalapaBlue.scale-100.png" />
+    <Content Include="Assets\XalapaBlue.scale-140.png" />
+    <Content Include="Assets\XalapaBlue.scale-240.png" />
+    <Content Include="Assets\XalapaGray.scale-100.png" />
+    <Content Include="Assets\XalapaGray.scale-140.png" />
+    <Content Include="Assets\XalapaGray.scale-240.png" />
     <Content Include="StoreManifest.xml" />
   </ItemGroup>
   <ItemGroup>
