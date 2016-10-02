@@ -5,14 +5,12 @@ using Android.App;
 using Android.Content.PM;
 using Android.OS;
 
-using Environment = System.Environment;
-
 namespace AppLimpia.Droid
 {
     /// <summary>
     /// Defines the main activity for the Application.
     /// </summary>
-    [Activity(Label = "AppLimpia", Icon = "@drawable/icon", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "Xalapa Limpia", Icon = "@drawable/icon", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Class is created by the OS")]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
@@ -85,6 +83,10 @@ namespace AppLimpia.Droid
                 var errorFilePath = Path.Combine(libraryPath, ErrorFileName);
                 var errorMessage = $"Time: {DateTime.Now}\r\nError: Unhandled Exception\r\n{exception}";
                 File.WriteAllText(errorFilePath, errorMessage);
+
+                // Log unhandled exception
+                System.Diagnostics.Debug.WriteLine("Unhandled exception");
+                System.Diagnostics.Debug.WriteLine(exception.ToString());
             }
             catch
             {

@@ -149,6 +149,31 @@ namespace AppLimpia
                 {
                     this.status = value;
                     this.OnPropertyChanged();
+
+                    // ReSharper disable once ExplicitCallerInfoArgument
+                    this.OnPropertyChanged(nameof(this.StatusString));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the current incident report status string. 
+        /// </summary>
+        public string StatusString
+        {
+            get
+            {
+                // TODO: Localize
+                switch (this.status)
+                {
+                    case IncidentReportStatus.Received:
+                        return "Recibido";
+                    case IncidentReportStatus.InProcess:
+                        return "En proceso";
+                    case IncidentReportStatus.Completed:
+                        return "Atendido";
+                    default:
+                        return string.Empty;
                 }
             }
         }

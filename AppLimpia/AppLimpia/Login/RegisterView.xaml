@@ -7,11 +7,17 @@
              xmlns:login="clr-namespace:AppLimpia.Login;assembly=AppLimpia"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance login:RegisterViewModel}"
-             x:Class="AppLimpia.Login.RegisterView"
-             BackgroundColor="#004D72">
+             x:Class="AppLimpia.Login.RegisterView">
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+                iOS="0,20,0,0"
+                Android="0,0,0,0"
+                WinPhone="0,0,0,0"/>
+  </ContentPage.Padding>
   <ScrollView Orientation="Vertical"
               HorizontalOptions="Fill"
-              VerticalOptions="Fill">
+              VerticalOptions="Fill"
+              BackgroundColor="#004D72">
     <StackLayout Orientation="Vertical"
                  HorizontalOptions="FillAndExpand"
                  VerticalOptions="FillAndExpand">

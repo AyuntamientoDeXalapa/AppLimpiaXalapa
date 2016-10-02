@@ -125,7 +125,7 @@ namespace AppLimpia.Login
             // Send request to the server
             this.isLoggingIn = true;
             WebHelper.GetAsync(
-                new Uri($"{Uris.Login}?username={user}&password={password}"),
+                new Uri($"{Uris.Login}?username={user.ToLower()}&password={password}"),
                 this.ProcessLoginResults,
                 () => this.isLoggingIn = false);
         }

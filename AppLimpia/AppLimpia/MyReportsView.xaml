@@ -6,11 +6,17 @@
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:MyReportsViewModel}"
-             x:Class="AppLimpia.MyReportsView"
-             BackgroundColor="#E3E4E5">
+             x:Class="AppLimpia.MyReportsView">
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+                iOS="0,20,0,0"
+                Android="0,0,0,0"
+                WinPhone="0,0,0,0"/>
+  </ContentPage.Padding>
   <Grid HorizontalOptions="Fill"
         VerticalOptions="Fill"
-        RowSpacing="0">
+        RowSpacing="0"
+        BackgroundColor="#E3E4E5">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
@@ -89,7 +95,7 @@
               <Label Grid.Column="0"
                      Grid.Row="2"
                      Grid.ColumnSpan="2"
-                     Text="{Binding Status,StringFormat='Estatus: {0}'}"/>
+                     Text="{Binding StatusString,StringFormat='Estatus: {0}',Mode=OneWay}"/>
             </Grid>
           </ViewCell>
         </DataTemplate>

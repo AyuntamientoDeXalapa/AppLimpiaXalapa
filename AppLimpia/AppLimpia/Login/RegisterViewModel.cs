@@ -134,7 +134,7 @@ namespace AppLimpia.Login
             // Prepare the data to be send to the server
             var registrationForm = new Json.JsonObject
                                        {
-                                               { "username", this.Login },
+                                               { "username", this.Login.ToLower() },
                                                { "name", this.FullName },
                                                { "password", this.Password }
                                        };
@@ -156,7 +156,7 @@ namespace AppLimpia.Login
         /// Processes the registration result returned by the server.
         /// </summary>
         /// <param name="result">The registration result.</param>
-        private void ProcessRegistrationResults(JsonValue result)
+        private async void ProcessRegistrationResults(JsonValue result)
         {
             // The register user ID
             // TODO: Change to OAUTH token
@@ -168,7 +168,7 @@ namespace AppLimpia.Login
             this.isRegistering = false;
 
             // Return to login view
-            this.Navigation.PopModalAsync();
+            await this.Navigation.PopModalAsync();
 
             // Signal the task completion
             this.completionSource.SetResult(true);

@@ -62,7 +62,7 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Calcelar.
+        ///   Looks up a localized string similar to Cancelar.
         /// </summary>
         internal static string Cancel {
             get {

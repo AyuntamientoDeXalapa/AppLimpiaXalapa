@@ -6,11 +6,17 @@
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:MainViewModel}"
-             x:Class="AppLimpia.MainView"
-             BackgroundColor="#E3E4E5">
+             x:Class="AppLimpia.MainView">
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+                iOS="0,20,0,0"
+                Android="0,0,0,0"
+                WinPhone="0,0,0,0"/>
+  </ContentPage.Padding>
   <!-- Main view -->
   <Grid ColumnSpacing="2"
-        RowSpacing="2">
+        RowSpacing="2"
+        BackgroundColor="#E3E4E5">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>
       <ColumnDefinition Width="*"/>
@@ -264,7 +270,8 @@
     <Grid Grid.Column="0"
           Grid.Row="0"
           Grid.ColumnSpan="4"
-          Grid.RowSpan="2">
+          Grid.RowSpan="2"
+          InputTransparent="True">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
@@ -279,6 +286,8 @@
                          Grid.Row="1"
                          HeightRequest="64"
                          WidthRequest="64"
+                         InputTransparent="True"
+                         IsVisible="{Binding IsBusy}"
                          IsRunning="{Binding IsBusy}"/>
     </Grid>
   </Grid>

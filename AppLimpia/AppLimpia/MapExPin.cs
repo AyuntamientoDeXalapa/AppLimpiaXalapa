@@ -175,7 +175,7 @@ namespace AppLimpia
         /// Gets whether the current <see cref="MapExPin"/> is a favorite.
         /// </summary>
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global", Justification = "Used in data binding")]
-        public bool IsFavorite => this.Type == MapPinType.Favorite;
+        public bool IsFavorite => (this.Type == MapPinType.Favorite) || (this.Type == MapPinType.PrimaryFavorite);
 
         /// <summary>
         /// Gets or sets the position of the current <see cref="MapExPin"/>.

@@ -864,6 +864,13 @@ namespace AppLimpia
                     // Add pin to favorites
                     pin.Type = MapPinType.Favorite;
                     this.favoriteDropPoints.Add(pin);
+
+                    // If the favorite is the first one
+                    if (this.favoriteDropPoints.Count == 1)
+                    {
+                        // Set as primary favorite
+                        this.SetPrimaryFavorite(pin);
+                    }
                 }
                 else
                 {

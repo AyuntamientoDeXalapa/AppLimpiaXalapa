@@ -45,8 +45,8 @@ namespace AppLimpia.iOS
             Settings.Instance = new SettingsIOS();
 
             // Setup exception handler
-            AppDomain.CurrentDomain.UnhandledException += AppDelegate.CurrentDomainOnUnhandledException;
-            AppDelegate.DisplayCrashReport();
+            //AppDomain.CurrentDomain.UnhandledException += AppDelegate.CurrentDomainOnUnhandledException;
+            //AppDelegate.DisplayCrashReport();
 
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer
@@ -119,6 +119,10 @@ namespace AppLimpia.iOS
                 var errorFilePath = Path.Combine(libraryPath, ErrorFileName);
                 var errorMessage = $"Time: {DateTime.Now}\r\nError: Unhandled Exception\r\n{exception}";
                 File.WriteAllText(errorFilePath, errorMessage);
+
+                // Log unhandled exception
+                System.Diagnostics.Debug.WriteLine("Unhandled exception");
+                System.Diagnostics.Debug.WriteLine(exception.ToString());
             }
             catch
             {

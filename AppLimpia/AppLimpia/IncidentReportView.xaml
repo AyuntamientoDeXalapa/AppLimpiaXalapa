@@ -6,11 +6,17 @@
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance local:IncidentReportViewModel}"
-             x:Class="AppLimpia.IncidentReportView"
-             BackgroundColor="#E3E4E5">
+             x:Class="AppLimpia.IncidentReportView">
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+                iOS="0,20,0,0"
+                Android="0,0,0,0"
+                WinPhone="0,0,0,0"/>
+  </ContentPage.Padding>
   <Grid HorizontalOptions="Fill"
         VerticalOptions="Fill"
-        RowSpacing="0">
+        RowSpacing="0"
+        BackgroundColor="#E3E4E5">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
@@ -97,7 +103,8 @@
     <!-- Activity indicator -->
     <Grid Grid.Column="0"
           Grid.Row="0"
-          Grid.RowSpan="2">
+          Grid.RowSpan="2"
+          InputTransparent="True">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
@@ -112,6 +119,8 @@
                          Grid.Row="1"
                          HeightRequest="64"
                          WidthRequest="64"
+                         InputTransparent="True"
+                         IsVisible="{Binding IsBusy}"
                          IsRunning="{Binding IsBusy}"/>
     </Grid>
   </Grid>
