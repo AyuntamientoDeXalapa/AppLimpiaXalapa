@@ -432,7 +432,7 @@ namespace AppLimpia
         /// </summary>
         private void GetMyReports()
         {
-            // Get the favorites from the server
+            // Get the submitted incident reports from the server
             // TODO: Move to Login event
             WebHelper.GetAsync(new Uri(Uris.GetReports), this.ParseMyReportsData);
         }
@@ -465,7 +465,9 @@ namespace AppLimpia
                 var dropPoint = report.GetItemOrDefault("montonera").GetStringValueOrDefault(null);
                 var incident = report.GetItemOrDefault("incidencia").GetStringValueOrDefault(null);
                 var user = report.GetItemOrDefault("usuario").GetStringValueOrDefault(string.Empty);
+                var status = report.GetItemOrDefault("status").GetStringValueOrDefault(string.Empty);
 
+                // TODO: Move this check to server
                 if (string.IsNullOrEmpty(uid) || (user == uid))
                 {
                     // Parse notification date
@@ -479,7 +481,7 @@ namespace AppLimpia
 
                     // If all fields present
                     if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(dropPoint)
-                        && !string.IsNullOrEmpty(incident))
+                        && !string.IsNullOrEmpty(incident) && !string.IsNullOrEmpty(status))
                     {
                         // Add my report
                         var reportObject = new IncidentReport(id)
@@ -487,7 +489,7 @@ namespace AppLimpia
                                                    Date = date.ToLocalTime(),
                                                    DropPoint = dropPoint,
                                                    Type = incident,
-                                                   Status = IncidentReportStatus.Received
+                                                   Status = status
                                                };
                         this.myReports.Add(reportObject);
                     }
@@ -750,8 +752,6 @@ namespace AppLimpia
                     null,
                     DateTimeStyles.None,
                     out date);
-                IncidentReportStatus status;
-                result &= Enum.TryParse(statusString, out status);
 
                 // Add the report returned from the server
                 if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(dropPoint) &&
@@ -762,7 +762,7 @@ namespace AppLimpia
                                                Date = date,
                                                DropPoint = dropPoint,
                                                Type = incident,
-                                               Status = status
+                                               Status = string.Empty
                                            };
                     this.myReports.Add(reportObject);
                 }

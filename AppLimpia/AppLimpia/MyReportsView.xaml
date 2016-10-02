@@ -95,7 +95,7 @@
               <Label Grid.Column="0"
                      Grid.Row="2"
                      Grid.ColumnSpan="2"
-                     Text="{Binding StatusString,StringFormat='Estatus: {0}',Mode=OneWay}"/>
+                     Text="{Binding Status,StringFormat='Estatus: {0}'}"/>
             </Grid>
           </ViewCell>
         </DataTemplate>

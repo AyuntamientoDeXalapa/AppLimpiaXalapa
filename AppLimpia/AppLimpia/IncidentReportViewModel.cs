@@ -255,6 +255,8 @@ namespace AppLimpia
         {
             // Get the new incident report id
             var id = json.GetItemOrDefault("id").GetStringValueOrDefault(null);
+            var status = json.GetItemOrDefault("status").GetStringValueOrDefault(string.Empty);
+
             if (!string.IsNullOrEmpty(id))
             {
                 // Create a new incident report
@@ -264,8 +266,8 @@ namespace AppLimpia
                                      Date = date.ToLocalTime(),
                                      DropPoint = this.pin.Label,
                                      Type = this.IncidentTypes[this.incidentTypeIndex],
-                                     Status = IncidentReportStatus.Received
-                                 };
+                                     Status = status
+                };
 
                 // Raise incident reported created event
                 this.OnIncidentReportCreated?.Invoke(this, report);

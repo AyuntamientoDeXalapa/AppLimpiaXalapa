@@ -1,33 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace AppLimpia
 {
-    /// <summary>
-    /// The incident report status.
-    /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Used by Parse method")]
-    public enum IncidentReportStatus
-    {
-        /// <summary>
-        /// The incident report is received by the server.
-        /// </summary>
-        Received = 1,
-
-        /// <summary>
-        /// The incident report is in process of resolution.
-        /// </summary>
-        InProcess = 2,
-
-        /// <summary>
-        /// The incident report is resolved.
-        /// </summary>
-        Completed = 3
-    }
-
     /// <summary>
     /// The incident report.
     /// </summary>
@@ -51,7 +27,7 @@ namespace AppLimpia
         /// <summary>
         /// The current incident report status.
         /// </summary>
-        private IncidentReportStatus status;
+        private string status;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IncidentReport"/> class.
@@ -60,7 +36,9 @@ namespace AppLimpia
         public IncidentReport(string id)
         {
             this.Id = id;
-            this.status = IncidentReportStatus.Received;
+            this.dropPoint = string.Empty;
+            this.type = string.Empty;
+            this.status = string.Empty;
         }
 
         /// <summary>
@@ -105,7 +83,7 @@ namespace AppLimpia
 
             set
             {
-                if (!string.Equals(this.dropPoint, value))
+                if (!this.dropPoint.Equals(value))
                 {
                     this.dropPoint = value;
                     this.OnPropertyChanged();
@@ -125,7 +103,7 @@ namespace AppLimpia
 
             set
             {
-                if (!string.Equals(this.type, value))
+                if (!this.type.Equals(value))
                 {
                     this.type = value;
                     this.OnPropertyChanged();
@@ -136,7 +114,7 @@ namespace AppLimpia
         /// <summary>
         /// Gets or sets the current incident report status.
         /// </summary>
-        public IncidentReportStatus Status
+        public string Status
         {
             get
             {
@@ -149,31 +127,6 @@ namespace AppLimpia
                 {
                     this.status = value;
                     this.OnPropertyChanged();
-
-                    // ReSharper disable once ExplicitCallerInfoArgument
-                    this.OnPropertyChanged(nameof(this.StatusString));
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets the current incident report status string. 
-        /// </summary>
-        public string StatusString
-        {
-            get
-            {
-                // TODO: Localize
-                switch (this.status)
-                {
-                    case IncidentReportStatus.Received:
-                        return "Recibido";
-                    case IncidentReportStatus.InProcess:
-                        return "En proceso";
-                    case IncidentReportStatus.Completed:
-                        return "Atendido";
-                    default:
-                        return string.Empty;
                 }
             }
         }
