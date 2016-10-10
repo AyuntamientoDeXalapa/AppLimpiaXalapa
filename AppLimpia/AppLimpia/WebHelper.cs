@@ -254,7 +254,27 @@ namespace AppLimpia
             httpClient.Timeout = TimeSpan.FromSeconds(30);
             try
             {
-                using (var response = await httpClient.SendAsync(request))
+                // Send the request to the server
+                var socketTimeout = TimeSpan.FromSeconds(30 + 5);
+                var response = await Task.Run(
+                                   () =>
+                                       {
+                                           var cancelSource = new CancellationTokenSource();
+                                           var requestTask = httpClient.SendAsync(request, cancelSource.Token);
+
+                                           // If task timeout
+                                           if (!requestTask.Wait(socketTimeout))
+                                           {
+                                               // Cancel the task
+                                               // TODO: Localize
+                                               cancelSource.Cancel();
+                                               throw new TimeoutException("No connectivity");
+                                           }
+
+                                           // Return the result
+                                           return requestTask.GetAwaiter().GetResult();
+                                       }).ConfigureAwait(false);
+                using (response)
                 {
                     // If response is a error
                     if (!response.IsSuccessStatusCode)
