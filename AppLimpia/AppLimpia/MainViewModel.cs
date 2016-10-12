@@ -713,7 +713,7 @@ namespace AppLimpia
             else
             {
                 // TODO: Localize
-                pin.Label = "Punto de recolección " + properties.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                pin.Label = pin.Id;   //"Punto de recolección " + properties.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
                 pin.Address = string.Empty; // pin.Type == MapPinType.DropPoint ? "Montonera" : "Favorita";
             }
         }
@@ -877,6 +877,12 @@ namespace AppLimpia
                     // Remove pin from favorites
                     pin.Type = MapPinType.DropPoint;
                     this.favoriteDropPoints.Remove(pin);
+
+                    // Remove favorite from primary favorites
+                    if (this.primaryFavorite == pin)
+                    {
+                        this.primaryFavorite = null;
+                    }
                 }
             }
         }
@@ -1023,8 +1029,7 @@ namespace AppLimpia
                         {
                             foreach (var item in e.OldItems.Cast<FavoritesViewModel.FavoriteWrapper>())
                             {
-                                this.pinsDictionary.Remove(item.Pin.Id);
-                                this.favoriteDropPoints.Remove(item.Pin);
+                                this.SetFavoriteStatus(item.Pin.Id, false);
                             }
                         }
                     };
