@@ -83,6 +83,11 @@ namespace AppLimpia
         public const string Register = Uris.Server + "api/usuarios";
 
         /// <summary>
+        /// The recover password URI.
+        /// </summary>
+        public const string RecoverPassword = Uris.Server + "api/usuarios/recover";
+
+        /// <summary>
         /// The OAUTH start URI.
         /// </summary>
         public const string OauthStart = Uris.Server + "applimpia-fake/oauth2_start.php";
