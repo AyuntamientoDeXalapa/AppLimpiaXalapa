@@ -109,6 +109,13 @@ namespace AppLimpia.Droid
                         textViewTitle.Text = customPin.Label;
                     }
 
+                    // Set annotation snippet
+                    var textViewSnippet = view?.FindViewById<TextView>(Resource.Id.snippet);
+                    if (textViewSnippet != null)
+                    {
+                        textViewSnippet.Text = customPin.Address;
+                    }
+
                     // Set toggle favorite button event
                     var toggleFavorite = view?.FindViewById<Android.Widget.ImageButton>(Resource.Id.buttonFavoriteToggle);
                     if (toggleFavorite != null)

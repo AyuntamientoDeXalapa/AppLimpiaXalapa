@@ -403,13 +403,14 @@ namespace AppLimpia
             foreach (var ex in task.Exception.Flatten().InnerExceptions)
             {
                 // If the error is an not connected error
-                if (ex is TimeoutException)
+                if ((ex is TimeoutException) || (ex is TaskCanceledException))
                 {
                     // TODO: Localize
                     App.DisplayAlert(
                         "Error",
                         "No se pudo conectar con el servidor. Por favor verifica que esta conectado al Internet o intenta más tarde.",
                         "OK");
+                    Debug.WriteLine(ex.ToString());
                 }
                 else if (ex is RemoteServerException)
                 {

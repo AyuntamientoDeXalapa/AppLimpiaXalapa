@@ -713,8 +713,8 @@ namespace AppLimpia
             else
             {
                 // TODO: Localize
-                pin.Label = pin.Id;   //"Punto de recolección " + properties.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
-                pin.Address = string.Empty; // pin.Type == MapPinType.DropPoint ? "Montonera" : "Favorita";
+                pin.Label = "Punto de recolección " + properties.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                pin.Address = "Lun, Mie, Vie (Turno: " + properties.GetItemOrDefault("turno").GetStringValue() + ")";
             }
         }
 
