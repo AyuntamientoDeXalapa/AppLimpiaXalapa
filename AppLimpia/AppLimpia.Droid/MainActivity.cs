@@ -2,6 +2,7 @@
 using System.IO;
 
 using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 
@@ -39,6 +40,10 @@ namespace AppLimpia.Droid
             // Setup exception handler
             AppDomain.CurrentDomain.UnhandledException += MainActivity.CurrentDomainOnUnhandledException;
             this.DisplayCrashReport();
+
+            // Register for GCM
+            var intent = new Intent(this, typeof(RegistrationIntentService));
+            this.StartService(intent);
 
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer

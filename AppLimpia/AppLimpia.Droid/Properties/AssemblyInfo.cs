@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Android.App;
+using Android.Content.PM;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -38,6 +39,10 @@ using Android.App;
 [assembly: UsesPermission(Android.Manifest.Permission.AccessMockLocation)]
 [assembly: UsesPermission(Android.Manifest.Permission.AccessNetworkState)]
 [assembly: UsesPermission(Android.Manifest.Permission.AccessWifiState)]
+[assembly: UsesPermission(Android.Manifest.Permission.WakeLock)]
+[assembly: UsesPermission("com.google.android.c2dm.permission.RECEIVE")]
+[assembly: UsesPermission("mx.gob.xalapa.limpia.permission.C2D_MESSAGE")]
+[assembly: Permission(Name = "mx.gob.xalapa.limpia.permission.C2D_MESSAGE", ProtectionLevel = Protection.Signature)]
 
 #if DEBUG
 [assembly: MetaData("com.google.android.maps.v2.API_KEY", Value = "AIzaSyD_cUK3_yZMr_qn0jOCT9zA-ow6AG7NK_k")]
