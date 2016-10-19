@@ -25,9 +25,9 @@
 	<key>CFBundleDisplayName</key>
 	<string>Xalapa Limpia</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.yourcompany.AppLimpia</string>
+	<string>mx.gob.xalapa.limpia</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.1</string>
+	<string>1.0</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Icon-60@2x.png</string>
@@ -56,6 +56,6 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>es</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>1.0</string>
 </dict>
 </plist>
