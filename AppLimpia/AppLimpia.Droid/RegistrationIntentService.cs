@@ -41,7 +41,7 @@ namespace AppLimpia.Droid
                 {
                     // Get the application instance ID
                     var instanceId = InstanceID.GetInstance(this);
-                    var token = instanceId.GetToken("782084745929", GoogleCloudMessaging.InstanceIdScope, null);
+                    var token = instanceId.GetToken("593931297162", GoogleCloudMessaging.InstanceIdScope, null);
 
                     // Send the registration token to the App server
                     Log.Info("RegistrationIntentService", "GCM Registration Token: " + token);
@@ -49,9 +49,10 @@ namespace AppLimpia.Droid
                     this.Subscribe(token);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Log.Debug("RegistrationIntentService", "Failed to get a registration token");
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
             }
         }
 
