@@ -140,6 +140,7 @@ namespace AppLimpia.Login
             // The register user ID
             // TODO: Change to OAUTH token
             var userId = result.GetItemOrDefault("id").GetStringValueOrDefault(string.Empty);
+            Settings.Instance.SetValue(Settings.UserName, this.userName);
             Settings.Instance.SetValue(Settings.UserId, userId);
             Debug.WriteLine("User ID = " + userId);
 

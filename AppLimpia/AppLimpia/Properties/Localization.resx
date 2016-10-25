@@ -121,9 +121,13 @@
     <value>Cancelar</value>
     <comment>The cancel button</comment>
   </data>
-  <data name="ConfirmPassword" xml:space="preserve">
-    <value>Confirmar contraseña</value>
-    <comment>The password confirm for registration</comment>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Cambiar</value>
+    <comment>The change password button on the change password screen</comment>
+  </data>
+  <data name="ChangePasswordTitle" xml:space="preserve">
+    <value>Cambiar contraseña</value>
+    <comment>The change password screen title</comment>
   </data>
   <data name="EnterWith" xml:space="preserve">
     <value>Ingresa con</value>
@@ -164,6 +168,18 @@
   <data name="Password" xml:space="preserve">
     <value>Contraseña</value>
     <comment>The password used to enter the application</comment>
+  </data>
+  <data name="PasswordConfirm" xml:space="preserve">
+    <value>Confirmar contraseña</value>
+    <comment>The password confirm for registration</comment>
+  </data>
+  <data name="PasswordCurrent" xml:space="preserve">
+    <value>Contraseña actual</value>
+    <comment>The current password text</comment>
+  </data>
+  <data name="PasswordNew" xml:space="preserve">
+    <value>Nueva contraseña</value>
+    <comment>The new password text</comment>
   </data>
   <data name="RecoverPassword" xml:space="preserve">
     <value>Recuperar</value>

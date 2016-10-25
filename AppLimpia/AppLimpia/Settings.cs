@@ -13,6 +13,11 @@ namespace AppLimpia
         public const string UserId = "UserId";
 
         /// <summary>
+        /// The user name setting name.
+        /// </summary>
+        public const string UserName = "UserName";
+
+        /// <summary>
         /// Gets or sets the instance of the current <see cref="Settings"/> implementation.
         /// </summary>
         public static Settings Instance { get; set; }

@@ -97,6 +97,7 @@ namespace AppLimpia
             this.ShowFavoritesCommand = new Command(this.ShowFavorites);
             this.ShowNotificationsCommand = new Command(this.ShowNotifications);
             this.ShowReportsCommand = new Command(this.ShowReports);
+            this.ChangePasswordCommand = new Command(this.ChangePassword);
             this.LogoutCommand = new Command(this.Logout);
         }
 
@@ -197,6 +198,11 @@ namespace AppLimpia
         /// Gets the show reports command.
         /// </summary>
         public ICommand ShowReportsCommand { get; }
+
+        /// <summary>
+        /// Gets the change password command.
+        /// </summary>
+        public ICommand ChangePasswordCommand { get; }
 
         /// <summary>
         /// Gets the logout command.
@@ -1072,6 +1078,26 @@ namespace AppLimpia
             {
                 // TODO: Localize
                 App.DisplayAlert("Reportes", "Usted todavía no ha enviado ningun reporte", "OK");
+            }
+        }
+
+        /// <summary>
+        /// Changes the password of the currently logged user.
+        /// </summary>
+        private void ChangePassword()
+        {
+            // If logged in with email and password
+            if (Settings.Instance.Contains(Settings.UserName))
+            {
+                // Show change password view
+                var viewModel = new Login.ChangePasswordViewModel();
+                var view = new Login.ChangePasswordView { BindingContext = viewModel };
+                this.Navigation.PushModalAsync(view);
+            }
+            else
+            {
+                // TODO: Localize
+                App.DisplayAlert("Cambiar contreseña", "Solo se permita cambio de contraseña si Usted entro con email", "OK");
             }
         }
 

@@ -71,11 +71,20 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Confirmar contraseña.
+        ///   Looks up a localized string similar to Cambiar.
         /// </summary>
-        internal static string ConfirmPassword {
+        internal static string ChangePassword {
             get {
-                return ResourceManager.GetString("ConfirmPassword", resourceCulture);
+                return ResourceManager.GetString("ChangePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cambiar contraseña.
+        /// </summary>
+        internal static string ChangePasswordTitle {
+            get {
+                return ResourceManager.GetString("ChangePasswordTitle", resourceCulture);
             }
         }
         
@@ -166,6 +175,33 @@ namespace AppLimpia.Properties {
         internal static string Password {
             get {
                 return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmar contraseña.
+        /// </summary>
+        internal static string PasswordConfirm {
+            get {
+                return ResourceManager.GetString("PasswordConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contraseña actual.
+        /// </summary>
+        internal static string PasswordCurrent {
+            get {
+                return ResourceManager.GetString("PasswordCurrent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nueva contraseña.
+        /// </summary>
+        internal static string PasswordNew {
+            get {
+                return ResourceManager.GetString("PasswordNew", resourceCulture);
             }
         }
         

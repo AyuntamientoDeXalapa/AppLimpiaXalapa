@@ -49,21 +49,25 @@
                    HorizontalOptions="Fill"
                    Padding="30,10">
         <Entry x:Name="EntryFullName"
+               Style="{DynamicResource LoginEntry}"
                HorizontalOptions="FillAndExpand"
                Placeholder="{local:Localize FullName}"
                Text="{Binding FullName}"/>
         <Entry x:Name="EntryUserName"
+               Style="{DynamicResource LoginEntry}"
                HorizontalOptions="FillAndExpand"
                Placeholder="{local:Localize UserLogin}"
                Text="{Binding Login}"/>
         <Entry x:Name="EntryPassword"
+               Style="{DynamicResource LoginEntry}"
                HorizontalOptions="FillAndExpand"
                Placeholder="{local:Localize Password}"
                IsPassword="True"
                Text="{Binding Password}"/>
         <Entry x:Name="EntryPasswordConfirm"
+               Style="{DynamicResource LoginEntry}"
                HorizontalOptions="FillAndExpand"
-               Placeholder="{local:Localize ConfirmPassword}"
+               Placeholder="{local:Localize PasswordConfirm}"
                IsPassword="True"
                Text="{Binding PasswordConfirm}"/>
       
