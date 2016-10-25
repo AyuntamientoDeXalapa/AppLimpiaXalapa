@@ -81,7 +81,7 @@ namespace AppLimpia
         private void OnTakePhoto(object sender, EventArgs e)
         {
             var picker = MediaPicker.Instance;
-            if (picker != null)
+            if ((picker != null) && picker.IsCameraAvailable)
             {
                 var options = new CameraMediaStorageOptions();
                 var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -89,7 +89,7 @@ namespace AppLimpia
             }
             else
             {
-                this.DisplayAlert("Error", "Not implemented", "OK");
+                this.DisplayAlert("Error", "La aplicación no puede aceder a camara", "OK");
             }
         }
 
@@ -116,7 +116,9 @@ namespace AppLimpia
             }
             else if (task.IsCanceled)
             {
+#if DEBUG
                 this.DisplayAlert("Canceled", "Canceled", "OK");
+#endif
             }
             else
             {
