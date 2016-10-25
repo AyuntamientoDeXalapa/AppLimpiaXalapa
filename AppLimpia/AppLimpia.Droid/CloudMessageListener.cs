@@ -3,6 +3,7 @@ using System;
 using Android.App;
 using Android.Content;
 using Android.Gms.Gcm;
+using Android.Media;
 using Android.OS;
 using Android.Util;
 
@@ -40,10 +41,12 @@ namespace AppLimpia.Droid
             var pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
 
             // Create a new notification
+            var sound = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
             var notificationBuilder = new Android.App.Notification.Builder(this)
                 .SetSmallIcon(Resource.Drawable.icon)
                 .SetContentTitle("Xalapa Limpia")
                 .SetContentText(message)
+                .SetSound(sound)
                 .SetAutoCancel(true)
                 .SetContentIntent(pendingIntent);
 
