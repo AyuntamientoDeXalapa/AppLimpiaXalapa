@@ -45,8 +45,15 @@ namespace AppLimpia.iOS
             Settings.Instance = new SettingsIOS();
 
             // Setup exception handler
-            //AppDomain.CurrentDomain.UnhandledException += AppDelegate.CurrentDomainOnUnhandledException;
-            //AppDelegate.DisplayCrashReport();
+            AppDomain.CurrentDomain.UnhandledException += AppDelegate.CurrentDomainOnUnhandledException;
+            AppDelegate.DisplayCrashReport();
+
+            // Request notification permission
+            var pushSettings =
+                UIUserNotificationSettings.GetSettingsForTypes(
+                    UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
+                    new NSSet());
+            UIApplication.SharedApplication.RegisterUserNotificationSettings(pushSettings);
 
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer
@@ -57,12 +64,86 @@ namespace AppLimpia.iOS
         }
 
         /// <summary>
+        /// Called to tell the delegate the types of local and remote notifications that can be used to get the
+        /// user’s attention.
+        /// </summary>
+        /// <param name="application">The application object that registered the user notification settings.</param>
+        /// <param name="notificationSettings">
+        ///   The user’s specified notification settings for your application. The settings in this object may be
+        ///   different than the ones you originally requested.
+        /// </param>
+        public override void DidRegisterUserNotificationSettings(
+            UIApplication application,
+            UIUserNotificationSettings notificationSettings)
+        {
+            // Register for remote notifications
+            UIApplication.SharedApplication.RegisterForRemoteNotifications();
+        }
+
+        /// <summary>
+        /// Tells the delegate that the application successfully registered with Apple Push Notification service.
+        /// </summary>
+        /// <param name="application">
+        ///   The application object that initiated the remote-notification registration process.
+        /// </param>
+        /// <param name="deviceToken">A token that identifies the device to APNs.</param>
+        public override void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            /*
+             * let tokenChars = UnsafePointer<CChar>(deviceToken.bytes)
+             * var tokenString = ""
+             * 
+             * for i in 0..<deviceToken.length {
+             *     tokenString += String(format: "%02.2hhx", arguments: [tokenChars[i]])
+             * }
+             * 
+             * print("Device Token:", tokenString)
+             */
+
+            // Get current device token
+            var token = deviceToken.Description;
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                token = token.Trim('<').Trim('>');
+            }
+
+            // Report error to user
+            Debug.WriteLine("Notifications token: " + token);
+            //new UIAlertView("Registered for push notifications", token, null, "OK", null).Show();
+        }
+
+        /// <summary>
+        /// Sent to the delegate when Apple Push Notification service cannot successfully complete the registration
+        /// process.
+        /// </summary>
+        /// <param name="application">
+        ///   The application object that initiated the remote-notification registration process.
+        /// </param>
+        /// <param name="error">An NSError object that encapsulates information why registration did not succeed.</param>
+        public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
+        {
+            // Report error to user
+            new UIAlertView("Error de registrar con servicio de notificaciones", error.LocalizedDescription, null, "OK", null).Show();
+            Debug.WriteLine("Error registering push notifications: " + error.LocalizedDescription);
+        }
+
+        /// <summary>
+        /// Tells the application that a remote notification arrived .
+        /// </summary>
+        /// <param name="application">The application object that received the remote notification.</param>
+        /// <param name="userInfo">A dictionary that contains information related to the remote notification.</param>
+        public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
+        {
+            Debug.WriteLine("Received remote notification");
+        }
+
+        /// <summary>
         /// Gets the current culture for application display.
         /// </summary>
         /// <returns>The culture to use for application resources.</returns>
         private static System.Globalization.CultureInfo GetCurrentCultureInfo()
         {
-            // Set the fallback language
+            // Set the fall back language
             var netLanguage = "en";
             var prefLanguageOnly = "en";
 

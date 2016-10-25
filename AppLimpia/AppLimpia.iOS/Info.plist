@@ -25,7 +25,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Xalapa Limpia</string>
 	<key>CFBundleIdentifier</key>
-	<string>mx.gob.xalapa.limpia</string>
+	<string>mx.xalapa.gob.xalapa.limpia</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>CFBundleIconFiles</key>
@@ -33,6 +33,7 @@
 		<string>Icon-60@2x.png</string>
 		<string>Icon-76.png</string>
 		<string>Icon-76@2x.png</string>
+    <string>Icon-83.5@2x.png</string>
 		<string>Default.png</string>
 		<string>Default@2x.png</string>
 		<string>Default-568h@2x.png</string>

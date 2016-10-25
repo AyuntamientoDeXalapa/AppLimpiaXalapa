@@ -195,6 +195,13 @@ namespace AppLimpia.iOS
             view.TranslatesAutoresizingMaskIntoConstraints = false;
 
             // Create the locate vehicle button
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var labelSchedule = new UILabel();
+            labelSchedule.Text = customPin.Address;
+            labelSchedule.TranslatesAutoresizingMaskIntoConstraints = false;
+            view.AddSubview(labelSchedule);
+
+            // Create the locate vehicle button
             var buttonLocate = new UIButton(UIButtonType.Custom);
             buttonLocate.SetTitle("Ubicar camion", UIControlState.Normal);
             buttonLocate.SetTitleColor(UIColor.Blue, UIControlState.Normal);
@@ -212,14 +219,15 @@ namespace AppLimpia.iOS
 
             // Create sub view dictionary
             NSDictionary views = NSDictionary.FromObjectsAndKeys(
-                new NSObject[] { buttonLocate, buttonReport },
-                new NSObject[] { new NSString("buttonLocate"), new NSString("buttonReport") });
+                new NSObject[] { labelSchedule, buttonLocate, buttonReport },
+                new NSObject[] { new NSString("labelSchedule"), new NSString("buttonLocate"), new NSString("buttonReport") });
 
             // Add view constraints
+            view.AddConstraints(NSLayoutConstraint.FromVisualFormat("H:|[labelSchedule]|", 0, null, views));
             view.AddConstraints(NSLayoutConstraint.FromVisualFormat("H:|[buttonLocate]|", 0, null, views));
             view.AddConstraints(NSLayoutConstraint.FromVisualFormat("H:|[buttonReport]|", 0, null, views));
             view.AddConstraints(
-                NSLayoutConstraint.FromVisualFormat("V:|[buttonLocate]-[buttonReport]|", 0, null, views));
+                NSLayoutConstraint.FromVisualFormat("V:|[labelSchedule]-[buttonLocate]-[buttonReport]|", 0, null, views));
 
             // Return the created view
             return view;
