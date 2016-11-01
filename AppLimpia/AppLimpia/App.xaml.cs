@@ -62,6 +62,11 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets or sets the device unique identifier.
+        /// </summary>
+        internal string DeviceId { get; set; }
+
+        /// <summary>
         /// Gets or sets the main view model.
         /// </summary>
         private MainViewModel MainViewModel { get; set; }
@@ -139,6 +144,7 @@ namespace AppLimpia
         /// </summary>
         protected override void OnStart()
         {
+            Debug.WriteLine($"Device ID: {this.DeviceId}");
         }
 
         /// <summary>

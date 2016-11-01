@@ -2,6 +2,10 @@
 using System.Globalization;
 using System.Reflection;
 
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
+using Windows.Storage.Streams;
+using Windows.System.Profile;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http.Filters;
 
@@ -42,6 +46,7 @@ namespace AppLimpia.WinPhone
             // ReSharper disable once UseObjectOrCollectionInitializer
             var application = new AppLimpia.App();
             application.CurrentCultureInfo = CultureInfo.CurrentUICulture;
+            application.DeviceId = $"{Xamarin.Forms.Device.OS}:{MainPage.GetDeviceId()}";
             this.LoadApplication(application);
         }
 
@@ -58,6 +63,21 @@ namespace AppLimpia.WinPhone
             // Windows.Phone.UI.Input.HardwareButtons.BackPressed event.
             // If you are using the NavigationHelper provided by some templates,
             // this event is handled for you.
+        }
+
+        /// <summary>
+        /// Gets the device unique identifier.
+        /// </summary>
+        /// <returns>The device unique identifier.</returns>
+        private static string GetDeviceId()
+        {
+            var token = HardwareIdentification.GetPackageSpecificToken(null);
+            var hardwareId = token.Id;
+
+            var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
+            var hashed = hasher.HashData(hardwareId);
+
+            return CryptographicBuffer.EncodeToHexString(hashed);
         }
 
         /// <summary>

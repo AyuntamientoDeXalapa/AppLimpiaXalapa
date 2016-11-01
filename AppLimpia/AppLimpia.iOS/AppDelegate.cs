@@ -55,10 +55,18 @@ namespace AppLimpia.iOS
                     new NSSet());
             UIApplication.SharedApplication.RegisterUserNotificationSettings(pushSettings);
 
+            // Get the device identifier
+#if !TARGET_IPHONE_SIMULATOR
+            var deviceUuid = UIDevice.CurrentDevice.IdentifierForVendor;
+#else
+            var deviceUuid = new NSUuid("CA90424A-5E89-468E-BC7B-9DE7D82FC02D");
+#endif
+
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer
             var application = new App();
             application.CurrentCultureInfo = AppDelegate.GetCurrentCultureInfo();
+            application.DeviceId = $"{Xamarin.Forms.Device.OS}:{deviceUuid.AsString()}";
             this.LoadApplication(application);
             return base.FinishedLaunching(app, options);
         }
@@ -109,7 +117,7 @@ namespace AppLimpia.iOS
 
             // Report error to user
             Debug.WriteLine("Notifications token: " + token);
-            //new UIAlertView("Registered for push notifications", token, null, "OK", null).Show();
+            ////new UIAlertView("Registered for push notifications", token, null, "OK", null).Show();
         }
 
         /// <summary>

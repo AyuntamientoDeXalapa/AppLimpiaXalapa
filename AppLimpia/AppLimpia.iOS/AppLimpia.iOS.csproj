@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;__UNIFIED__;__MOBILE__;__IOS__;TARGET_IPHONE_SIMULATOR</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -52,6 +52,7 @@
     <ConsolePause>false</ConsolePause>
     <CodeAnalysisRuleSet>..\..\Rules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>__UNIFIED__;__MOBILE__;__IOS__;TARGET_IPHONE_SIMULATOR</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -110,6 +111,12 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <CodeAnalysisRuleSet>..\..\Rules.ruleset</CodeAnalysisRuleSet>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhoneSimulator'">
+    <DefineConstants>__UNIFIED__;__MOBILE__;__IOS__;TARGET_IPHONE_SIMULATOR</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AppStore|iPhoneSimulator'">
+    <DefineConstants>__UNIFIED__;__MOBILE__;__IOS__;TARGET_IPHONE_SIMULATOR</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />

@@ -8,6 +8,9 @@ using Android.OS;
 
 namespace AppLimpia.Droid
 {
+    // Resolve ambiguous types
+    using SecureSettings = Android.Provider.Settings.Secure;
+
     /// <summary>
     /// Defines the main activity for the Application.
     /// </summary>
@@ -45,10 +48,14 @@ namespace AppLimpia.Droid
             var intent = new Intent(this, typeof(RegistrationIntentService));
             this.StartService(intent);
 
+            // Get the device id
+            var deviceId = SecureSettings.GetString(this.ContentResolver, SecureSettings.AndroidId);
+
             // Initialize the application
             // ReSharper disable once UseObjectOrCollectionInitializer
             var application = new App();
             application.CurrentCultureInfo = MainActivity.GetCurrentCultureInfo();
+            application.DeviceId = $"{Xamarin.Forms.Device.OS}:{deviceId}";
             this.LoadApplication(application);
         }
 

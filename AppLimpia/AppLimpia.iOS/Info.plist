@@ -48,15 +48,19 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Podemos ocupar su ubicación?</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Nosotros utilizamos su ubicación</string>
-	<key>CFBundleLocalizations</key>
+  <key>CFBundleLocalizations</key>
 	<array>
 		<string>es</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>es</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Podemos ocupar su ubicación?</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Nosotros utilizamos su ubicación</string>
+  <key>NSCameraUsageDescription</key>
+  <string>Esta aplicación requiere acceso a su camara para tomar fotos</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Esta aplicación requiere acceso a sus fotos</string>
 </dict>
 </plist>
