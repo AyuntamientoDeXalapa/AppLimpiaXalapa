@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -120,13 +122,33 @@ namespace AppLimpia.Login
             }
 
             // Prepare the data to be send to the server
-            user = System.Net.WebUtility.UrlEncode(user);
-            var password = System.Net.WebUtility.UrlEncode(this.Password);
+            var deviceId = ((App)Application.Current).DeviceId;
+            var loginForm = new Json.JsonObject
+                                {
+                                        { "username", user },
+                                        { "password", this.Password },
+                                        { "device", deviceId },
+                                        { "override", true }
+                                };
+
+            // If push token exists
+            var pushToken = ((App)Application.Current).PushToken;
+            if (!string.IsNullOrEmpty(pushToken))
+            {
+                loginForm.Add("push_token", pushToken);
+            }
+
+            // Format data
+            var builder = new StringBuilder();
+            Json.Json.Write(loginForm, builder);
+            Debug.WriteLine("Request: " + builder);
+            var request = new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
 
             // Send request to the server
             this.isLoggingIn = true;
-            WebHelper.GetAsync(
-                new Uri($"{Uris.Login}?username={user}&password={password}"),
+            WebHelper.PostAsync(
+                new Uri(Uris.Login),
+                request,
                 this.ProcessLoginResults,
                 () => this.isLoggingIn = false);
         }
@@ -138,14 +160,36 @@ namespace AppLimpia.Login
         private void ProcessLoginResults(JsonValue result)
         {
             // The register user ID
-            // TODO: Change to OAUTH token
-            var userId = result.GetItemOrDefault("id").GetStringValueOrDefault(string.Empty);
-            Settings.Instance.SetValue(Settings.UserName, this.userName);
-            Settings.Instance.SetValue(Settings.UserId, userId);
-            Debug.WriteLine("User ID = " + userId);
+            // TODO: Remove USER ID
+            var userId = result.GetItemOrDefault("user_id").GetStringValueOrDefault(string.Empty);
+            var accessToken = result.GetItemOrDefault("access_token").GetStringValueOrDefault(string.Empty);
+            var expiresIn = result.GetItemOrDefault("expires_in").GetIntValueOrDefault(24 * 60 * 60);
+            var refreshToken = result.GetItemOrDefault("refresh_token").GetStringValueOrDefault(string.Empty);
 
-            // End the registration process
+            // End the login process
             this.isLoggingIn = false;
+
+            // If all of the fields are returned
+            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
+            {
+                // Save data to settings
+                Settings.Instance.SetValue(Settings.UserName, this.userName.Trim().ToLower());
+                Settings.Instance.SetValue(Settings.UserId, userId);
+                Settings.Instance.SetValue(Settings.AccessToken, accessToken);
+                Settings.Instance.SetValue(Settings.AccessTokenExpires, DateTime.UtcNow.AddSeconds(expiresIn));
+                Settings.Instance.SetValue(Settings.RefreshToken, refreshToken);
+
+                // TODO: Remove after debugging
+                Debug.WriteLine("User ID       = " + userId);
+                Debug.WriteLine("Access Token  = " + accessToken);
+                Debug.WriteLine("Refresh Token = " + refreshToken);
+            }
+            else
+            {
+                // TODO: Localize
+                App.DisplayAlert("Error", "El servidor no ha regresado los datos de acceso al sistema", "OK");
+                return;
+            }
 
             // Show the main view
             App.ShowMainView();

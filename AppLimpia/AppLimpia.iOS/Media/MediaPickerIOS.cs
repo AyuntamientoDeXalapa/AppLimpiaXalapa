@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using AppLimpia.Media;
 
+using AVFoundation;
+
 using UIKit;
 
 #region Generated Code
@@ -87,13 +89,11 @@ namespace AppLimpia.iOS.Media
             return GetMediaAsync(UIImagePickerControllerSourceType.PhotoLibrary, TypeImage);
         }
 
-        /// <summary>
-        /// Takes the picture.
-        /// </summary>
-        /// <param name="options">The storage options.</param>
-        /// <returns>Task&lt;IMediaFile&gt;.</returns>
-        /// <exception cref="NotSupportedException">
-        /// </exception>
+        /// <summary> 
+        /// Takes the picture. 
+        /// </summary> 
+        /// <param name="options">The storage options.</param> 
+        /// <returns>Task representing the asynchronous operation.</returns>
         public override Task<MediaFile> TakePhotoAsync(CameraMediaStorageOptions options)
         {
             // If photos are not supported

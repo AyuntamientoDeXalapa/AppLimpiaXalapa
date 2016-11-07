@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 using AppLimpia.Media;
 
@@ -113,11 +114,22 @@ namespace AppLimpia.iOS
             if (!string.IsNullOrWhiteSpace(token))
             {
                 token = token.Trim('<').Trim('>');
+
+                // Remove inner spaces from token
+                var tokenBuilder = new StringBuilder();
+                foreach (var c in token)
+                {
+                    if (!char.IsWhiteSpace(c))
+                    {
+                        tokenBuilder.Append(c);
+                    }
+                }
+
+                token = tokenBuilder.ToString();
             }
 
-            // Report error to user
-            Debug.WriteLine("Notifications token: " + token);
-            ////new UIAlertView("Registered for push notifications", token, null, "OK", null).Show();
+            // Send token to the server
+            App.SetPushToken($"{Xamarin.Forms.Device.OS}:{token}");
         }
 
         /// <summary>

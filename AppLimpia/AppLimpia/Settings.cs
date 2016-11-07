@@ -18,6 +18,26 @@ namespace AppLimpia
         public const string UserName = "UserName";
 
         /// <summary>
+        /// The access token setting name.
+        /// </summary>
+        public const string AccessToken = "AccessToken";
+
+        /// <summary>
+        /// The access token expires setting name.
+        /// </summary>
+        public const string AccessTokenExpires = "AccessTokenExpires";
+
+        /// <summary>
+        /// The refresh token setting name.
+        /// </summary>
+        public const string RefreshToken = "RefreshToken";
+
+        /// <summary>
+        /// The push notification token setting name.
+        /// </summary>
+        public const string PushToken = "PushToken";
+
+        /// <summary>
         /// Gets or sets the instance of the current <see cref="Settings"/> implementation.
         /// </summary>
         public static Settings Instance { get; set; }

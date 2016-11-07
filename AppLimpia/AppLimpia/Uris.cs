@@ -75,7 +75,7 @@ namespace AppLimpia
         /// <summary>
         /// The user login URI.
         /// </summary>
-        public const string Login = Uris.Server + "api/usuarios";
+        public const string Login = Uris.Server + "api/sesiones";
 
         /// <summary>
         /// The user registration URI.
@@ -91,6 +91,11 @@ namespace AppLimpia
         /// The change password URI.
         /// </summary>
         public const string ChangePassword = Uris.Server + "api/usuarios/change";
+
+        /// <summary>
+        /// The set push token URI.
+        /// </summary>
+        public const string SetPushToken = Uris.Server + "api/sesiones/push";
 
         /// <summary>
         /// The OAUTH start URI.

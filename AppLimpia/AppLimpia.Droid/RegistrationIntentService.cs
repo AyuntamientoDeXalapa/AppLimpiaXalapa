@@ -45,7 +45,7 @@ namespace AppLimpia.Droid
 
                     // Send the registration token to the App server
                     Log.Info("RegistrationIntentService", "GCM Registration Token: " + token);
-                    this.SendRegistrationToAppServer(token);
+                    App.SetPushToken($"{Xamarin.Forms.Device.OS}:{token}");
                     this.Subscribe(token);
                 }
             }
@@ -54,15 +54,6 @@ namespace AppLimpia.Droid
                 Log.Debug("RegistrationIntentService", "Failed to get a registration token");
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
             }
-        }
-
-        /// <summary>
-        /// Sends the registration token to the App server.
-        /// </summary>
-        /// <param name="token">The registration token.</param>
-        private void SendRegistrationToAppServer(string token)
-        {
-            // Add custom implementation here as needed.
         }
 
         void Subscribe(string token)

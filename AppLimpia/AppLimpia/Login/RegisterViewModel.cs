@@ -157,7 +157,7 @@ namespace AppLimpia.Login
         /// Processes the registration result returned by the server.
         /// </summary>
         /// <param name="result">The registration result.</param>
-        private async void ProcessRegistrationResults(JsonValue result)
+        private void ProcessRegistrationResults(JsonValue result)
         {
             // The register user ID
             // TODO: Change to OAUTH token
@@ -166,8 +166,87 @@ namespace AppLimpia.Login
             Settings.Instance.SetValue(Settings.UserId, this.UserId);
             Debug.WriteLine("User ID = " + this.UserId);
 
-            // End the registration process
+            ////// End the registration process
+            ////this.isRegistering = false;
+
+            ////// Return to login view
+            ////await this.Navigation.PopModalAsync();
+
+            ////// Signal the task completion
+            ////this.completionSource.SetResult(true);
+
+            // TODO: Remove when register returns valid tokens
+            // Prepare the data to be send to the server
+            var login = this.Login.Trim().ToLower();
+            var deviceId = ((App)Application.Current).DeviceId;
+            var loginForm = new Json.JsonObject
+                                {
+                                        { "username", login },
+                                        { "password", this.Password },
+                                        { "device", deviceId }
+                                };
+
+            // If push token exists
+            var pushToken = ((App)Application.Current).PushToken;
+            if (!string.IsNullOrEmpty(pushToken))
+            {
+                loginForm.Add("push_token", pushToken);
+            }
+
+            // Format data
+            var builder = new StringBuilder();
+            Json.Json.Write(loginForm, builder);
+            Debug.WriteLine("Request: " + builder);
+            var request = new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
+
+            // Send request to the server
+            WebHelper.PostAsync(
+                new Uri(Uris.Login),
+                request,
+                this.ProcessLoginResults,
+                () => this.isRegistering = false);
+
+        }
+
+        /// <summary>
+        /// Processes the login result returned by the server.
+        /// </summary>
+        /// <param name="result">The login result.</param>
+        // TODO: Remove
+        private async void ProcessLoginResults(JsonValue result)
+        {
+            // The register user ID
+            // TODO: Remove USER ID
+            var userId = result.GetItemOrDefault("user_id").GetStringValueOrDefault(string.Empty);
+            var accessToken = result.GetItemOrDefault("access_token").GetStringValueOrDefault(string.Empty);
+            var expiresIn = result.GetItemOrDefault("expires_in").GetIntValueOrDefault(24 * 60 * 60);
+            var refreshToken = result.GetItemOrDefault("refresh_token").GetStringValueOrDefault(string.Empty);
+
+            // End the login process
             this.isRegistering = false;
+
+            // If all of the fields are returned
+            var login = this.Login.Trim().ToLower();
+            if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
+            {
+                // Save data to settings
+                Settings.Instance.SetValue(Settings.UserName, login);
+                Settings.Instance.SetValue(Settings.UserId, userId);
+                Settings.Instance.SetValue(Settings.AccessToken, accessToken);
+                Settings.Instance.SetValue(Settings.AccessTokenExpires, DateTime.UtcNow.AddSeconds(expiresIn));
+                Settings.Instance.SetValue(Settings.RefreshToken, refreshToken);
+
+                // TODO: Remove after debugging
+                Debug.WriteLine("User ID       = " + userId);
+                Debug.WriteLine("Access Token  = " + accessToken);
+                Debug.WriteLine("Refresh Token = " + refreshToken);
+            }
+            else
+            {
+                // TODO: Localize
+                App.DisplayAlert("Error", "El servidor no ha regresado los datos de acceso al sistema", "OK");
+                return;
+            }
 
             // Return to login view
             await this.Navigation.PopModalAsync();

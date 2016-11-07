@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -23,15 +25,15 @@ namespace AppLimpia
             this.InitializeComponent();
 
             // Get the stored user identifier
-            var userId = string.Empty;
-            if (Settings.Instance.Contains(Settings.UserId))
+            var accessToken = string.Empty;
+            if (Settings.Instance.Contains(Settings.AccessToken))
             {
-                userId = Settings.Instance.GetValue(Settings.UserId, string.Empty);
-                Debug.WriteLine("User ID = " + userId);
+                accessToken = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+                Debug.WriteLine("Access Token  = " + accessToken);
             }
 
             // If user is not logged in
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(accessToken))
             {
                 // Show the login page
                 var startViewModel = new Login.LoginViewModel();
@@ -65,6 +67,11 @@ namespace AppLimpia
         /// Gets or sets the device unique identifier.
         /// </summary>
         internal string DeviceId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the device push notification token.
+        /// </summary>
+        internal string PushToken { get; private set; }
 
         /// <summary>
         /// Gets or sets the main view model.
@@ -137,6 +144,52 @@ namespace AppLimpia
         internal static Task<bool> DisplayAlert(string title, string message, string accept, string cancel)
         {
             return Application.Current.MainPage.DisplayAlert(title, message, accept, cancel);
+        }
+
+        /// <summary>
+        /// Sets the push notification token used for the current application.
+        /// </summary>
+        /// <param name="pushToken">The device push notification token.</param>
+        internal static void SetPushToken(string pushToken)
+        {
+            // If push token have not been changed
+            Debug.WriteLine("New push token available: " + pushToken);
+            var currentPushToken = Settings.Instance.GetValue(Settings.PushToken, string.Empty);
+            if (string.Compare(currentPushToken, pushToken, StringComparison.CurrentCultureIgnoreCase) == 0)
+            {
+                // Do nothing
+                return;
+            }
+
+            // Get the current application instance
+            var instance = Application.Current as App;
+            if (instance != null)
+            {
+                // Set the push token
+                instance.PushToken = pushToken;
+            }
+
+            // If user is logged in
+            if (Settings.Instance.Contains(Settings.AccessToken))
+            {
+                // Prepare the data to be send to the server
+                var updateForm = new Json.JsonObject
+                                     {
+                                             { "username", Settings.Instance.GetValue(Settings.UserName, string.Empty) },
+                                             { "push_token", pushToken }
+                                     };
+                var builder = new StringBuilder();
+                Json.Json.Write(updateForm, builder);
+                Debug.WriteLine("Request: " + builder);
+                var request = new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
+
+                // Send request to the server
+                Debug.WriteLine("Update push token on server");
+                WebHelper.PatchAsync(
+                    new Uri(Uris.SetPushToken),
+                    request,
+                    _ => { Settings.Instance.SetValue(Settings.PushToken, pushToken); });
+            }
         }
 
         /// <summary>

@@ -251,8 +251,18 @@ namespace AppLimpia
             // Get the task
             var task = WebHelper.PatchAsync(newUri, content);
 
+            // Get the task scheduler
+            TaskScheduler scheduler;
+            try
+            {
+                scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            }
+            catch (InvalidOperationException)
+            {
+                scheduler = TaskScheduler.Current;
+            }
+
             // Setup continuation
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             task.ContinueWith(
                 t => action(t.Result),
                 default(CancellationToken),
