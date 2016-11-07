@@ -1,45 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 using Foundation;
 
+#region Generated Code
+// To suppress the StyleCop warning
 namespace AppLimpia.iOS
+#endregion
 {
     /// <summary>
-    ///     Class NsDataStream.
+    /// The NSData <see cref="Stream"/> wrapper.
     /// </summary>
-    internal unsafe class NsDataStream : UnmanagedMemoryStream
+    internal sealed unsafe class NsDataStream : UnmanagedMemoryStream
     {
         /// <summary>
-        ///     The _data
+        /// The NSData object.
         /// </summary>
-        private readonly NSData _data;
+        private readonly NSData data;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="NsDataStream" /> class.
+        /// Initializes a new instance of the <see cref="NsDataStream"/> class.
         /// </summary>
-        /// <param name="data">The data.</param>
+        /// <param name="data">The NSData object.</param>
         public NsDataStream(NSData data)
             : base((byte*)data.Bytes, (long)data.Length)
         {
-            _data = data;
+            this.data = data;
         }
 
         /// <summary>
-        ///     Releases the unmanaged resources used by the <see cref="T:System.IO.UnmanagedMemoryStream" /> and optionally
-        ///     releases the managed resources.
+        /// Releases the unmanaged resources used by the <see cref="UnmanagedMemoryStream" /> and optionally
+        /// releases the managed resources.
         /// </summary>
         /// <param name="disposing">
-        ///     true to release both managed and unmanaged resources; false to release only unmanaged
-        ///     resources.
+        ///   <c>true</c> to release both managed and unmanaged resources; 
+        ///   <c>false</c> to release only unmanaged resources.
         /// </param>
         protected override void Dispose(bool disposing)
         {
+            // Dispose the managed data
             if (disposing)
             {
-                _data.Dispose();
+                this.data.Dispose();
             }
 
             base.Dispose(disposing);

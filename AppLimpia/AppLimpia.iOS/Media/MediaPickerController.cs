@@ -13,30 +13,29 @@ namespace AppLimpia.iOS.Media
 #endregion
 {
     /// <summary>
-    /// Class MediaPickerController. This class cannot be inherited.
+    /// Class media picker controller.
     /// </summary>
     public sealed class MediaPickerController : UIImagePickerController
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MediaPickerController"/> class.
         /// </summary>
-        /// <param name="mpDelegate">The mp delegate.</param>
-        internal MediaPickerController(MediaPickerDelegate mpDelegate)
+        /// <param name="mediaDelegate">The media picker delegate.</param>
+        internal MediaPickerController(MediaPickerDelegate mediaDelegate)
         {
-            base.Delegate = mpDelegate;
+            base.Delegate = mediaDelegate;
         }
 
         /// <summary>
-        /// Gets or sets the delegate.
+        /// Gets or sets the media picker delegate.
         /// </summary>
-        /// <value>The delegate.</value>
-        /// <exception cref="NotSupportedException"></exception>
         public override NSObject Delegate
         {
             get
             {
                 return base.Delegate;
             }
+
             set
             {
                 throw new NotSupportedException();
@@ -46,10 +45,11 @@ namespace AppLimpia.iOS.Media
         /// <summary>
         /// Gets the result asynchronous.
         /// </summary>
-        /// <returns>Task&lt;MediaFile&gt;.</returns>
+        /// <returns>Task representing the asynchronous operation.</returns>
+        // ReSharper disable once UnusedMember.Global
         public Task<MediaFile> GetResultAsync()
         {
-            return ((MediaPickerDelegate)Delegate).Task;
+            return ((MediaPickerDelegate)this.Delegate).Task;
         }
     }
 }

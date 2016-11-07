@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 using UIKit;
 
@@ -10,48 +8,48 @@ namespace AppLimpia.iOS.Media
 #endregion
 {
     /// <summary>
-    /// Class MediaPickerPopoverDelegate.
+    /// The media picker popover delegate.
     /// </summary>
     internal class MediaPickerPopoverDelegate : UIPopoverControllerDelegate
     {
         /// <summary>
-        /// The _picker
+        /// The media picker delegate.
         /// </summary>
-        private readonly UIImagePickerController _picker;
+        private readonly MediaPickerDelegate pickerDelegate;
 
         /// <summary>
-        /// The _picker delegate
+        /// The media picker controller.
         /// </summary>
-        private readonly MediaPickerDelegate _pickerDelegate;
+        private readonly UIImagePickerController picker;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MediaPickerPopoverDelegate"/> class.
         /// </summary>
-        /// <param name="pickerDelegate">The picker delegate.</param>
-        /// <param name="picker">The picker.</param>
+        /// <param name="pickerDelegate">The media picker delegate.</param>
+        /// <param name="picker">The media picker controller.</param>
         internal MediaPickerPopoverDelegate(MediaPickerDelegate pickerDelegate, UIImagePickerController picker)
         {
-            _pickerDelegate = pickerDelegate;
-            _picker = picker;
+            this.pickerDelegate = pickerDelegate;
+            this.picker = picker;
         }
 
         /// <summary>
-        /// Shoulds the dismiss.
+        /// Gets a value determining whether the current pop-up should be dismissed.
         /// </summary>
-        /// <param name="popoverController">The popover controller.</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public override bool ShouldDismiss(UIPopoverController popoverController)
+        /// <param name="controller">The popover controller.</param>
+        /// <returns><c>true</c> to dismiss the current pop-up; <c>false</c> otherwise.</returns>
+        public override bool ShouldDismiss(UIPopoverController controller)
         {
             return true;
         }
 
         /// <summary>
-        /// Dids the dismiss.
+        /// Called when the current pop-up is dismissed.
         /// </summary>
-        /// <param name="popoverController">The popover controller.</param>
-        public override void DidDismiss(UIPopoverController popoverController)
+        /// <param name="controller">The popover controller.</param>
+        public override void DidDismiss(UIPopoverController controller)
         {
-            _pickerDelegate.Canceled(_picker);
+            this.pickerDelegate.Canceled(this.picker);
         }
     }
 }
