@@ -85,10 +85,23 @@ namespace AppLimpia
             {
                 var options = new CameraMediaStorageOptions();
                 var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-                picker.TakePhotoAsync(options).ContinueWith(this.OnPhotoChoosen, scheduler);
+                var task = picker.TakePhotoAsync(options);
+                if (task != null)
+                {
+                    task.ContinueWith(this.OnPhotoChoosen, scheduler);
+                }
+                else
+                {
+                    // TODO: Localize
+                    this.DisplayAlert(
+                        "Error",
+                        "Para tomar la foto abilita el permiso de camara en configuracion de sistema",
+                        "OK");
+                }
             }
             else
             {
+                // TODO: Localize
                 this.DisplayAlert("Error", "La aplicación no puede aceder a camara", "OK");
             }
         }
