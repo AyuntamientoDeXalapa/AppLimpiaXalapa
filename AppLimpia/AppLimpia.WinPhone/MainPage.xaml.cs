@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Reflection;
 
+using Windows.Networking.PushNotifications;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
@@ -43,6 +44,9 @@ namespace AppLimpia.WinPhone
             // Setup factory
             AppLimpia.WebHelper.SetFactory(this.HttpClientFactory);
 
+            // Setup push notifications channel
+            MainPage.GetPushToken();
+
             // ReSharper disable once UseObjectOrCollectionInitializer
             var application = new AppLimpia.App();
             application.CurrentCultureInfo = CultureInfo.CurrentUICulture;
@@ -79,6 +83,23 @@ namespace AppLimpia.WinPhone
 
             return CryptographicBuffer.EncodeToHexString(hashed);
         }
+
+        /// <summary>
+        /// Gets the push notification token for the current application.
+        /// </summary>
+        private static void GetPushToken()
+        {
+            // Get the channel for notifications
+            var channelOperation = PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            channelOperation.AsTask().ContinueWith(
+                task =>
+                    {
+                        // Send token to the server
+                        var token = task.Result.Uri.ToString();
+                        AppLimpia.App.SetPushToken($"{Xamarin.Forms.Device.OS}:{token}");
+                    });
+        }
+
 
         /// <summary>
         /// Creates the instance of the <see cref="System.Net.Http.HttpClient"/>.
