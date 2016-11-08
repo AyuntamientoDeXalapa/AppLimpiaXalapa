@@ -228,7 +228,7 @@ namespace AppLimpia
             }
 
             report.Add(new StringContent(uid), "usuario");
-            report.Add(new StringContent($"Dispositivo: {Device.OS}"), "device");
+            report.Add(new StringContent(((App)Application.Current).DeviceId), "device");
 
             // Add image if any
             if (this.reportPhoto != null)
