@@ -10,10 +10,6 @@ using Windows.System.Profile;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http.Filters;
 
-#if !DEBUG
-#error Generate map authentication token https://msdn.microsoft.com/en-us/library/dn741528.aspx
-#endif
-
 namespace AppLimpia.WinPhone
 {
     /// <summary>
@@ -27,7 +23,7 @@ namespace AppLimpia.WinPhone
         public MainPage()
         {
             // Initialize the platform dependent components
-            Xamarin.FormsMaps.Init(string.Empty);
+            Xamarin.FormsMaps.Init("tQm6TJ6as98ILjiGz0qY7g");
             Media.MediaPicker.Instance = new MediaPickerWinPhone();
             Settings.Instance = new SettingsWinPhone();
 
