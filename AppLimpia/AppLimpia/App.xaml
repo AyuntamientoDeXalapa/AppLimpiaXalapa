@@ -186,8 +186,8 @@
 
           <!-- Login styles -->
           <Style x:Key="LoginEntry" TargetType="Entry">
-            <Setter Property="BackgroundColor" Value="Transparent"/>
-            <Setter Property="PlaceholderColor" Value="#598498"/>
+            <Setter Property="BackgroundColor" Value="#598498"/>
+            <Setter Property="PlaceholderColor" Value="Silver"/>
             <Setter Property="TextColor" Value="White"/>
           </Style>
         </ResourceDictionary>

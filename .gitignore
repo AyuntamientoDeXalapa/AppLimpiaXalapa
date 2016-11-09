@@ -49,6 +49,10 @@ tarballs/
 test-results/
 Thumbs.db
 
+# Windows phone generated packages
+AppPackages/
+BundleArtifacts/
+
 # Mac bundle stuff
 *.dmg
 # *.app
