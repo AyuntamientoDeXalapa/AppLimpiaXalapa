@@ -295,6 +295,13 @@ namespace AppLimpia
             {
                 // Send the GET request to the server
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                if (Settings.Instance.Contains(Settings.AccessToken))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue(
+                                                        "Bearer",
+                                                        Settings.Instance.GetValue(Settings.AccessToken, string.Empty));
+                }
+
                 return await WebHelper.SendAsync(request);
             }
         }
@@ -312,6 +319,12 @@ namespace AppLimpia
             {
                 // Send the POST request to the server
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                if (Settings.Instance.Contains(Settings.AccessToken))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue(
+                                                        "Bearer",
+                                                        Settings.Instance.GetValue(Settings.AccessToken, string.Empty));
+                }
 
                 // Prepare the request content
                 request.Content = content;
@@ -334,6 +347,12 @@ namespace AppLimpia
             {
                 // Send the PUT request to the server
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                if (Settings.Instance.Contains(Settings.AccessToken))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue(
+                                                        "Bearer",
+                                                        Settings.Instance.GetValue(Settings.AccessToken, string.Empty));
+                }
 
                 // Prepare the request content
                 request.Content = content;
@@ -356,6 +375,12 @@ namespace AppLimpia
             {
                 // Send the PUT request to the server
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                if (Settings.Instance.Contains(Settings.AccessToken))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue(
+                                                        "Bearer",
+                                                        Settings.Instance.GetValue(Settings.AccessToken, string.Empty));
+                }
 
                 // Prepare the request content
                 request.Content = content;
@@ -378,6 +403,12 @@ namespace AppLimpia
             {
                 // Send the POST request to the server
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                if (Settings.Instance.Contains(Settings.AccessToken))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue(
+                                                        "Bearer",
+                                                        Settings.Instance.GetValue(Settings.AccessToken, string.Empty));
+                }
 
                 // Prepare the request content
                 var builder = new StringBuilder();
@@ -387,6 +418,47 @@ namespace AppLimpia
 
                 // Get server response
                 return await WebHelper.SendAsync(request);
+            }
+        }
+
+        /// <summary>
+        /// Asynchronously sends the data to the server and receives response with the specified method.
+        /// </summary>
+        /// <param name="uriMethod">The server URI-Method pair to use.</param>
+        /// <param name="content">The content to send to the server.</param>
+        /// <param name="action">An action to be performed on successful remote operation.</param>
+        /// <param name="failAction">An action to be executed on failed request.</param>
+        public static void SendAsync(
+            Uris.UriMethodPair uriMethod,
+            HttpContent content,
+            Action<JsonValue> action,
+            Action failAction = null)
+        {
+            // Add the nonce to negate caching
+            var uri = WebHelper.AppendNonce(uriMethod.Uri);
+
+            // Get the task
+            var task = WebHelper.SendAsync(uri, uriMethod.Method, content);
+
+            // Setup continuation
+            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            task.ContinueWith(
+                t => action(t.Result),
+                default(CancellationToken),
+                TaskContinuationOptions.OnlyOnRanToCompletion,
+                scheduler);
+
+            // Setup error handling
+            var continuation = task.ContinueWith(
+                WebHelper.ParseTaskError,
+                default(CancellationToken),
+                TaskContinuationOptions.OnlyOnFaulted,
+                scheduler);
+
+            // Setup error continuation
+            if (failAction != null)
+            {
+                continuation.ContinueWith(t => failAction());
             }
         }
 
@@ -407,10 +479,43 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Asynchronously sends the data to the server and receives response with the specified method.
+        /// </summary>
+        /// <param name="uri">The server URI to use.</param>
+        /// <param name="method">The HTTP Method to use.</param>
+        /// <param name="content">The content to send to the server.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        private static async Task<JsonValue> SendAsync(Uri uri, HttpMethod method, HttpContent content)
+        {
+            // Prepare the request
+            using (var request = new HttpRequestMessage(method, uri))
+            {
+                // Set the request headers
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                if (Settings.Instance.Contains(Settings.AccessToken))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue(
+                                                        "Bearer",
+                                                        Settings.Instance.GetValue(Settings.AccessToken, string.Empty));
+                }
+
+                // Set the request content
+                if (content != null)
+                {
+                    Debug.WriteLine("Request: " + await content.ReadAsStringAsync());
+                    request.Content = content;
+                }
+
+                // Get server response
+                return await WebHelper.SendAsync(request);
+            }
+        }
+
+        /// <summary>
         /// Asynchronously sends the request to the server.
         /// </summary>
         /// <param name="request">The request to be send to the server.</param>
-        /// <returns>>A task that represents the asynchronous operation.</returns>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         private static async Task<JsonValue> SendAsync(HttpRequestMessage request)
         {
             // Get server response
@@ -475,6 +580,38 @@ namespace AppLimpia
                 // TODO: Localize
                 throw new TimeoutException("No connectivity", ex);
             }
+        }
+
+        /// <summary>
+        /// Appends nonce to the provided URI.
+        /// </summary>
+        /// <param name="originalUri">The URI to append nonce.</param>
+        /// <returns>URI with appended nonce.</returns>
+        private static Uri AppendNonce(Uri originalUri)
+        {
+            // Get the URI query
+            var builder = new UriBuilder(originalUri);
+            if (string.IsNullOrEmpty(builder.Query))
+            {
+                builder.Query = "nonce=" + Guid.NewGuid();
+            }
+            else
+            {
+                // Append nonce to the existing query string
+                var query = builder.Query;
+                if (query[0] == '?')
+                {
+                    query = query.Substring(1);
+                }
+
+                builder.Query = query + "&nonce=" + Guid.NewGuid();
+            }
+
+            // Return the URI with nonce
+            var newUri = builder.Uri;
+            Debug.WriteLine("Original URI: {0}", originalUri);
+            Debug.WriteLine("Modified URI: {0}", newUri);
+            return newUri;
         }
 
         /// <summary>

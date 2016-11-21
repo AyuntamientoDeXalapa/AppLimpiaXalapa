@@ -38,6 +38,11 @@ namespace AppLimpia
         public const string PushToken = "PushToken";
 
         /// <summary>
+        /// The OAUTH token setting name.
+        /// </summary>
+        public const string OauthToken = "OauthToken";
+
+        /// <summary>
         /// Gets or sets the instance of the current <see cref="Settings"/> implementation.
         /// </summary>
         public static Settings Instance { get; set; }

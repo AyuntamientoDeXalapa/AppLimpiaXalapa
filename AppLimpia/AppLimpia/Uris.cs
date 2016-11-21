@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 
 namespace AppLimpia
 {
@@ -106,5 +107,51 @@ namespace AppLimpia
         /// The OAUTH done URI.
         /// </summary>
         public const string OauthDone = Uris.Server + "applimpia-fake/oauth2_done.php";
+
+        /// <summary>
+        /// Gets the login URI.
+        /// </summary>
+        /// <returns>The login URI.</returns>
+        public static UriMethodPair GetLoginUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/sesiones"), HttpMethod.Post);
+        }
+
+        /// <summary>
+        /// Gets the authorization URI for the specified OAUTH provider.
+        /// </summary>
+        /// <param name="provider">The OAUTH provider.</param>
+        /// <returns>The authorization URI for the specified OAUTH provider.</returns>
+        public static UriMethodPair GetAuthorizationUri(string provider)
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/sesiones/{provider}"), HttpMethod.Get);
+        }
+
+        /// <summary>
+        /// Represents the URI and method pair.
+        /// </summary>
+        internal sealed class UriMethodPair
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="UriMethodPair"/> class.
+            /// </summary>
+            /// <param name="uri">The URI for the request.</param>
+            /// <param name="method">The method for the request.</param>
+            public UriMethodPair(Uri uri, HttpMethod method)
+            {
+                this.Uri = uri;
+                this.Method = method;
+            }
+
+            /// <summary>
+            /// Gets the URI of the current URI-Method pair.
+            /// </summary>
+            public Uri Uri { get; private set; }
+
+            /// <summary>
+            /// Gets the HTTP method of the current URI-Method pair.
+            /// </summary>
+            public HttpMethod Method { get; private set; }
+        }
     }
 }

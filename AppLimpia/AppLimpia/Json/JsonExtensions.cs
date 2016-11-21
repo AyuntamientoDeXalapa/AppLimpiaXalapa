@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http;
+using System.Text;
 
 namespace AppLimpia.Json
 {
@@ -7,6 +9,18 @@ namespace AppLimpia.Json
     /// </summary>
     internal static class JsonExtensions
     {
+        /// <summary>
+        /// Formats the current <see cref="JsonValue"/> as <see cref="HttpContent"/>. 
+        /// </summary>
+        /// <param name="value">The <see cref="JsonValue"/> to format.</param>
+        /// <returns>A <see cref="HttpContent"/> from the <see cref="JsonValue"/>.</returns>
+        public static HttpContent AsHttpContent(this JsonValue value)
+        {
+            var builder = new StringBuilder();
+            Json.Write(value, builder);
+            return new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
+        }
+
         /// <summary>
         /// Gets a value of an element with the specified name, or default value if the element does not exists.
         /// </summary>

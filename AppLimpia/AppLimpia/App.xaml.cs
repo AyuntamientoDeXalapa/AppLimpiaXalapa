@@ -69,9 +69,14 @@ namespace AppLimpia
         internal string DeviceId { get; set; }
 
         /// <summary>
-        /// Gets or sets the device push notification token.
+        /// Gets the device push notification token.
         /// </summary>
         internal string PushToken { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the launch URI delegate.
+        /// </summary>
+        internal Action<Uri> LaunchUriDelegate { get; set; }
 
         /// <summary>
         /// Gets or sets the main view model.

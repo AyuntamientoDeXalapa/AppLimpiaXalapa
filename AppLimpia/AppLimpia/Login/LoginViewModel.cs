@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -23,11 +23,6 @@ namespace AppLimpia.Login
         private string userName;
 
         /// <summary>
-        /// A value indicating whether the login process is in progress.
-        /// </summary>
-        private bool isLoggingIn;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="LoginViewModel"/> class.
         /// </summary>
         public LoginViewModel()
@@ -35,12 +30,12 @@ namespace AppLimpia.Login
             // Reset user name and password
             this.userName = string.Empty;
             this.Password = string.Empty;
-            this.isLoggingIn = false;
 
             // Setup commands
             this.LoginCommand = new Command(this.Login);
             this.RegisterCommand = new Command(this.Register);
             this.LoginWithCommand = new Command(par => this.LoginWith((string)par));
+            this.ResumeLoginWithCommand = new Command(par => this.ResumeLoginWith((Uri)par));
             this.RecoverPasswordCommand = new Command(this.RecoverPassword);
         }
 
@@ -76,6 +71,11 @@ namespace AppLimpia.Login
         public ICommand LoginWithCommand { get; private set; }
 
         /// <summary>
+        /// Gets the resume login with command.
+        /// </summary>
+        public ICommand ResumeLoginWithCommand { get; private set; }
+
+        /// <summary>
         /// Gets the register command.
         /// </summary>
         public ICommand RegisterCommand { get; private set; }
@@ -94,7 +94,7 @@ namespace AppLimpia.Login
             System.Diagnostics.Debug.WriteLine("{0}:{1}", this.UserName, this.Password);
 
             // If already logging in
-            if (this.isLoggingIn)
+            if (this.IsBusy)
             {
                 return;
             }
@@ -123,10 +123,12 @@ namespace AppLimpia.Login
 
             // Prepare the data to be send to the server
             var deviceId = ((App)Application.Current).DeviceId;
-            var loginForm = new Json.JsonObject
+            var request = new Json.JsonObject
                                 {
+                                        { "grant_type", "password" },
                                         { "username", user },
                                         { "password", this.Password },
+                                        { "scope", "user submit-report" },
                                         { "device", deviceId },
                                         { "override", true }
                                 };
@@ -135,29 +137,23 @@ namespace AppLimpia.Login
             var pushToken = ((App)Application.Current).PushToken;
             if (!string.IsNullOrEmpty(pushToken))
             {
-                loginForm.Add("push_token", pushToken);
+                request.Add("push_token", pushToken);
             }
 
-            // Format data
-            var builder = new StringBuilder();
-            Json.Json.Write(loginForm, builder);
-            Debug.WriteLine("Request: " + builder);
-            var request = new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
-
             // Send request to the server
-            this.isLoggingIn = true;
-            WebHelper.PostAsync(
-                new Uri(Uris.Login),
-                request,
-                this.ProcessLoginResults,
-                () => this.isLoggingIn = false);
+            this.IsBusy = true;
+            WebHelper.SendAsync(
+                Uris.GetLoginUri(),
+                request.AsHttpContent(),
+                this.ProcessLoginResult,
+                () => this.IsBusy = false);
         }
 
         /// <summary>
         /// Processes the login result returned by the server.
         /// </summary>
         /// <param name="result">The login result.</param>
-        private void ProcessLoginResults(JsonValue result)
+        private void ProcessLoginResult(JsonValue result)
         {
             // The register user ID
             // TODO: Remove USER ID
@@ -167,17 +163,22 @@ namespace AppLimpia.Login
             var refreshToken = result.GetItemOrDefault("refresh_token").GetStringValueOrDefault(string.Empty);
 
             // End the login process
-            this.isLoggingIn = false;
+            this.IsBusy = false;
 
             // If all of the fields are returned
             if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(accessToken) && !string.IsNullOrEmpty(refreshToken))
             {
                 // Save data to settings
-                Settings.Instance.SetValue(Settings.UserName, this.userName.Trim().ToLower());
                 Settings.Instance.SetValue(Settings.UserId, userId);
                 Settings.Instance.SetValue(Settings.AccessToken, accessToken);
                 Settings.Instance.SetValue(Settings.AccessTokenExpires, DateTime.UtcNow.AddSeconds(expiresIn));
                 Settings.Instance.SetValue(Settings.RefreshToken, refreshToken);
+
+                // Save user name if any
+                if (!string.IsNullOrWhiteSpace(this.userName))
+                {
+                    Settings.Instance.SetValue(Settings.UserName, this.userName.Trim().ToLower());
+                }
 
                 // TODO: Remove after debugging
                 Debug.WriteLine("User ID       = " + userId);
@@ -201,21 +202,116 @@ namespace AppLimpia.Login
         /// <param name="provider">User credentials provider.</param>
         private void LoginWith(string provider)
         {
-            // TODO: Localize
-            App.DisplayAlert("Error", "Esta función todavia no esta disponible", "OK");
-            return;
+            // If already logging in
+            if (this.IsBusy)
+            {
+                return;
+            }
 
-            // Create the OAUTH login completion source
-            var completionSource = new TaskCompletionSource<bool>();
+            // Remove OAUTH token
+            Settings.Instance.Remove(Settings.OauthToken);
 
-            // Show OAUTH view
-            var viewModel = new OauthViewModel(provider, completionSource);
-            var view = new OauthView { BindingContext = viewModel };
-            this.Navigation.PushModalAsync(view);
+            // If launch URI delegate is provided
+            if (((App)Application.Current).LaunchUriDelegate != null)
+            {
+                // Get the authorization URI from the server
+                this.IsBusy = true;
+                WebHelper.SendAsync(
+                    Uris.GetAuthorizationUri(provider),
+                    null,
+                    this.ProcessLoginWithResult,
+                    () => this.IsBusy = false);
+            }
+            else
+            {
+                // Display the not implemented error
+                // TODO: Localize
+                App.DisplayAlert("Error", "Esta función todavia no esta disponible", "OK");
+            }
+        }
 
-            // Set the continuation options
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            completionSource.Task.ContinueWith(t => this.ProcessOauthResult(t, viewModel), scheduler);
+        /// <summary>
+        /// Processes the login with result returned by the server.
+        /// </summary>
+        /// <param name="result">The login with result.</param>
+        private void ProcessLoginWithResult(JsonValue result)
+        {
+            // Get the token and redirect URI
+            var grantType = result.GetItemOrDefault("grant_type").GetStringValueOrDefault(string.Empty);
+            var oauthToken = result.GetItemOrDefault("oauth_token").GetStringValueOrDefault(string.Empty);
+            var redirectUri = result.GetItemOrDefault("redirect_uri").GetStringValueOrDefault(string.Empty);
+
+            // End the enter with process
+            this.IsBusy = false;
+
+            // If no redirect URI is not specified
+            if (string.IsNullOrEmpty(redirectUri))
+            {
+                return;
+            }
+
+            // Save OAUTH token
+            var oauthState = new JsonObject { { "grant_type", grantType }, { "oauth_token", oauthToken } };
+            var builder = new StringBuilder();
+            Json.Json.Write(oauthState, builder);
+            Settings.Instance.SetValue(Settings.OauthToken, builder.ToString());
+
+            // Redirect to the authorization URI
+            ((App)Application.Current).LaunchUriDelegate?.Invoke(new Uri(redirectUri));
+        }
+
+        /// <summary>
+        /// Resumes the log in with the specified provider.
+        /// </summary>
+        /// <param name="authorizationUri">The user authorization URI.</param>
+        private void ResumeLoginWith(Uri authorizationUri)
+        {
+            // Get the saved OAUTH state
+            var stateString = Settings.Instance.GetValue(Settings.OauthToken, "{}");
+            var oauthState = (JsonObject)Json.Json.Read(stateString);
+            Settings.Instance.Remove(Settings.OauthToken);
+
+            // Get the query parameters from the URI
+            Debug.WriteLine("ResumeLoginWith({0})", authorizationUri);
+            var query = authorizationUri.Query;
+            if ((query.Length > 0) && (query[0] == '?'))
+            {
+                query = query.Substring(1);
+            }
+
+            // Parse the keys and values
+            var pairs = query.Split('&');
+            var arguments = new Dictionary<string, string>();
+            foreach (var pair in pairs)
+            {
+                var split = pair.Split('=');
+                arguments.Add(
+                    Uri.UnescapeDataString(split[0]),
+                    split.Length > 1 ? Uri.UnescapeDataString(split[1]) : string.Empty);
+            }
+
+            // If error is present
+            if (arguments.ContainsKey("error"))
+            {
+                // Report error to the user
+                // TODO: Localize
+                App.DisplayAlert("Error", "Operacion fue cancelada", "OK");
+                return;
+            }
+
+            // Add the result to the saved state
+            foreach (var kvp in arguments)
+            {
+                oauthState.Add(kvp.Key, kvp.Value);
+            }
+
+            // Send request to the server
+            this.IsBusy = true;
+            WebHelper.SendAsync(
+                Uris.GetLoginUri(),
+                oauthState.AsHttpContent(),
+                this.ProcessLoginResult,
+                () => this.IsBusy = false);
         }
 
         /// <summary>
