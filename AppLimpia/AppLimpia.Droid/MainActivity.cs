@@ -14,7 +14,15 @@ namespace AppLimpia.Droid
     /// <summary>
     /// Defines the main activity for the Application.
     /// </summary>
-    [Activity(Label = "Xalapa Limpia", Icon = "@drawable/icon", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(
+        Label = "Xalapa Limpia",
+        Icon = "@drawable/icon",
+        MainLauncher = true, 
+        ScreenOrientation = ScreenOrientation.Portrait, 
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [IntentFilter(new[] { "android.intent.action.VIEW" },
+        Categories = new[] { "android.intent.category.DEFAULT", "android.intent.category.BROWSABLE" },
+        DataScheme = "mx.gob.xalapa.limpia")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Class is created by the OS")]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
@@ -26,13 +34,6 @@ namespace AppLimpia.Droid
         {
             // Call the base member
             base.OnCreate(bundle);
-
-            // TODO: Remove after testing
-            var display = this.WindowManager.DefaultDisplay;
-            var size = new Android.Graphics.Point();
-            display.GetSize(size);
-            System.Diagnostics.Debug.WriteLine("Width = {0}, Height = {1}", size.X, size.Y);
-            System.Diagnostics.Debug.WriteLine("Density = {0}", this.Resources.DisplayMetrics.Density);
 
             // Initialize the platform dependent components
             Xamarin.FormsMaps.Init(this, bundle);
@@ -56,7 +57,29 @@ namespace AppLimpia.Droid
             var application = new App();
             application.CurrentCultureInfo = MainActivity.GetCurrentCultureInfo();
             application.DeviceId = $"{Xamarin.Forms.Device.OS}:{deviceId}";
+            application.LaunchUriDelegate = this.LaunchUri;
+
+            // Prepare the current intent
             this.LoadApplication(application);
+        }
+
+        /// <summary>
+        /// Handles the new intent that arrives when the current activity is on top.
+        /// </summary>
+        /// <param name="intent">The new intent arrived to the current activity.</param>
+        protected override void OnNewIntent(Intent intent)
+        {
+            this.Intent = intent;
+            base.OnNewIntent(intent);
+        }
+
+        /// <summary>
+        /// Handles the resuming of the current activity.
+        /// </summary>
+        protected override void OnResume()
+        {
+            MainActivity.HandleIntent(Xamarin.Forms.Application.Current as App, this.Intent);
+            base.OnResume();
         }
 
         /// <summary>
@@ -68,6 +91,29 @@ namespace AppLimpia.Droid
             var androidLocale = Java.Util.Locale.Default;
             var netLanguage = androidLocale.ToString().Replace("_", "-");
             return new System.Globalization.CultureInfo(netLanguage);
+        }
+
+        /// <summary>
+        /// Handles the Intent by the current application.
+        /// </summary>
+        /// <param name="application">The current instance of the application.</param>
+        /// <param name="intent">The Intent to be handles by the current application.</param>
+        private static void HandleIntent(App application, Intent intent)
+        {
+            // If no application exists
+            if (application == null)
+            {
+                return;
+            }
+
+            // If the current intent is a view action
+            if (intent.Action.Equals(Intent.ActionView))
+            {
+                // Resume the login process
+                var loginViewModel = application.MainPage?.BindingContext as Login.LoginViewModel;
+                var uri = new Uri(intent.DataString);
+                loginViewModel?.ResumeLoginWithCommand?.Execute(uri);
+            }
         }
 
         /// <summary>
@@ -133,6 +179,16 @@ namespace AppLimpia.Droid
                     {
                         // User pressed Close.
                     }).SetMessage(errorText).SetTitle("Crash Report").Show();
+        }
+
+        /// <summary>
+        /// Launches the application associated with the specified URI.
+        /// </summary>
+        /// <param name="uriToLaunch">The URI to launch.</param>
+        private void LaunchUri(Uri uriToLaunch)
+        {
+            var browserIntent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(uriToLaunch.ToString()));
+            this.StartActivity(browserIntent);
         }
     }
 }
