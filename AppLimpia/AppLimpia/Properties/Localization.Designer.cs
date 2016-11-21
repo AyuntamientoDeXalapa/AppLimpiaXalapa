@@ -98,6 +98,51 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to La operación fue cancelada.
+        /// </summary>
+        internal static string ErrorCancelled {
+            get {
+                return ResourceManager.GetString("ErrorCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string ErrorDialogDismiss {
+            get {
+                return ResourceManager.GetString("ErrorDialogDismiss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string ErrorDialogTitle {
+            get {
+                return ResourceManager.GetString("ErrorDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El servidor no ha regresado los datos de acceso al sistema.
+        /// </summary>
+        internal static string ErrorNoLoginData {
+            get {
+                return ResourceManager.GetString("ErrorNoLoginData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Esta función todavia no esta disponible.
+        /// </summary>
+        internal static string ErrorNotImplemented {
+            get {
+                return ResourceManager.GetString("ErrorNotImplemented", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Favoritos.
         /// </summary>
         internal static string FavoritesTitle {

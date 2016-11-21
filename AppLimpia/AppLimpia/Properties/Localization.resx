@@ -133,6 +133,26 @@
     <value>Ingresa con</value>
     <comment>The enter with text</comment>
   </data>
+  <data name="ErrorCancelled" xml:space="preserve">
+    <value>La operación fue cancelada</value>
+    <comment>The user cancelled error text</comment>
+  </data>
+  <data name="ErrorDialogDismiss" xml:space="preserve">
+    <value>OK</value>
+    <comment>The error dialog dismiss button</comment>
+  </data>
+  <data name="ErrorDialogTitle" xml:space="preserve">
+    <value>Error</value>
+    <comment>The error dialog title</comment>
+  </data>
+  <data name="ErrorNoLoginData" xml:space="preserve">
+    <value>El servidor no ha regresado los datos de acceso al sistema</value>
+    <comment>The server did not return the access data error text</comment>
+  </data>
+  <data name="ErrorNotImplemented" xml:space="preserve">
+    <value>Esta función todavia no esta disponible</value>
+    <comment>The not implemented error text</comment>
+  </data>
   <data name="FavoritesTitle" xml:space="preserve">
     <value>Favoritos</value>
     <comment>The favorites page title</comment>

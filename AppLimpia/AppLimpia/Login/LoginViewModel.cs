@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 
 using AppLimpia.Json;
+using AppLimpia.Properties;
 
 using Xamarin.Forms;
 
@@ -49,6 +50,8 @@ namespace AppLimpia.Login
                 return this.userName;
             }
 
+            // ReSharper disable once MemberCanBePrivate.Global
+            // Justification = Used by data binding
             set
             {
                 this.SetProperty(ref this.userName, value, nameof(this.UserName));
@@ -58,6 +61,9 @@ namespace AppLimpia.Login
         /// <summary>
         /// Gets or sets the password for the user to log.
         /// </summary>
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        // Justification = Used by data binding
         public string Password { private get; set; }
 
         /// <summary>
@@ -187,8 +193,11 @@ namespace AppLimpia.Login
             }
             else
             {
-                // TODO: Localize
-                App.DisplayAlert("Error", "El servidor no ha regresado los datos de acceso al sistema", "OK");
+                // Report the server error to the user
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorNoLoginData,
+                    Localization.ErrorDialogDismiss);
                 return;
             }
 
@@ -225,8 +234,10 @@ namespace AppLimpia.Login
             else
             {
                 // Display the not implemented error
-                // TODO: Localize
-                App.DisplayAlert("Error", "Esta función todavia no esta disponible", "OK");
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorNotImplemented,
+                    Localization.ErrorDialogDismiss);
             }
         }
 
@@ -239,13 +250,13 @@ namespace AppLimpia.Login
             // Get the token and redirect URI
             var grantType = result.GetItemOrDefault("grant_type").GetStringValueOrDefault(string.Empty);
             var oauthToken = result.GetItemOrDefault("oauth_token").GetStringValueOrDefault(string.Empty);
-            var redirectUri = result.GetItemOrDefault("redirect_uri").GetStringValueOrDefault(string.Empty);
+            var authorizationUri = result.GetItemOrDefault("authorization_uri").GetStringValueOrDefault(string.Empty);
 
             // End the enter with process
             this.IsBusy = false;
 
             // If no redirect URI is not specified
-            if (string.IsNullOrEmpty(redirectUri))
+            if (string.IsNullOrEmpty(authorizationUri))
             {
                 return;
             }
@@ -257,7 +268,7 @@ namespace AppLimpia.Login
             Settings.Instance.SetValue(Settings.OauthToken, builder.ToString());
 
             // Redirect to the authorization URI
-            ((App)Application.Current).LaunchUriDelegate?.Invoke(new Uri(redirectUri));
+            ((App)Application.Current).LaunchUriDelegate?.Invoke(new Uri(authorizationUri));
         }
 
         /// <summary>
@@ -294,8 +305,10 @@ namespace AppLimpia.Login
             if (arguments.ContainsKey("error"))
             {
                 // Report error to the user
-                // TODO: Localize
-                App.DisplayAlert("Error", "Operacion fue cancelada", "OK");
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorCancelled,
+                    Localization.ErrorDialogDismiss);
                 return;
             }
 
@@ -312,40 +325,6 @@ namespace AppLimpia.Login
                 oauthState.AsHttpContent(),
                 this.ProcessLoginResult,
                 () => this.IsBusy = false);
-        }
-
-        /// <summary>
-        /// Processes the OAUTH login task result.
-        /// </summary>
-        /// <param name="oauthTask">The OAUTH login task.</param>
-        /// <param name="viewModel">The OAUTH view model.</param>
-        private void ProcessOauthResult(Task<bool> oauthTask, OauthViewModel viewModel)
-        {
-            // If task is canceled do nothing
-            if (oauthTask.IsCanceled)
-            {
-                System.Diagnostics.Debug.WriteLine("OAUTH Canceled");
-                return;
-            }
-
-            // Process OAUTH result
-            System.Diagnostics.Debug.WriteLine("OAUTH Done");
-            System.Diagnostics.Debug.WriteLine("UserId = " + viewModel.UserId);
-            System.Diagnostics.Debug.WriteLine("UserKey = " + viewModel.UserKey);
-            System.Diagnostics.Debug.WriteLine("Confirm = " + viewModel.Confirm);
-            System.Diagnostics.Debug.WriteLine("Error = " + viewModel.Error);
-
-            // If OAUTH was successful
-            if (string.IsNullOrEmpty(viewModel.Error))
-            {
-                // Show the main view
-                App.ShowMainView();
-            }
-            else
-            {
-                // Display error
-                App.DisplayAlert("Error", viewModel.Error, "OK");
-            }
         }
 
         /// <summary>
@@ -391,10 +370,7 @@ namespace AppLimpia.Login
         /// </summary>
         private void RecoverPassword()
         {
-            // Create the register completion source
-            System.Diagnostics.Debug.WriteLine("Restore password");
-
-            // Show Register view
+            // Show recover password view
             var viewModel = new RecoverPasswordViewModel();
             var view = new RecoverPasswordView { BindingContext = viewModel };
             this.Navigation.PushModalAsync(view);
