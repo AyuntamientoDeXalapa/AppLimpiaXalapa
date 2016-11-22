@@ -345,9 +345,12 @@ namespace AppLimpia
 
             // Update pin status
             continuation.ContinueWith(
-                _ =>
+                value =>
                     {
-                        this.SetFavoriteStatus(id, false);
+                        this.SetFavoriteStatus(
+                            id,
+                            false,
+                            value.Result.GetItemOrDefault("primary").GetStringValueOrDefault(null));
                         this.IsBusy = false;
                     },
                 default(CancellationToken),
@@ -514,11 +517,12 @@ namespace AppLimpia
         /// Parses the server data response.
         /// </summary>
         /// <param name="task">A task that represents the asynchronous server operation.</param>
-        private void ParseServerData(Task<JsonValue> task)
+        private JsonValue ParseServerData(Task<JsonValue> task)
         {
             // Parse the server response
             // NOTE: If the server data was not retrieved the exception will be propagated
             this.ParseJson(task.Result);
+            return task.Result;
         }
 
         /// <summary>
@@ -859,7 +863,8 @@ namespace AppLimpia
         /// </summary>
         /// <param name="id">The identifier of a map pin.</param>
         /// <param name="isFavorite"><c>true</c> to set as favorite; <c>false</c> to remove from favorite.</param>
-        private void SetFavoriteStatus(string id, bool isFavorite)
+        /// <param name="newPrimaryId">The identifier of the new primary favorite.</param>
+        private void SetFavoriteStatus(string id, bool isFavorite, string newPrimaryId = null)
         {
             // Get the map pin by id
             MapExPin pin;
@@ -888,6 +893,16 @@ namespace AppLimpia
                     if (this.primaryFavorite == pin)
                     {
                         this.primaryFavorite = null;
+
+                        // If new primary id is specified
+                        if (!string.IsNullOrEmpty(newPrimaryId))
+                        {
+                            MapExPin newPrimary;
+                            if (this.pinsDictionary.TryGetValue(newPrimaryId, out newPrimary))
+                            {
+                                this.SetPrimaryFavorite(newPrimary);
+                            }
+                        }
                     }
                 }
             }

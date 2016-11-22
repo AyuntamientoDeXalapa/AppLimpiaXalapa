@@ -275,9 +275,10 @@ namespace AppLimpia
 
                 // Update pin status
                 continuation.ContinueWith(
-                    _ =>
+                    value =>
                         {
-                            this.OnFavoriteRemoved();
+                            this.OnFavoriteRemoved(
+                                value.Result.GetItemOrDefault("primary").GetStringValueOrDefault(null));
                             this.viewModel.IsBusy = false;
                         },
                     default(CancellationToken),
@@ -299,7 +300,8 @@ namespace AppLimpia
             /// <summary>
             /// Called when the current favorite was removed from the server.
             /// </summary>
-            private void OnFavoriteRemoved()
+            /// <param name="newPrimaryId">The identifier of the new primary favorite.</param>
+            private void OnFavoriteRemoved(string newPrimaryId = null)
             {
                 // Remove the favorite from view model
                 this.favorite.Type = MapPinType.DropPoint;
@@ -309,6 +311,19 @@ namespace AppLimpia
                     if (this.viewModel.PrimaryFavorite == this)
                     {
                         this.viewModel.PrimaryFavorite = null;
+
+                        // If new primary id is specified
+                        if (!string.IsNullOrEmpty(newPrimaryId))
+                        {
+                            foreach (var dropPoint in this.viewModel.Favorites)
+                            {
+                                if (dropPoint.Pin.Id == newPrimaryId)
+                                {
+                                    dropPoint.IsPrimary = true;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -317,11 +332,12 @@ namespace AppLimpia
             /// Parses the server data response.
             /// </summary>
             /// <param name="task">A task that represents the asynchronous server operation.</param>
-            private void ParseServerData(Task<Json.JsonValue> task)
+            private Json.JsonValue ParseServerData(Task<Json.JsonValue> task)
             {
                 // Parse the server response
                 // NOTE: If the server data was not retrieved the exception will be propagated
                 this.ParseJson(task.Result);
+                return task.Result;
             }
 
             /// <summary>
