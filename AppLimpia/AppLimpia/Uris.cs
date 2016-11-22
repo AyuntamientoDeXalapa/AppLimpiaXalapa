@@ -128,6 +128,15 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the submit report URI.
+        /// </summary>
+        /// <returns>The submit report URI.</returns>
+        public static UriMethodPair GetSubmitReportUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/reportes"), HttpMethod.Post);
+        }
+
+        /// <summary>
         /// Represents the URI and method pair.
         /// </summary>
         internal sealed class UriMethodPair

@@ -302,7 +302,7 @@ namespace AppLimpia
                                                         Settings.Instance.GetValue(Settings.AccessToken, string.Empty));
                 }
 
-                return await WebHelper.SendAsync(request);
+                return await WebHelper.SendAsync(request, null);
             }
         }
 
@@ -330,7 +330,7 @@ namespace AppLimpia
                 request.Content = content;
 
                 // Get server response
-                return await WebHelper.SendAsync(request);
+                return await WebHelper.SendAsync(request, null);
             }
         }
 
@@ -358,7 +358,7 @@ namespace AppLimpia
                 request.Content = content;
 
                 // Get server response
-                return await WebHelper.SendAsync(request);
+                return await WebHelper.SendAsync(request, null);
             }
         }
 
@@ -386,7 +386,7 @@ namespace AppLimpia
                 request.Content = content;
 
                 // Get server response
-                return await WebHelper.SendAsync(request);
+                return await WebHelper.SendAsync(request, null);
             }
         }
 
@@ -417,7 +417,7 @@ namespace AppLimpia
                 request.Content = new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
 
                 // Get server response
-                return await WebHelper.SendAsync(request);
+                return await WebHelper.SendAsync(request, null);
             }
         }
 
@@ -428,17 +428,19 @@ namespace AppLimpia
         /// <param name="content">The content to send to the server.</param>
         /// <param name="action">An action to be performed on successful remote operation.</param>
         /// <param name="failAction">An action to be executed on failed request.</param>
+        /// <param name="timeout">An timeout for the operation.</param>
         public static void SendAsync(
             Uris.UriMethodPair uriMethod,
             HttpContent content,
             Action<JsonValue> action,
-            Action failAction = null)
+            Action failAction = null,
+            TimeSpan? timeout = null)
         {
             // Add the nonce to negate caching
             var uri = WebHelper.AppendNonce(uriMethod.Uri);
 
             // Get the task
-            var task = WebHelper.SendAsync(uri, uriMethod.Method, content);
+            var task = WebHelper.SendAsync(uri, uriMethod.Method, content, null);
 
             // Setup continuation
             var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -484,8 +486,9 @@ namespace AppLimpia
         /// <param name="uri">The server URI to use.</param>
         /// <param name="method">The HTTP Method to use.</param>
         /// <param name="content">The content to send to the server.</param>
+        /// <param name="timeout">An timeout for the operation.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        private static async Task<JsonValue> SendAsync(Uri uri, HttpMethod method, HttpContent content)
+        private static async Task<JsonValue> SendAsync(Uri uri, HttpMethod method, HttpContent content, TimeSpan? timeout)
         {
             // Prepare the request
             using (var request = new HttpRequestMessage(method, uri))
@@ -507,7 +510,7 @@ namespace AppLimpia
                 }
 
                 // Get server response
-                return await WebHelper.SendAsync(request);
+                return await WebHelper.SendAsync(request, timeout);
             }
         }
 
@@ -515,16 +518,20 @@ namespace AppLimpia
         /// Asynchronously sends the request to the server.
         /// </summary>
         /// <param name="request">The request to be send to the server.</param>
+        /// <param name="timeout">An timeout for the operation.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        private static async Task<JsonValue> SendAsync(HttpRequestMessage request)
+        private static async Task<JsonValue> SendAsync(HttpRequestMessage request, TimeSpan? timeout)
         {
+            // Get the timeout
+            var timeoutValue = timeout ?? TimeSpan.FromSeconds(30);
+
             // Get server response
             var httpClient = WebHelper.factory();
-            httpClient.Timeout = TimeSpan.FromSeconds(30);
+            httpClient.Timeout = timeoutValue;
             try
             {
                 // Send the request to the server
-                var socketTimeout = TimeSpan.FromSeconds(30 + 5);
+                var socketTimeout = timeoutValue.Add(TimeSpan.FromSeconds(5));
                 var response = await Task.Run(
                                    () =>
                                        {

@@ -240,11 +240,12 @@ namespace AppLimpia
 
             // Send the report to the server
             this.IsBusy = true;
-            WebHelper.PostAsync(
-                new Uri(Uris.SubmitReport),
+            WebHelper.SendAsync(
+                Uris.GetSubmitReportUri(),
                 report,
                 this.ParseNewIncidentData,
-                () => this.IsBusy = false);
+                () => this.IsBusy = false,
+                timeout: TimeSpan.FromMinutes(5));
         }
 
         /// <summary>

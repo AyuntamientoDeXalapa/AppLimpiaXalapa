@@ -61,47 +61,48 @@
     </Grid>
 
     <!-- Main content -->
-    <StackLayout Grid.Column="0"
-                 Grid.Row="1"
-                 Orientation="Vertical"
-                 HorizontalOptions="Fill"
-                 Padding="30,10">
-      <!-- Incident report fields -->
-      <local:PickerEx x:Name="PickerIncidentTypes"
-                      HorizontalOptions="FillAndExpand"
-                      PlaceholderText="{local:Localize IncidentType}"
-                      SelectedIndex="{Binding IncidentTypeIndex}"/>
-
-      <!-- Incident report photo -->
-      <Image x:Name="Image1"
-             IsVisible="False">
-        <Image.WidthRequest>
-          <OnPlatform x:TypeArguments="x:Double" iOS="300" Android="300" WinPhone="450"/>
-        </Image.WidthRequest>
-        <Image.HeightRequest>
-          <OnPlatform x:TypeArguments="x:Double" iOS="300" Android="300" WinPhone="450"/>
-        </Image.HeightRequest>
-      </Image>
-      
-      <!-- Control buttons -->
-      <!-- TODO: Convert to command -->
-      <Button Style="{DynamicResource BlueButton}"
-              HorizontalOptions="FillAndExpand"
-              Text="{local:Localize TakePhoto}"
-              Clicked="OnTakePhoto"/>
-      <Button Style="{DynamicResource GreenButton}"
-              HorizontalOptions="FillAndExpand"
-              Text="{local:Localize SendReport}"
-              Command="{Binding ReportIncidentCommand}"/>
-      <!-- TODO: Convert to command -->
-      <Button Style="{DynamicResource CancelButton}"
-              HorizontalOptions="FillAndExpand"
-              Text="{local:Localize Cancel}"
-              Clicked="OnCanceled"/>
-    </StackLayout>
+    <ScrollView Grid.Column="0"
+                Grid.Row="1">
+      <StackLayout Orientation="Vertical"
+                   HorizontalOptions="Fill"
+                   Padding="30,10">
+        <!-- Incident report fields -->
+        <local:PickerEx x:Name="PickerIncidentTypes"
+                        HorizontalOptions="FillAndExpand"
+                        PlaceholderText="{local:Localize IncidentType}"
+                        SelectedIndex="{Binding IncidentTypeIndex}"/>
+  
+        <!-- Incident report photo -->
+        <Image x:Name="Image1"
+               IsVisible="False">
+          <Image.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="300" Android="300" WinPhone="450"/>
+          </Image.WidthRequest>
+          <Image.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="300" Android="300" WinPhone="450"/>
+          </Image.HeightRequest>
+        </Image>
+        
+        <!-- Control buttons -->
+        <!-- TODO: Convert to command -->
+        <Button Style="{DynamicResource BlueButton}"
+                HorizontalOptions="FillAndExpand"
+                Text="{local:Localize TakePhoto}"
+                Clicked="OnTakePhoto"/>
+        <Button Style="{DynamicResource GreenButton}"
+                HorizontalOptions="FillAndExpand"
+                Text="{local:Localize SendReport}"
+                Command="{Binding ReportIncidentCommand}"/>
+        <!-- TODO: Convert to command -->
+        <Button Style="{DynamicResource CancelButton}"
+                HorizontalOptions="FillAndExpand"
+                Text="{local:Localize Cancel}"
+                Clicked="OnCanceled"/>
+      </StackLayout>
+    </ScrollView>
 
     <!-- City hall logo -->
-    <Grid Grid.Column="0"
+    <!-- <Grid Grid.Column="0"
           Grid.Row="0"
           Grid.RowSpan="2"
           InputTransparent="True">
@@ -126,7 +127,7 @@
                       WinPhone="Assets/XalapaGray.png"/>
         </Image.Source>
       </Image>
-    </Grid>
+    </Grid> -->
 
     <!-- Activity indicator -->
     <Grid Grid.Column="0"
