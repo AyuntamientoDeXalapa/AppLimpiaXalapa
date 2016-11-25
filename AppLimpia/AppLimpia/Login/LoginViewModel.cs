@@ -318,6 +318,18 @@ namespace AppLimpia.Login
                 oauthState.Add(kvp.Key, kvp.Value);
             }
 
+            // Add the device and push token
+            var deviceId = ((App)Application.Current).DeviceId;
+            var pushToken = ((App)Application.Current).PushToken;
+            oauthState.Add("device", deviceId);
+            if (!string.IsNullOrEmpty(pushToken))
+            {
+                oauthState.Add("push_token", pushToken);
+            }
+
+            // TODO: Move to failed login
+            oauthState.Add("override", true);
+
             // Send request to the server
             this.IsBusy = true;
             WebHelper.SendAsync(

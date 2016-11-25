@@ -442,8 +442,18 @@ namespace AppLimpia
             // Get the task
             var task = WebHelper.SendAsync(uri, uriMethod.Method, content, null);
 
+            // Get the task scheduler
+            TaskScheduler scheduler;
+            try
+            {
+                scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            }
+            catch (InvalidOperationException)
+            {
+                scheduler = TaskScheduler.Current;
+            }
+
             // Setup continuation
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
             task.ContinueWith(
                 t => action(t.Result),
                 default(CancellationToken),
@@ -488,7 +498,11 @@ namespace AppLimpia
         /// <param name="content">The content to send to the server.</param>
         /// <param name="timeout">An timeout for the operation.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        private static async Task<JsonValue> SendAsync(Uri uri, HttpMethod method, HttpContent content, TimeSpan? timeout)
+        private static async Task<JsonValue> SendAsync(
+            Uri uri,
+            HttpMethod method,
+            HttpContent content,
+            TimeSpan? timeout)
         {
             // Prepare the request
             using (var request = new HttpRequestMessage(method, uri))
@@ -557,7 +571,7 @@ namespace AppLimpia
                     {
                         // Parse the returned error description
                         var responseContent = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine("Error: " + responseContent);
+                        Debug.WriteLine("Error ({0}): {1}", response.StatusCode, responseContent);
                         var problem = Json.Json.Read(responseContent);
 
                         // Read error description
@@ -633,26 +647,35 @@ namespace AppLimpia
             // Report the error to the user
             foreach (var ex in task.Exception.Flatten().InnerExceptions)
             {
-                // If the error is an not connected error
-                if ((ex is TimeoutException) || (ex is TaskCanceledException))
+                try
                 {
-                    // TODO: Localize
-                    App.DisplayAlert(
-                        "Error",
-                        "No se pudo conectar con el servidor. Por favor verifica que esta conectado al Internet o intenta más tarde.",
-                        "OK");
-                    Debug.WriteLine(ex.ToString());
+                    // If the error is a not connected error
+                    if ((ex is TimeoutException) || (ex is TaskCanceledException))
+                    {
+                        // TODO: Localize
+                        App.DisplayAlert(
+                            "Error",
+                            "No se pudo conectar con el servidor. Por favor verifica que esta conectado al Internet o intenta más tarde.",
+                            "OK");
+                        Debug.WriteLine(ex.ToString());
+                    }
+                    else if (ex is RemoteServerException)
+                    {
+                        var exception = (RemoteServerException)ex;
+                        App.DisplayAlert(exception.Title, exception.Message, "OK");
+                        Debug.WriteLine($"{exception.Title}: {exception.Message}");
+                    }
+                    else
+                    {
+                        // TODO: Localize
+                        App.DisplayAlert("Error", "El servidor marco el error pero no ha regresado ninguna detalle.", "OK");
+                        Debug.WriteLine(ex.ToString());
+                    }
                 }
-                else if (ex is RemoteServerException)
+                catch (Exception)
                 {
-                    var exception = (RemoteServerException)ex;
-                    App.DisplayAlert(exception.Title, exception.Message, "OK");
-                }
-                else
-                {
-                    // TODO: Localize
-                    App.DisplayAlert("Error", "El servidor marco el error pero no ha regresado ninguna detalle.", "OK");
-                    Debug.WriteLine(ex.ToString());
+                    // Ignored
+                    // This is thrown when updating push token when application is not a foreground application
                 }
             }
         }
