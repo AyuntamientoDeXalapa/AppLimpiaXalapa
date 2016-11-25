@@ -128,6 +128,15 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the change push token URI.
+        /// </summary>
+        /// <returns>The change push token URI.</returns>
+        public static UriMethodPair GetChangePushTokenUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/sesiones/change"), new HttpMethod("PATCH"));
+        }
+
+        /// <summary>
         /// Gets the submit report URI.
         /// </summary>
         /// <returns>The submit report URI.</returns>

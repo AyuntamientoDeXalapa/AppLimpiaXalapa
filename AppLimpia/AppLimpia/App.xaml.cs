@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+
+using AppLimpia.Json;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -221,21 +221,17 @@ namespace AppLimpia
             if (Settings.Instance.Contains(Settings.AccessToken))
             {
                 // Prepare the data to be send to the server
-                var updateForm = new Json.JsonObject
-                                     {
-                                             { "username", Settings.Instance.GetValue(Settings.UserName, string.Empty) },
-                                             { "push_token", pushToken }
-                                     };
-                var builder = new StringBuilder();
-                Json.Json.Write(updateForm, builder);
-                Debug.WriteLine("Request: " + builder);
-                var request = new StringContent(builder.ToString(), Encoding.UTF8, "application/json");
+                var request = new Json.JsonObject
+                                  {
+                                          { "username", Settings.Instance.GetValue(Settings.UserName, string.Empty) },
+                                          { "push_token", pushToken }
+                                  };
 
                 // Send request to the server
                 Debug.WriteLine("Update push token on server");
-                WebHelper.PatchAsync(
-                    new Uri(Uris.SetPushToken),
-                    request,
+                WebHelper.SendAsync(
+                    Uris.GetChangePushTokenUri(),
+                    request.AsHttpContent(),
                     _ => Settings.Instance.SetValue(Settings.PushToken, pushToken));
             }
         }
