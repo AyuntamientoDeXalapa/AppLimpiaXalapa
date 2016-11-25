@@ -27,15 +27,14 @@
 	<key>CFBundleIdentifier</key>
 	<string>mx.xalapa.gob.xalapa.limpia</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.3</string>
+	<string>1.0.4</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.3</string>
+	<string>1.0.4</string>
 	<key>CFBundleIconFiles</key>
 	<array>
 		<string>Icon-60@2x.png</string>
 		<string>Icon-76.png</string>
 		<string>Icon-76@2x.png</string>
-    <string>Icon-83.5@2x.png</string>
 		<string>Default.png</string>
 		<string>Default@2x.png</string>
 		<string>Default-568h@2x.png</string>
@@ -48,9 +47,20 @@
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-  <key>CFBundleLocalizations</key>
+	<key>CFBundleLocalizations</key>
 	<array>
 		<string>es</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mx.gob.xalapa.limpia</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>mx.gob.xalapa.limpia</string>
+		</dict>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>es</string>
@@ -58,9 +68,9 @@
 	<string>Podemos ocupar su ubicación?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Nosotros utilizamos su ubicación</string>
-  <key>NSCameraUsageDescription</key>
-  <string>Esta aplicación requiere acceso a su camara para tomar fotos</string>
-  <key>NSPhotoLibraryUsageDescription</key>
-  <string>Esta aplicación requiere acceso a sus fotos</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Esta aplicación requiere acceso a su camara para tomar fotos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Esta aplicación requiere acceso a sus fotos</string>
 </dict>
 </plist>

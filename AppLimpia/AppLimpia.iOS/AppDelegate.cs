@@ -22,6 +22,11 @@ namespace AppLimpia.iOS
     public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
         /// <summary>
+        /// The URI the current application was launched with.
+        /// </summary>
+        private Uri launchedUri;
+
+        /// <summary>
         /// Handles the FinishedLaunching event of the application delegate.
         /// </summary>
         /// <param name="app">The current application.</param>
@@ -68,8 +73,60 @@ namespace AppLimpia.iOS
             var application = new App();
             application.CurrentCultureInfo = AppDelegate.GetCurrentCultureInfo();
             application.DeviceId = $"{Xamarin.Forms.Device.OS}:{deviceUuid.AsString()}";
+            application.LaunchUriDelegate = this.LaunchUri;
+
+            if (options != null)
+            {
+                NSObject obj;
+                options.TryGetValue(UIApplication.LaunchOptionsUrlKey, out obj);
+                var uri = obj as NSUrl;
+                if (uri != null)
+                {
+                    this.launchedUri = new Uri(uri.ToString());
+                }
+            }
+
+            // Load the current application
             this.LoadApplication(application);
             return base.FinishedLaunching(app, options);
+        }
+
+        /// <summary>
+        /// Called when the application becomes a foreground application.
+        /// </summary>
+        /// <param name="application">The current application.</param>
+        public override void OnActivated(UIApplication application)
+        {
+            // If application was launched with an URI
+            if (this.launchedUri != null)
+            {
+                this.HandleUri(this.launchedUri);
+                this.launchedUri = null;
+            }
+
+            base.OnActivated(application);
+        }
+
+        /// <summary>
+        /// Handles the opening of a resource specified by a URL.
+        /// </summary>
+        /// <param name="application">The current application.</param>
+        /// <param name="url">The URL resource to open.</param>
+        /// <param name="sourceApplication">The source application requesting the resource.</param>
+        /// <param name="annotation">The annotation.</param>
+        /// <returns>
+        ///   <c>true</c> if the delegate successfully handled the request;
+        ///   <c>false</c> if the attempt to open the URL resource failed.
+        /// </returns>
+        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        {
+            // Handle the resource URI
+            Debug.WriteLine("OpenUrl");
+            Debug.WriteLine(url);
+            this.HandleUri(new Uri(url.ToString()));
+
+            // Return success
+            return true;
         }
 
         /// <summary>
@@ -259,6 +316,31 @@ namespace AppLimpia.iOS
                     }
                 };
             alertView.Show();
+        }
+
+        /// <summary>
+        /// Launches the application associated with the specified URI.
+        /// </summary>
+        /// <param name="uriToLaunch">The URI to launch.</param>
+        private void LaunchUri(Uri uriToLaunch)
+        {
+            var uri = new NSUrl(uriToLaunch.ToString());
+            UIApplication.SharedApplication.OpenUrl(uri);
+        }
+
+        /// <summary>
+        /// Handles the URI passed ti the current application.
+        /// </summary>
+        /// <param name="uri">The URI to be handled.</param>
+        private void HandleUri(Uri uri)
+        {
+            // Resume the login process
+            var application = Xamarin.Forms.Application.Current as App;
+            if (application != null)
+            {
+                var loginViewModel = application.MainPage?.BindingContext as Login.LoginViewModel;
+                loginViewModel?.ResumeLoginWithCommand?.Execute(uri);
+            }
         }
     }
 }
