@@ -64,4 +64,4 @@ Si en momento de abrir la aplicación el emulador de Adnroid dice que los Google
 
 ### Licencia
 
-Este proyecto está liberado bajo la licencia MIT.
+Leer LICENSE.
