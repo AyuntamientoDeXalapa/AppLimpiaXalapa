@@ -21,6 +21,14 @@
         </m3:DefaultTile>
         <m3:SplashScreen Image="Assets\SplashScreen.png" />
       </m3:VisualElements>
+      <Extensions>
+        <Extension Category="windows.protocol">
+          <Protocol Name="mx.gob.xalapa.limpia">
+            <Logo>Assets\Logo.png</Logo>
+            <DisplayName>Xalapa Limpia OAUTH callback protocol</DisplayName>
+          </Protocol>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

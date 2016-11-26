@@ -5,8 +5,8 @@ using System.Reflection;
 using Windows.Networking.PushNotifications;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
-using Windows.Storage.Streams;
 using Windows.System.Profile;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 using Windows.Web.Http.Filters;
 
@@ -38,7 +38,7 @@ namespace AppLimpia.WinPhone
             AppLimpia.Properties.Localization.SetResourceManager(manager);
 
             // Setup factory
-            AppLimpia.WebHelper.SetFactory(this.HttpClientFactory);
+            AppLimpia.WebHelper.SetFactory(MainPage.HttpClientFactory);
 
             // Setup push notifications channel
             MainPage.GetPushToken();
@@ -47,6 +47,9 @@ namespace AppLimpia.WinPhone
             var application = new AppLimpia.App();
             application.CurrentCultureInfo = CultureInfo.CurrentUICulture;
             application.DeviceId = $"{Xamarin.Forms.Device.OS}:{MainPage.GetDeviceId()}";
+            application.LaunchUriDelegate = this.LaunchUri;
+
+            // Load the current application
             this.LoadApplication(application);
         }
 
@@ -71,9 +74,11 @@ namespace AppLimpia.WinPhone
         /// <returns>The device unique identifier.</returns>
         private static string GetDeviceId()
         {
+            // Get the hardware ID
             var token = HardwareIdentification.GetPackageSpecificToken(null);
             var hardwareId = token.Id;
 
+            // Hash the data
             var hasher = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Md5);
             var hashed = hasher.HashData(hardwareId);
 
@@ -96,16 +101,31 @@ namespace AppLimpia.WinPhone
                     });
         }
 
-
         /// <summary>
         /// Creates the instance of the <see cref="System.Net.Http.HttpClient"/>.
         /// </summary>
         /// <returns>A new instance of the <see cref="System.Net.Http.HttpClient"/>.</returns>
-        private System.Net.Http.HttpClient HttpClientFactory()
+        private static System.Net.Http.HttpClient HttpClientFactory()
         {
             var filter = new HttpBaseProtocolFilter();
             var client = new System.Net.Http.HttpClient(new WindowsHttpMessageHandler(filter));
             return client;
+        }
+
+        /// <summary>
+        /// Launches the application associated with the specified URI.
+        /// </summary>
+        /// <param name="uriToLaunch">The URI to launch.</param>
+        private async void LaunchUri(Uri uriToLaunch)
+        {
+            var result = await Windows.System.Launcher.LaunchUriAsync(uriToLaunch);
+            if (!result)
+            {
+                var dialog = new MessageDialog(
+                                 AppLimpia.Properties.Localization.ErrorCannotOpenBrowser,
+                                 AppLimpia.Properties.Localization.ErrorDialogTitle);
+                await dialog.ShowAsync();
+            }
         }
     }
 }

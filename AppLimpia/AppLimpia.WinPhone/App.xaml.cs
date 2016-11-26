@@ -44,6 +44,49 @@ namespace AppLimpia.WinPhone
             }
 #endif
 
+            // Create the root frame
+            this.CreateRootFrame(e);
+            Window.Current.Activate();
+        }
+
+        /// <summary>
+        /// Invoked when the application is activated by some means other than normal launching.
+        /// </summary>
+        /// <param name="args">Event data for the event.</param>
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            // If application is activated by protocol
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                // Create the root frame
+                this.CreateRootFrame(args);
+
+                // Resume the login process
+                var application = Xamarin.Forms.Application.Current as AppLimpia.App;
+                if (application != null)
+                {
+                    var loginViewModel = application.MainPage?.BindingContext as Login.LoginViewModel;
+                    var protocolArgs = args as ProtocolActivatedEventArgs;
+                    if (protocolArgs != null)
+                    {
+                        loginViewModel?.ResumeLoginWithCommand?.Execute(protocolArgs.Uri);
+                    }
+                }
+
+                // Ensure that the current window is active
+                Window.Current.Activate();
+            }
+
+            base.OnActivated(args);
+        }
+
+        /// <summary>
+        /// Creates the root frame for the current application.
+        /// </summary>
+        /// <param name="e">Event data for the event.</param>
+        private void CreateRootFrame(IActivatedEventArgs e)
+        {
+            // Get the current root frame
             var rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -53,15 +96,12 @@ namespace AppLimpia.WinPhone
                 // Create a Frame to act as the navigation context and navigate to the first page
                 // ReSharper disable once UseObjectOrCollectionInitializer
                 rootFrame = new Frame();
-
-                // TODO: change this value to a cache size that is appropriate for your application
                 rootFrame.CacheSize = 1;
 
                 // Initialize the Xamarin.Forms application
                 Xamarin.Forms.Forms.Init(e);
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
-                    // TODO: Load state from previously suspended application
                 }
 
                 // Place the frame in the current Window
@@ -86,14 +126,12 @@ namespace AppLimpia.WinPhone
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (!rootFrame.Navigate(typeof(MainPage), e.Arguments))
+                var arg = (e as LaunchActivatedEventArgs)?.Arguments;
+                if (!rootFrame.Navigate(typeof(MainPage), arg))
                 {
                     throw new Exception("Failed to create initial page");
                 }
             }
-
-            // Ensure the current window is active
-            Window.Current.Activate();
         }
 
         /// <summary>
