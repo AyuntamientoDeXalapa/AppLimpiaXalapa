@@ -107,6 +107,15 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No se puede abrir el navegador.
+        /// </summary>
+        internal static string ErrorCannotOpenBrowser {
+            get {
+                return ResourceManager.GetString("ErrorCannotOpenBrowser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
         internal static string ErrorDialogDismiss {

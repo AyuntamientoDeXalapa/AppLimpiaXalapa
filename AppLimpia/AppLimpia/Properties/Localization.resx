@@ -137,6 +137,10 @@
     <value>La operación fue cancelada</value>
     <comment>The user cancelled error text</comment>
   </data>
+  <data name="ErrorCannotOpenBrowser" xml:space="preserve">
+    <value>No se puede abrir el navegador</value>
+    <comment>The cannot open web browser error text</comment>
+  </data>
   <data name="ErrorDialogDismiss" xml:space="preserve">
     <value>OK</value>
     <comment>The error dialog dismiss button</comment>

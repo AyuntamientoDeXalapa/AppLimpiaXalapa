@@ -64,11 +64,15 @@
                             <!-- Drop point information -->
                             <StackPanel Orientation="Vertical">
                                 <TextBlock FontSize="16"
-                                           FontWeight="Bold"
-                                           Margin="5"
+                                           Margin="3"
                                            HorizontalAlignment="Center"
                                            Foreground="Black"
                                            Text="{Binding Label}"/>
+                                <TextBlock FontSize="12"
+                                           Margin="3"
+                                           HorizontalAlignment="Center"
+                                           Foreground="Black"
+                                           Text="{Binding Address}"/>
                                 <Button Margin="5"
                                         HorizontalAlignment="Stretch"
                                         Content="Ubicar camion"
@@ -113,12 +117,15 @@
                             Background="White">
                         <StackPanel Orientation="Vertical"
                                     Margin="2">
-                            <TextBlock Foreground="Black"
-                                       FontWeight="Bold"
+                            <TextBlock FontSize="16"
+                                       Margin="3"
                                        HorizontalAlignment="Center"
+                                       Foreground="Black"
                                        Text="{Binding Label}"/>
-                            <TextBlock Foreground="Black"
+                            <TextBlock FontSize="12"
+                                       Margin="3"
                                        HorizontalAlignment="Center"
+                                       Foreground="Black"
                                        TextWrapping="Wrap"
                                        Text="{Binding Address}"/>
                         </StackPanel>

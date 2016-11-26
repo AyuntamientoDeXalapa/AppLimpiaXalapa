@@ -444,6 +444,7 @@ namespace AppLimpia
 
             // Get the task scheduler
             TaskScheduler scheduler;
+            var setupContinuation = true;
             try
             {
                 scheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -451,6 +452,7 @@ namespace AppLimpia
             catch (InvalidOperationException)
             {
                 scheduler = TaskScheduler.Current;
+                setupContinuation = false;
             }
 
             // Setup continuation
@@ -461,11 +463,19 @@ namespace AppLimpia
                 scheduler);
 
             // Setup error handling
-            var continuation = task.ContinueWith(
-                WebHelper.ParseTaskError,
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnFaulted,
-                scheduler);
+            Task continuation;
+            if (setupContinuation)
+            {
+                continuation = task.ContinueWith(
+                    WebHelper.ParseTaskError,
+                    default(CancellationToken),
+                    TaskContinuationOptions.OnlyOnFaulted,
+                    scheduler);
+            }
+            else
+            {
+                continuation = task;
+            }
 
             // Setup error continuation
             if (failAction != null)
