@@ -66,6 +66,7 @@ namespace AppLimpia.iOS
                 // Show user position if required
                 var element = (MapEx)e.NewElement;
                 element.IsShowingUser = element.ShowUserPosition;
+                MapExRenderer.CheckLocationService(element);
             }
         }
 
@@ -84,6 +85,33 @@ namespace AppLimpia.iOS
             {
                 var element = (MapEx)this.Element;
                 element.IsShowingUser = element.ShowUserPosition;
+                MapExRenderer.CheckLocationService(element);
+            }
+        }
+
+        /// <summary>
+        /// Checks whether the location service is available.
+        /// </summary>
+        /// <param name="element">The rendered <see cref="MapEx"/> element.</param>
+        private static void CheckLocationService(MapEx element)
+        {
+            // If location is requested
+            if (element.ShowUserPosition)
+            {
+                // If the location service is not allowed
+                var status = CLLocationManager.Status;
+                if ((status == CLAuthorizationStatus.Denied) || (status == CLAuthorizationStatus.Restricted))
+                {
+                    element.PositionServiceAvailable = false;
+                }
+                else
+                {
+                    element.PositionServiceAvailable = true;
+                }
+            }
+            else
+            {
+                element.PositionServiceAvailable = false;
             }
         }
 
@@ -269,6 +297,13 @@ namespace AppLimpia.iOS
             // Report the new map coordinates
             if (e.UserLocation.Location != null)
             {
+                // If accuracy is too high
+                if (e.UserLocation.Location.HorizontalAccuracy >= 100)
+                {
+                    return;
+                }
+
+                // Update the user location
                 var location = e.UserLocation.Location.Coordinate;
                 ((MapEx)this.Element).UserPosition = new Position(location.Latitude, location.Longitude);
             }

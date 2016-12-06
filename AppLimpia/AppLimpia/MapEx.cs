@@ -20,7 +20,7 @@ namespace AppLimpia
             "ShowUserPosition",
             typeof(bool),
             typeof(MapEx),
-            true);
+            false);
 
         /// <summary>
         /// The bind-able property for the current user position.
@@ -30,6 +30,15 @@ namespace AppLimpia
             typeof(Position),
             typeof(MapEx),
             default(Position));
+
+        /// <summary>
+        /// The bind-able property indicating whether the position service is available.
+        /// </summary>
+        public static readonly BindableProperty PositionServiceAvailableProperty = BindableProperty.Create(
+            "PositionServiceAvailable",
+            typeof(bool),
+            typeof(MapEx),
+            false);
 
         /// <summary>
         /// The pins on the current map.
@@ -94,6 +103,22 @@ namespace AppLimpia
             set
             {
                 this.SetValue(MapEx.UserPositionProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the position service is available.
+        /// </summary>
+        public bool PositionServiceAvailable
+        {
+            get
+            {
+                return (bool)this.GetValue(MapEx.PositionServiceAvailableProperty);
+            }
+
+            set
+            {
+                this.SetValue(MapEx.PositionServiceAvailableProperty, value);
             }
         }
 
