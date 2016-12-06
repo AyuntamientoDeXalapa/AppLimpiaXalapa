@@ -55,6 +55,7 @@
           <Entry x:Name="EntryUserName"
                  Style="{DynamicResource LoginEntry}"
                  HorizontalOptions="FillAndExpand"
+                 Keyboard="Email"
                  Placeholder="{local:Localize UserLogin}"
                  Text="{Binding UserName}"/>
           <Entry x:Name="EntryPassword"
