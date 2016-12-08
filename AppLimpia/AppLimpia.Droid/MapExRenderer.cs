@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Android.Content;
 using Android.Gms.Maps;
@@ -178,6 +179,7 @@ namespace AppLimpia.Droid
             {
                 // Remove event handler
                 Xamarin.Forms.MessagingCenter.Unsubscribe<MapEx>(this, "CenterMap");
+                Xamarin.Forms.MessagingCenter.Unsubscribe<MapEx>(this, "CheckLocationService");
 
                 var pins = (ObservableCollection<MapExPin>)((MapEx)e.OldElement).Pins;
                 pins.CollectionChanged -= this.OnCollectionChanged;
@@ -194,6 +196,10 @@ namespace AppLimpia.Droid
                 // Setup event handlers
                 var element = (MapEx)e.NewElement;
                 Xamarin.Forms.MessagingCenter.Subscribe(this, "CenterMap", new Action<MapEx, Position>(this.CenterMap));
+                Xamarin.Forms.MessagingCenter.Subscribe(
+                    this,
+                    "CheckLocationService",
+                    new Action<MapEx, TaskCompletionSource<bool>>(MapExRenderer.CheckLocationService));
                 var pins = (ObservableCollection<MapExPin>)element.Pins;
                 pins.CollectionChanged += this.OnCollectionChanged;
 
@@ -223,6 +229,26 @@ namespace AppLimpia.Droid
                 var element = (MapEx)this.Element;
                 element.IsShowingUser = element.ShowUserPosition;
             }
+        }
+
+        /// <summary>
+        /// Checks whether the location service is available.
+        /// </summary>
+        /// <param name="sender">The rendered <see cref="MapEx"/> element.</param>
+        /// <param name="completionSource">The completion source for the asynchronous operation.</param>
+        private static void CheckLocationService(MapEx sender, TaskCompletionSource<bool> completionSource)
+        {
+            // Get the location service
+            var manager =
+                Android.App.Application.Context.GetSystemService(Context.LocationService) as
+                    Android.Locations.LocationManager;
+            if (manager == null)
+            {
+                completionSource.SetCanceled();
+                return;
+            }
+
+            completionSource.SetResult(manager.IsProviderEnabled(Android.Locations.LocationManager.GpsProvider));
         }
 
         /// <summary>

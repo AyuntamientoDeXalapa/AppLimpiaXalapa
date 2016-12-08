@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
@@ -32,18 +32,9 @@ namespace AppLimpia
             default(Position));
 
         /// <summary>
-        /// The bind-able property indicating whether the position service is available.
-        /// </summary>
-        public static readonly BindableProperty PositionServiceAvailableProperty = BindableProperty.Create(
-            "PositionServiceAvailable",
-            typeof(bool),
-            typeof(MapEx),
-            false);
-
-        /// <summary>
         /// The pins on the current map.
         /// </summary>
-        private ObservableCollection<MapExPin> pins; 
+        private readonly ObservableCollection<MapExPin> pins; 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MapEx"/> class.
@@ -52,18 +43,7 @@ namespace AppLimpia
         {
             // Override the base value
             this.IsShowingUser = false;
-
-            // TODO: Remove
-            Device.OnPlatform(Android: () => { }, iOS: () => { });
-
             this.pins = new ObservableCollection<MapExPin>();
-
-            // TODO: Remove
-            Device.OnPlatform(
-                WinPhone: () => { },
-                Android: () => { },
-                iOS: () => { },
-                Default: () => this.pins.CollectionChanged += this.OnCollectionChanged);
         }
 
         /// <summary>
@@ -84,9 +64,6 @@ namespace AppLimpia
             set
             {
                 this.SetValue(MapEx.ShowUserPositionProperty, value);
-
-                // TODO: Remove
-                Device.OnPlatform(Android: () => { }, iOS: () => { });
             }
         }
 
@@ -95,6 +72,8 @@ namespace AppLimpia
         /// </summary>
         public Position UserPosition
         {
+            // ReSharper disable once UnusedMember.Global
+            // Justification = Used by data binding
             get
             {
                 return (Position)this.GetValue(MapEx.UserPositionProperty);
@@ -103,22 +82,6 @@ namespace AppLimpia
             set
             {
                 this.SetValue(MapEx.UserPositionProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the position service is available.
-        /// </summary>
-        public bool PositionServiceAvailable
-        {
-            get
-            {
-                return (bool)this.GetValue(MapEx.PositionServiceAvailableProperty);
-            }
-
-            set
-            {
-                this.SetValue(MapEx.PositionServiceAvailableProperty, value);
             }
         }
 
@@ -155,64 +118,14 @@ namespace AppLimpia
         }
 
         /// <summary>
-        /// Handles the CollectionChanged event.
+        /// Checks whether the location service is active.
         /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">A <see cref="NotifyCollectionChangedEventArgs"/> with arguments of the event.</param>
-        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        /// <returns>The task representing the asynchronous operation.</returns>
+        public Task<bool> CheckLocationService()
         {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    {
-                        // The element was added to the collection
-                        var index = e.NewStartingIndex;
-                        foreach (var element in e.NewItems)
-                        {
-                            base.Pins.Insert(index++, ((MapExPin)element).Pin);
-                        }
-
-                        break;
-                    }
-
-                case NotifyCollectionChangedAction.Remove:
-                    {
-                        // The element was removed from the collection
-                        var index = e.OldStartingIndex;
-                        // ReSharper disable once UnusedVariable
-                        foreach (var element in e.OldItems)
-                        {
-                            base.Pins.RemoveAt(index++);
-                        }
-
-                        break;
-                    }
-
-                case NotifyCollectionChangedAction.Replace:
-                    {
-                        // The collection item was replaced
-                        var index = e.NewStartingIndex;
-                        foreach (var element in e.NewItems)
-                        {
-                            base.Pins[index++] = ((MapExPin)element).Pin;
-                        }
-
-                        break;
-                    }
-
-                case NotifyCollectionChangedAction.Move:
-                    {
-                        // The item was moved in the collection
-                        var item = base.Pins[e.OldStartingIndex];
-                        base.Pins.RemoveAt(e.OldStartingIndex);
-                        base.Pins.Insert(e.NewStartingIndex, item);
-                        break;
-                    }
-
-                case NotifyCollectionChangedAction.Reset:
-                    base.Pins.Clear();
-                    break;
-            }
+            var completionSource = new TaskCompletionSource<bool>();
+            MessagingCenter.Send(this, "CheckLocationService", completionSource);
+            return completionSource.Task;
         }
     }
 }

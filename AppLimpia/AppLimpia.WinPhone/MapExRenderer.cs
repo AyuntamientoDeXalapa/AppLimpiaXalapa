@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Windows.Devices.Geolocation;
 using Windows.UI;
@@ -57,6 +58,7 @@ namespace AppLimpia.WinPhone
             if (e.OldElement != null)
             {
                 Xamarin.Forms.MessagingCenter.Unsubscribe<MapEx>(this, "CenterMap");
+                Xamarin.Forms.MessagingCenter.Unsubscribe<MapEx>(this, "CheckLocationService");
                 if (this.Control != null)
                 {
                     this.Control.MapTapped -= this.OnMapTapped;
@@ -79,6 +81,10 @@ namespace AppLimpia.WinPhone
                 // Subscribe to events
                 System.Diagnostics.Debug.Assert(this.Control != null, "Control is not created");
                 Xamarin.Forms.MessagingCenter.Subscribe(this, "CenterMap", new Action<MapEx, Position>(this.CenterMap));
+                Xamarin.Forms.MessagingCenter.Subscribe(
+                    this,
+                    "CheckLocationService",
+                    new Action<MapEx, TaskCompletionSource<bool>>(MapExRenderer.CheckLocationService));
                 this.Control.MapTapped += this.OnMapTapped;
 
                 var pins = (ObservableCollection<MapExPin>)((MapEx)e.NewElement).Pins;
@@ -110,6 +116,20 @@ namespace AppLimpia.WinPhone
             {
                 this.UpdateUserPosition();
             }
+        }
+
+        /// <summary>
+        /// Checks whether the location service is available.
+        /// </summary>
+        /// <param name="sender">The rendered <see cref="MapEx"/> element.</param>
+        /// <param name="completionSource">The completion source for the asynchronous operation.</param>
+        private static void CheckLocationService(MapEx sender, TaskCompletionSource<bool> completionSource)
+        {
+            // Get the location service
+            var locationService = new Geolocator();
+            completionSource.SetResult(
+                (locationService.LocationStatus != PositionStatus.NotAvailable)
+                && (locationService.LocationStatus != PositionStatus.Disabled));
         }
 
         /// <summary>

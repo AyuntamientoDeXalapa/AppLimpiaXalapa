@@ -1,6 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+
+using AppLimpia.Properties;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
@@ -51,6 +55,34 @@ namespace AppLimpia
             this.update = true;
             this.MapView.MoveToRegion(
                 MapSpan.FromCenterAndRadius(new Position(19.5266, -96.9238), Distance.FromMiles(0.3)));
+        }
+
+        /// <summary>
+        /// Handles the Appearing event.
+        /// </summary>
+        protected override void OnAppearing()
+        {
+            // Check the location service status
+            var task = this.MapView.CheckLocationService();
+            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            task.ContinueWith(
+                t =>
+                    {
+                        // If location service is not available
+                        if (!t.Result)
+                        {
+                            App.DisplayAlert(
+                                Localization.ErrorDialogTitle,
+                                Localization.ErrorNoLocationService,
+                                Localization.ErrorDialogDismiss);
+                        }
+                    },
+                default(CancellationToken),
+                TaskContinuationOptions.OnlyOnRanToCompletion,
+                scheduler);
+
+            // Call the base member
+            base.OnAppearing();
         }
 
         /// <summary>

@@ -149,6 +149,10 @@
     <value>Error</value>
     <comment>The error dialog title</comment>
   </data>
+  <data name="ErrorNoLocationService" xml:space="preserve">
+    <value>El servicio de localizacion no esta disponible. Por favor activalo en configuracion de sistema</value>
+    <comment>The no location service available error text</comment>
+  </data>
   <data name="ErrorNoLoginData" xml:space="preserve">
     <value>El servidor no ha regresado los datos de acceso al sistema</value>
     <comment>The server did not return the access data error text</comment>

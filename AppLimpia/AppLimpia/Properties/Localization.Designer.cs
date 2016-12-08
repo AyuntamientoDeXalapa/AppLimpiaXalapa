@@ -134,6 +134,15 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El servicio de localizacion no esta disponible. Por favor activalo en configuracion de sistema.
+        /// </summary>
+        internal static string ErrorNoLocationService {
+            get {
+                return ResourceManager.GetString("ErrorNoLocationService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El servidor no ha regresado los datos de acceso al sistema.
         /// </summary>
         internal static string ErrorNoLoginData {

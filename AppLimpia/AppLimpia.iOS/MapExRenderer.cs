@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 using CoreGraphics;
 using CoreLocation;
@@ -30,6 +31,16 @@ namespace AppLimpia.iOS
     public class MapExRenderer : MapRenderer
     {
         /// <summary>
+        /// The context synchronization lock object.
+        /// </summary>
+        private static readonly object Locker = new object();
+
+        /// <summary>
+        /// The location manager to receive request.
+        /// </summary>
+        private static CLLocationManager manager;
+
+        /// <summary>
         /// Handles the ElementChanged event.
         /// </summary>
         /// <param name="e">A <see cref="ElementChangedEventArgs{TElement}"/> with arguments of the event.</param>
@@ -42,6 +53,7 @@ namespace AppLimpia.iOS
             if (e.OldElement != null)
             {
                 Xamarin.Forms.MessagingCenter.Unsubscribe<MapEx>(this, "CenterMap");
+                Xamarin.Forms.MessagingCenter.Unsubscribe<MapEx>(this, "CheckLocationService");
 
                 var nativeMap = (MKMapView)this.Control;
                 nativeMap.GetViewForAnnotation = null;
@@ -54,6 +66,10 @@ namespace AppLimpia.iOS
             {
                 // Setup event handlers
                 Xamarin.Forms.MessagingCenter.Subscribe(this, "CenterMap", new Action<MapEx, Position>(this.CenterMap));
+                Xamarin.Forms.MessagingCenter.Subscribe(
+                    this,
+                    "CheckLocationService",
+                    new Action<MapEx, TaskCompletionSource<bool>>(MapExRenderer.CheckLocationService));
 
                 var nativeMap = (MKMapView)this.Control;
                 nativeMap.GetViewForAnnotation = this.GetViewForAnnotation;
@@ -66,7 +82,6 @@ namespace AppLimpia.iOS
                 // Show user position if required
                 var element = (MapEx)e.NewElement;
                 element.IsShowingUser = element.ShowUserPosition;
-                MapExRenderer.CheckLocationService(element);
             }
         }
 
@@ -85,33 +100,55 @@ namespace AppLimpia.iOS
             {
                 var element = (MapEx)this.Element;
                 element.IsShowingUser = element.ShowUserPosition;
-                MapExRenderer.CheckLocationService(element);
             }
         }
 
         /// <summary>
         /// Checks whether the location service is available.
         /// </summary>
-        /// <param name="element">The rendered <see cref="MapEx"/> element.</param>
-        private static void CheckLocationService(MapEx element)
+        /// <param name="sender">The rendered <see cref="MapEx"/> element.</param>
+        /// <param name="completionSource">The completion source for the asynchronous operation.</param>
+        private static void CheckLocationService(MapEx sender, TaskCompletionSource<bool> completionSource)
         {
-            // If location is requested
-            if (element.ShowUserPosition)
+            // Get the authorization status
+            var status = CLLocationManager.Status;
+            if ((status == CLAuthorizationStatus.Authorized) || (status == CLAuthorizationStatus.AuthorizedAlways)
+                || (status == CLAuthorizationStatus.AuthorizedWhenInUse))
             {
-                // If the location service is not allowed
-                var status = CLLocationManager.Status;
-                if ((status == CLAuthorizationStatus.Denied) || (status == CLAuthorizationStatus.Restricted))
-                {
-                    element.PositionServiceAvailable = false;
-                }
-                else
-                {
-                    element.PositionServiceAvailable = true;
-                }
+                completionSource.SetResult(true);
+            }
+            else if ((status == CLAuthorizationStatus.Denied) || (status == CLAuthorizationStatus.Restricted))
+            {
+                completionSource.SetResult(false);
             }
             else
             {
-                element.PositionServiceAvailable = false;
+                // If status is not determined
+                lock (MapExRenderer.Locker)
+                {
+                    // Request location authorization
+                    if (MapExRenderer.manager == null)
+                    {
+                        MapExRenderer.manager = new CLLocationManager();
+                        MapExRenderer.manager.RequestWhenInUseAuthorization();
+                    }
+                }
+
+                // When authorization status changed
+                MapExRenderer.manager.AuthorizationChanged += (s, e) =>
+                    {
+                        if ((e.Status == CLAuthorizationStatus.Authorized)
+                            || (e.Status == CLAuthorizationStatus.AuthorizedAlways)
+                            || (e.Status == CLAuthorizationStatus.AuthorizedWhenInUse))
+                        {
+                            completionSource.SetResult(true);
+                        }
+                        else if ((e.Status == CLAuthorizationStatus.Denied) 
+                            || (e.Status == CLAuthorizationStatus.Restricted))
+                        {
+                            completionSource.SetResult(false);
+                        }
+                    };
             }
         }
 
