@@ -149,9 +149,10 @@
           VerticalOptions="FillAndExpand"
           HorizontalOptions="FillAndExpand"
           RowSpacing="0"
-          BackgroundColor="#E3E4E5"
+          BackgroundColor="{DynamicResource MainGray}"
           IsVisible="False">
       <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
@@ -196,12 +197,36 @@
                Style="{DynamicResource LoginTitleLabel}"
                Text="{local:Localize MoreOptionsTitle}"/>
       </Grid>
-    
-      <!-- View notifications command -->
+      
+      <!-- Login command -->
       <Grid Grid.Column="0"
             Grid.Row="1"
             HorizontalOptions="FillAndExpand"
-            BackgroundColor="#D9DADB">
+            IsVisible="False">
+        <Label HorizontalOptions="StartAndExpand"
+               VerticalOptions="Center"
+               Margin="20,10,0,10"
+               InputTransparent="True"
+               Style="{DynamicResource LabelTitle}"
+               Text="{local:Localize LoginCommand}"/>
+        <Grid.GestureRecognizers>
+          <TapGestureRecognizer Command="{Binding LoginCommand}"
+                                Tapped="OnCommandTapped"/>
+        </Grid.GestureRecognizers>
+        <Grid.Triggers>
+          <DataTrigger TargetType="Grid"
+                       Binding="{Binding UserLoggedIn}"
+                       Value="False">
+            <Setter Property="IsVisible" Value="True"/>
+          </DataTrigger>
+        </Grid.Triggers>
+      </Grid>
+    
+      <!-- View notifications command -->
+      <Grid Grid.Column="0"
+            Grid.Row="2"
+            HorizontalOptions="FillAndExpand"
+            IsVisible="False">
         <Label HorizontalOptions="StartAndExpand"
                VerticalOptions="Center"
                Margin="20,10,0,10"
@@ -212,13 +237,20 @@
           <TapGestureRecognizer Command="{Binding ShowNotificationsCommand}"
                                 Tapped="OnCommandTapped"/>
         </Grid.GestureRecognizers>
+        <Grid.Triggers>
+          <DataTrigger TargetType="Grid"
+                       Binding="{Binding UserLoggedIn}"
+                       Value="True">
+            <Setter Property="IsVisible" Value="True"/>
+          </DataTrigger>
+        </Grid.Triggers>
       </Grid>
       
       <!-- View reports command -->
       <Grid Grid.Column="0"
-            Grid.Row="2"
+            Grid.Row="3"
             HorizontalOptions="FillAndExpand"
-            BackgroundColor="#E3E4E5">
+            IsVisible="False">
         <Label HorizontalOptions="StartAndExpand"
                VerticalOptions="Center"
                Margin="20,10,0,10"
@@ -229,13 +261,20 @@
           <TapGestureRecognizer Command="{Binding ShowReportsCommand}"
                                 Tapped="OnCommandTapped"/>
         </Grid.GestureRecognizers>
+        <Grid.Triggers>
+          <DataTrigger TargetType="Grid"
+                       Binding="{Binding UserLoggedIn}"
+                       Value="True">
+            <Setter Property="IsVisible" Value="True"/>
+          </DataTrigger>
+        </Grid.Triggers>
       </Grid>
 
       <!-- Change password command -->
       <Grid Grid.Column="0"
-            Grid.Row="3"
+            Grid.Row="4"
             HorizontalOptions="FillAndExpand"
-            BackgroundColor="#D9DADB">
+            IsVisible="False">
         <Label HorizontalOptions="StartAndExpand"
                VerticalOptions="Center"
                Margin="20,10,0,10"
@@ -246,13 +285,20 @@
           <TapGestureRecognizer Command="{Binding ChangePasswordCommand}"
                                 Tapped="OnCommandTapped"/>
         </Grid.GestureRecognizers>
+        <Grid.Triggers>
+          <DataTrigger TargetType="Grid"
+                       Binding="{Binding CanChangePassword}"
+                       Value="True">
+            <Setter Property="IsVisible" Value="True"/>
+          </DataTrigger>
+        </Grid.Triggers>
       </Grid>
 
       <!-- Logout command -->
       <Grid Grid.Column="0"
-            Grid.Row="4"
+            Grid.Row="5"
             HorizontalOptions="FillAndExpand"
-            BackgroundColor="#E3E4E5">
+            IsVisible="False">
         <Label HorizontalOptions="StartAndExpand"
                VerticalOptions="Center"
                Margin="20,10,0,10"
@@ -263,11 +309,18 @@
           <TapGestureRecognizer Command="{Binding LogoutCommand}"
                                 Tapped="OnCommandTapped"/>
         </Grid.GestureRecognizers>
+        <Grid.Triggers>
+          <DataTrigger TargetType="Grid"
+                       Binding="{Binding UserLoggedIn}"
+                       Value="True">
+            <Setter Property="IsVisible" Value="True"/>
+          </DataTrigger>
+        </Grid.Triggers>
       </Grid>
 
       <!-- City hall logo -->
       <Image Grid.Column="0"
-             Grid.Row="6"
+             Grid.Row="7"
              Margin="0,10">
         <Image.WidthRequest>
           <OnPlatform x:TypeArguments="x:Double" iOS="175" Android="175" WinPhone="262"/>

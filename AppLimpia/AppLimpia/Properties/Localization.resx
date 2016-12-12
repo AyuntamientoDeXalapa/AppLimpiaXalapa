@@ -193,6 +193,10 @@
     <value>Entrar</value>
     <comment>The login button text</comment>
   </data>
+  <data name="LoginCommand" xml:space="preserve">
+    <value>Iniciar sesión</value>
+    <comment>The login button text on more commands screen</comment>
+  </data>
   <data name="Logout" xml:space="preserve">
     <value>Cerrar sesión</value>
     <comment>The logout button text</comment>

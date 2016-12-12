@@ -233,6 +233,15 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Iniciar sesión.
+        /// </summary>
+        internal static string LoginCommand {
+            get {
+                return ResourceManager.GetString("LoginCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cerrar sesión.
         /// </summary>
         internal static string Logout {

@@ -8,6 +8,10 @@
       <!-- iOS styles -->
       <OnPlatform.iOS>
         <ResourceDictionary>
+          <!-- Colors -->
+          <Color x:Key="MainGray">#E3E4E5</Color>
+          <Color x:Key="AccentGray">#D9DADB</Color>
+
           <!-- Global styles -->
           <Style TargetType="Label">
             <Setter Property="FontSize" Value="14"/>
@@ -70,6 +74,10 @@
       <!-- Android styles -->
       <OnPlatform.Android>
         <ResourceDictionary>
+          <!-- Colors -->
+          <Color x:Key="MainGray">#E3E4E5</Color>
+          <Color x:Key="AccentGray">#D9DADB</Color>
+
           <!-- Global styles -->
           <Style TargetType="Label">
             <Setter Property="FontSize" Value="14"/>
@@ -132,6 +140,10 @@
       <!-- Windows phone styles -->
       <OnPlatform.WinPhone>
         <ResourceDictionary>
+          <!-- Colors -->
+          <Color x:Key="MainGray">#E3E4E5</Color>
+          <Color x:Key="AccentGray">#D9DADB</Color>
+
           <!-- Global styles -->
           <Style TargetType="Label">
             <Setter Property="FontSize" Value="14"/>

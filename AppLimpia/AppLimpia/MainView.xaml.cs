@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -178,6 +179,27 @@ namespace AppLimpia
         {
             this.MoreCommands.IsVisible = !this.MoreCommands.IsVisible;
             this.BoxViewMoreCommands.IsVisible = this.MoreCommands.IsVisible;
+
+            // If more commands are hidden
+            if (!this.MoreCommands.IsVisible)
+            {
+                return;
+            }
+
+            // Color commands
+            var index = 0;
+            foreach (var command in this.MoreCommands.Children.Skip(1))
+            {
+                // If command is visible
+                if ((command is Grid) && command.IsVisible)
+                {
+                    // If row is odd
+                    index++;
+                    command.BackgroundColor = (index % 2 == 1)
+                                                  ? (Color)this.Resources["AccentGray"]
+                                                  : command.BackgroundColor = Color.Default;
+                }
+            }
         }
 
         /// <summary>

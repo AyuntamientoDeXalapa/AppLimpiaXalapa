@@ -58,6 +58,16 @@ namespace AppLimpia
         private Position mapCenterCoordinates;
 
         /// <summary>
+        /// A value indicating whether a current user is logged in.
+        /// </summary>
+        private bool userLoggedIn;
+
+        /// <summary>
+        /// A value indicating whether a current user can change password.
+        /// </summary>
+        private bool canChangePassword;
+
+        /// <summary>
         /// A value indicating whether a current user position is loaded.
         /// </summary>
         private bool havePosition;
@@ -80,6 +90,8 @@ namespace AppLimpia
         public MainViewModel()
         {
             // Initialize variables
+            this.userLoggedIn = Settings.Instance.Contains(Settings.AccessToken);
+            this.canChangePassword = Settings.Instance.Contains(Settings.UserName);
             this.havePosition = false;
             this.haveFavorites = false;
 
@@ -98,6 +110,7 @@ namespace AppLimpia
             this.ShowNotificationsCommand = new Command(this.ShowNotifications);
             this.ShowReportsCommand = new Command(this.ShowReports);
             this.ChangePasswordCommand = new Command(this.ChangePassword);
+            this.LoginCommand = new Command(this.Login);
             this.LogoutCommand = new Command(this.Logout);
         }
 
@@ -105,6 +118,38 @@ namespace AppLimpia
         /// The event that is raised when a ViewModel is reporting a error.
         /// </summary>
         public event EventHandler<ErrorReportEventArgs> ErrorReported;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether a current user is logged in.
+        /// </summary>
+        public bool UserLoggedIn
+        {
+            get
+            {
+                return this.userLoggedIn;
+            }
+
+            set
+            {
+                this.SetProperty(ref this.userLoggedIn, value, nameof(this.UserLoggedIn));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether a current user can change password.
+        /// </summary>
+        public bool CanChangePassword
+        {
+            get
+            {
+                return this.canChangePassword;
+            }
+
+            set
+            {
+                this.SetProperty(ref this.canChangePassword, value, nameof(this.CanChangePassword));
+            }
+        }
 
         /// <summary>
         /// Gets or sets the current user position.
@@ -203,6 +248,11 @@ namespace AppLimpia
         /// Gets the change password command.
         /// </summary>
         public ICommand ChangePasswordCommand { get; }
+
+        /// <summary>
+        /// Gets the login command.
+        /// </summary>
+        public ICommand LoginCommand { get; }
 
         /// <summary>
         /// Gets the logout command.
@@ -1114,6 +1164,15 @@ namespace AppLimpia
                 // TODO: Localize
                 App.DisplayAlert("Cambiar contreseña", "Solo se permita cambio de contraseña si Usted entro con email", "OK");
             }
+        }
+
+        /// <summary>
+        /// Logs in the current user.
+        /// </summary>
+        private void Login()
+        {
+            // Show login view
+            this.UserLoggedIn = !this.UserLoggedIn;
         }
 
         /// <summary>
