@@ -2435,106 +2435,91 @@ namespace AppLimpia.Droid
 			public const int icon_locate_vehicle = 2130837698;
 			
 			// aapt resource value: 0x7f0200c3
-			public const int icon_logout = 2130837699;
+			public const int icon_more_commands = 2130837699;
 			
 			// aapt resource value: 0x7f0200c4
-			public const int icon_more_commands = 2130837700;
+			public const int icon_my_location = 2130837700;
 			
 			// aapt resource value: 0x7f0200c5
-			public const int icon_my_location = 2130837701;
+			public const int is_primary = 2130837701;
 			
 			// aapt resource value: 0x7f0200c6
-			public const int icon_notifications = 2130837702;
+			public const int mr_dialog_material_background_dark = 2130837702;
 			
 			// aapt resource value: 0x7f0200c7
-			public const int icon_reports = 2130837703;
+			public const int mr_dialog_material_background_light = 2130837703;
 			
 			// aapt resource value: 0x7f0200c8
-			public const int icon_search = 2130837704;
+			public const int mr_ic_audiotrack_light = 2130837704;
 			
 			// aapt resource value: 0x7f0200c9
-			public const int icon_vehicle = 2130837705;
+			public const int mr_ic_cast_dark = 2130837705;
 			
 			// aapt resource value: 0x7f0200ca
-			public const int is_primary = 2130837706;
+			public const int mr_ic_cast_light = 2130837706;
 			
 			// aapt resource value: 0x7f0200cb
-			public const int mr_dialog_material_background_dark = 2130837707;
+			public const int mr_ic_close_dark = 2130837707;
 			
 			// aapt resource value: 0x7f0200cc
-			public const int mr_dialog_material_background_light = 2130837708;
+			public const int mr_ic_close_light = 2130837708;
 			
 			// aapt resource value: 0x7f0200cd
-			public const int mr_ic_audiotrack_light = 2130837709;
+			public const int mr_ic_media_route_connecting_mono_dark = 2130837709;
 			
 			// aapt resource value: 0x7f0200ce
-			public const int mr_ic_cast_dark = 2130837710;
+			public const int mr_ic_media_route_connecting_mono_light = 2130837710;
 			
 			// aapt resource value: 0x7f0200cf
-			public const int mr_ic_cast_light = 2130837711;
+			public const int mr_ic_media_route_mono_dark = 2130837711;
 			
 			// aapt resource value: 0x7f0200d0
-			public const int mr_ic_close_dark = 2130837712;
+			public const int mr_ic_media_route_mono_light = 2130837712;
 			
 			// aapt resource value: 0x7f0200d1
-			public const int mr_ic_close_light = 2130837713;
+			public const int mr_ic_pause_dark = 2130837713;
 			
 			// aapt resource value: 0x7f0200d2
-			public const int mr_ic_media_route_connecting_mono_dark = 2130837714;
+			public const int mr_ic_pause_light = 2130837714;
 			
 			// aapt resource value: 0x7f0200d3
-			public const int mr_ic_media_route_connecting_mono_light = 2130837715;
+			public const int mr_ic_play_dark = 2130837715;
 			
 			// aapt resource value: 0x7f0200d4
-			public const int mr_ic_media_route_mono_dark = 2130837716;
-			
-			// aapt resource value: 0x7f0200d5
-			public const int mr_ic_media_route_mono_light = 2130837717;
-			
-			// aapt resource value: 0x7f0200d6
-			public const int mr_ic_pause_dark = 2130837718;
-			
-			// aapt resource value: 0x7f0200d7
-			public const int mr_ic_pause_light = 2130837719;
-			
-			// aapt resource value: 0x7f0200d8
-			public const int mr_ic_play_dark = 2130837720;
-			
-			// aapt resource value: 0x7f0200d9
-			public const int mr_ic_play_light = 2130837721;
-			
-			// aapt resource value: 0x7f0200e4
-			public const int notification_template_icon_bg = 2130837732;
-			
-			// aapt resource value: 0x7f0200da
-			public const int pin_drop_point = 2130837722;
-			
-			// aapt resource value: 0x7f0200db
-			public const int pin_favorite = 2130837723;
-			
-			// aapt resource value: 0x7f0200dc
-			public const int pin_primary_favorite = 2130837724;
-			
-			// aapt resource value: 0x7f0200dd
-			public const int pin_vehicle = 2130837725;
-			
-			// aapt resource value: 0x7f0200de
-			public const int remove = 2130837726;
+			public const int mr_ic_play_light = 2130837716;
 			
 			// aapt resource value: 0x7f0200df
-			public const int remove_from_favorites = 2130837727;
+			public const int notification_template_icon_bg = 2130837727;
 			
-			// aapt resource value: 0x7f0200e0
-			public const int set_as_primary = 2130837728;
+			// aapt resource value: 0x7f0200d5
+			public const int pin_drop_point = 2130837717;
 			
-			// aapt resource value: 0x7f0200e1
-			public const int twitter = 2130837729;
+			// aapt resource value: 0x7f0200d6
+			public const int pin_favorite = 2130837718;
 			
-			// aapt resource value: 0x7f0200e2
-			public const int xalapa_blue = 2130837730;
+			// aapt resource value: 0x7f0200d7
+			public const int pin_primary_favorite = 2130837719;
 			
-			// aapt resource value: 0x7f0200e3
-			public const int xalapa_gray = 2130837731;
+			// aapt resource value: 0x7f0200d8
+			public const int pin_vehicle = 2130837720;
+			
+			// aapt resource value: 0x7f0200d9
+			public const int remove = 2130837721;
+			
+			// aapt resource value: 0x7f0200da
+			public const int remove_from_favorites = 2130837722;
+			
+			// aapt resource value: 0x7f0200db
+			public const int set_as_primary = 2130837723;
+			
+			// aapt resource value: 0x7f0200dc
+			public const int twitter = 2130837724;
+			
+			// aapt resource value: 0x7f0200dd
+			public const int xalapa_blue = 2130837725;
+			
+			// aapt resource value: 0x7f0200de
+			public const int xalapa_gray = 2130837726;
 			
 			static Drawable()
 			{

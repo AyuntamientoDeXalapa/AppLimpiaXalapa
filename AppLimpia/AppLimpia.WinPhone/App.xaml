@@ -30,13 +30,13 @@
                         <StackPanel Orientation="Horizontal"
                                     Margin="2">
                             <!-- Favorite indicator -->
-                            <Image Width="32"
-                                   Height="32"
+                            <Image Width="30"
+                                   Height="30"
                                    Margin="5"
                                    VerticalAlignment="Top">
                                 <Image.Style>
                                     <Style TargetType="Image">
-                                        <Setter Property="Source" Value="Assets/Icons/AddToFavorites.png"/>
+                                        <Setter Property="Source" Value="Assets/Pins/AddToFavorites.png"/>
                                     </Style>
                                 </Image.Style>
                                 <i:Interaction.Behaviors>
@@ -45,14 +45,14 @@
                                                             ComparisonCondition="Equal">
                                         <!-- ReSharper disable once Xaml.InvalidType -->
                                         <ic:ChangePropertyAction PropertyName="Source"
-                                                                 Value="Assets/Icons/RemoveFromFavorites.png"/>
+                                                                 Value="Assets/Pins/RemoveFromFavorites.png"/>
                                     </ic:DataTriggerBehavior>
                                     <ic:DataTriggerBehavior Binding="{Binding IsFavorite}"
                                                             Value="False"
                                                             ComparisonCondition="Equal">
                                         <!-- ReSharper disable once Xaml.InvalidType -->
                                         <ic:ChangePropertyAction PropertyName="Source"
-                                                                 Value="Assets/Icons/AddToFavorites.png"/>
+                                                                 Value="Assets/Pins/AddToFavorites.png"/>
                                     </ic:DataTriggerBehavior>
                                     <ic:EventTriggerBehavior EventName="Tapped">
                                         <!-- ReSharper disable once Xaml.InvalidType -->
