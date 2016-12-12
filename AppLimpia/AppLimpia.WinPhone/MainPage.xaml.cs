@@ -40,14 +40,14 @@ namespace AppLimpia.WinPhone
             // Setup factory
             AppLimpia.WebHelper.SetFactory(MainPage.HttpClientFactory);
 
-            // Setup push notifications channel
-            MainPage.GetPushToken();
-
             // ReSharper disable once UseObjectOrCollectionInitializer
             var application = new AppLimpia.App();
             application.CurrentCultureInfo = CultureInfo.CurrentUICulture;
             application.DeviceId = $"{Xamarin.Forms.Device.OS}:{MainPage.GetDeviceId()}";
             application.LaunchUriDelegate = this.LaunchUri;
+
+            // Setup push notifications channel
+            MainPage.GetPushToken();
 
             // Load the current application
             this.LoadApplication(application);

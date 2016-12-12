@@ -45,10 +45,6 @@ namespace AppLimpia.Droid
             AppDomain.CurrentDomain.UnhandledException += MainActivity.CurrentDomainOnUnhandledException;
             this.DisplayCrashReport();
 
-            // Register for GCM
-            var intent = new Intent(this, typeof(RegistrationIntentService));
-            this.StartService(intent);
-
             // Get the device id
             var deviceId = SecureSettings.GetString(this.ContentResolver, SecureSettings.AndroidId);
 
@@ -58,6 +54,10 @@ namespace AppLimpia.Droid
             application.CurrentCultureInfo = MainActivity.GetCurrentCultureInfo();
             application.DeviceId = $"{Xamarin.Forms.Device.OS}:{deviceId}";
             application.LaunchUriDelegate = this.LaunchUri;
+
+            // Register for GCM
+            var intent = new Intent(this, typeof(RegistrationIntentService));
+            this.StartService(intent);
 
             // Prepare the current intent
             this.LoadApplication(application);

@@ -133,7 +133,7 @@ namespace AppLimpia
         /// <returns>The change push token URI.</returns>
         public static UriMethodPair GetChangePushTokenUri()
         {
-            return new UriMethodPair(new Uri($"{Uris.Server}api/sesiones/change"), new HttpMethod("PATCH"));
+            return new UriMethodPair(new Uri($"{Uris.Server}api/sesiones/this"), new HttpMethod("PATCH"));
         }
 
         /// <summary>

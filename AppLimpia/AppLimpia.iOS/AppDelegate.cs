@@ -54,13 +54,6 @@ namespace AppLimpia.iOS
             AppDomain.CurrentDomain.UnhandledException += AppDelegate.CurrentDomainOnUnhandledException;
             AppDelegate.DisplayCrashReport();
 
-            // Request notification permission
-            var pushSettings =
-                UIUserNotificationSettings.GetSettingsForTypes(
-                    UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
-                    new NSSet());
-            UIApplication.SharedApplication.RegisterUserNotificationSettings(pushSettings);
-
             // Get the device identifier
 #if !TARGET_IPHONE_SIMULATOR
             var deviceUuid = UIDevice.CurrentDevice.IdentifierForVendor;
@@ -75,6 +68,7 @@ namespace AppLimpia.iOS
             application.DeviceId = $"{Xamarin.Forms.Device.OS}:{deviceUuid.AsString()}";
             application.LaunchUriDelegate = this.LaunchUri;
 
+            // If launched with the URI
             if (options != null)
             {
                 NSObject obj;
@@ -82,9 +76,17 @@ namespace AppLimpia.iOS
                 var uri = obj as NSUrl;
                 if (uri != null)
                 {
+                    // Save the URI
                     this.launchedUri = new Uri(uri.ToString());
                 }
             }
+
+            // Request notification permission
+            var pushSettings =
+                UIUserNotificationSettings.GetSettingsForTypes(
+                    UIUserNotificationType.Alert | UIUserNotificationType.Badge | UIUserNotificationType.Sound,
+                    new NSSet());
+            UIApplication.SharedApplication.RegisterUserNotificationSettings(pushSettings);
 
             // Load the current application
             this.LoadApplication(application);

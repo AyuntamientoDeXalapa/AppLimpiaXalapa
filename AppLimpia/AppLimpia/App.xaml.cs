@@ -140,26 +140,7 @@ namespace AppLimpia
         /// <returns>A <see cref="Task"/> representing an alert dialog.</returns>
         internal static Task DisplayAlert(string title, string message, string cancel)
         {
-            // If alert is not shown
-            if (!App.alertShown)
-            {
-                // Display alert to the user
-                try
-                {
-                    App.alertShown = true;
-                    var task = Application.Current.MainPage.DisplayAlert(title, message, cancel);
-                    task.ContinueWith(_ => App.alertShown = false);
-                    return task;
-                }
-                catch (Exception)
-                {
-                    App.alertShown = false;
-                    throw;
-                }
-            }
-
-            Debug.WriteLine("DisplayAlert(\"{0}\", \"{1}\") called twice", title, message);
-            return null;
+            return App.DisplayAlert(title, message, null, cancel);
         }
 
         /// <summary>
@@ -221,9 +202,10 @@ namespace AppLimpia
             if (Settings.Instance.Contains(Settings.AccessToken))
             {
                 // Prepare the data to be send to the server
+                var deviceId = instance?.DeviceId ?? string.Empty;
                 var request = new Json.JsonObject
                                   {
-                                          { "username", Settings.Instance.GetValue(Settings.UserName, string.Empty) },
+                                          { "device", deviceId },
                                           { "push_token", pushToken }
                                   };
 
