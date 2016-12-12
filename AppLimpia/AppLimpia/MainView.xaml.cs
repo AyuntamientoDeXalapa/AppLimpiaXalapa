@@ -197,7 +197,7 @@ namespace AppLimpia
                     index++;
                     command.BackgroundColor = (index % 2 == 1)
                                                   ? (Color)this.Resources["AccentGray"]
-                                                  : command.BackgroundColor = Color.Default;
+                                                  : (Color)this.Resources["MainGray"];
                 }
             }
         }

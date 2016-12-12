@@ -578,7 +578,7 @@ namespace AppLimpia
                         var newToken = await WebHelper.RefreshToken(httpClient);
 
                         // Prepare the modified request
-                        using (var newRequest = new HttpRequestMessage(request.Method, request.RequestUri))
+                        using (var newRequest = new HttpRequestMessage(request.Method, WebHelper.AppendNonce(request.RequestUri)))
                         {
                             newRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newToken);
                             newRequest.Content = request.Content;
@@ -727,7 +727,7 @@ namespace AppLimpia
                                                 { "grant_type", "refresh_token" },
                                                 { "refresh_token", Settings.Instance.GetValue(Settings.RefreshToken, string.Empty) }
                                         };
-            using (var request = new HttpRequestMessage(endpoint.Method, endpoint.Uri))
+            using (var request = new HttpRequestMessage(endpoint.Method, WebHelper.AppendNonce(endpoint.Uri)))
             {
                 // Setup the request
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -785,7 +785,17 @@ namespace AppLimpia
                     query = query.Substring(1);
                 }
 
-                builder.Query = query + "&nonce=" + Guid.NewGuid();
+                // If query already contain nonce
+                var index = query.IndexOf("nonce=", StringComparison.Ordinal);
+                if (index >= 0)
+                {
+                    query = query.Substring(0, index);
+                    builder.Query = query + "nonce=" + Guid.NewGuid();
+                }
+                else
+                {
+                    builder.Query = query + "&nonce=" + Guid.NewGuid();
+                }
             }
 
             // Return the URI with nonce
