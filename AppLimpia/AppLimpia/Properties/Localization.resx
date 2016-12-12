@@ -157,9 +157,21 @@
     <value>El servidor no ha regresado los datos de acceso al sistema</value>
     <comment>The server did not return the access data error text</comment>
   </data>
+  <data name="ErrorNotConnected" xml:space="preserve">
+    <value>No se pudo conectar con el servidor. Por favor verifica que esta conectado al Internet o intenta más tarde</value>
+    <comment>The not connected to the internet error text</comment>
+  </data>
   <data name="ErrorNotImplemented" xml:space="preserve">
     <value>Esta función todavia no esta disponible</value>
     <comment>The not implemented error text</comment>
+  </data>
+  <data name="ErrorUnauthorized" xml:space="preserve">
+    <value>Esta función requiere propia authorización</value>
+    <comment>The unauthorized error text</comment>
+  </data>
+  <data name="ErrorUnknownServerError" xml:space="preserve">
+    <value>El servidor marco el error pero no ha regresado ninguna detalle</value>
+    <comment>The unknown server error text</comment>
   </data>
   <data name="FavoritesTitle" xml:space="preserve">
     <value>Favoritos</value>

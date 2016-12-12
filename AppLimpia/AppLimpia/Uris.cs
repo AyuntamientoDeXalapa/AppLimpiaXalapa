@@ -146,6 +146,15 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the refresh access token URI.
+        /// </summary>
+        /// <returns>The refresh access token URI.</returns>
+        public static UriMethodPair GetRefreshTokenUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/tokens"), HttpMethod.Post);
+        }
+
+        /// <summary>
         /// Represents the URI and method pair.
         /// </summary>
         internal sealed class UriMethodPair

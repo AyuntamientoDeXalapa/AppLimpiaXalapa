@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using AppLimpia.Json;
+using AppLimpia.Properties;
 
 namespace AppLimpia
 {
@@ -17,9 +18,19 @@ namespace AppLimpia
     internal static class WebHelper
     {
         /// <summary>
+        /// The lock object provided for synchronous access.
+        /// </summary>
+        private static readonly object Locker = new object();
+
+        /// <summary>
         /// The factory to use for creating HttpClient instances.
         /// </summary>
         private static Func<HttpClient> factory = () => new HttpClient();
+
+        /// <summary>
+        /// The task representing the refresh operation.
+        /// </summary>
+        private static TaskCompletionSource<string> refreshOperation;
 
         /// <summary>
         /// Parses the Hypertext Application Language collection received from the server.
@@ -440,7 +451,7 @@ namespace AppLimpia
             var uri = WebHelper.AppendNonce(uriMethod.Uri);
 
             // Get the task
-            var task = WebHelper.SendAsync(uri, uriMethod.Method, content, null);
+            var task = WebHelper.SendAsync(uri, uriMethod.Method, content, timeout);
 
             // Get the task scheduler
             TaskScheduler scheduler;
@@ -556,60 +567,199 @@ namespace AppLimpia
             {
                 // Send the request to the server
                 var socketTimeout = timeoutValue.Add(TimeSpan.FromSeconds(5));
-                var response = await Task.Run(
-                                   () =>
-                                       {
-                                           var cancelSource = new CancellationTokenSource();
-                                           var requestTask = httpClient.SendAsync(request, cancelSource.Token);
-
-                                           // If task timeout
-                                           if (!requestTask.Wait(socketTimeout))
-                                           {
-                                               // Cancel the task
-                                               // TODO: Localize
-                                               cancelSource.Cancel();
-                                               throw new TimeoutException("No connectivity");
-                                           }
-
-                                           // Return the result
-                                           return requestTask.GetAwaiter().GetResult();
-                                       }).ConfigureAwait(false);
-                using (response)
+                var response = await WebHelper.SendRequest(httpClient, request, socketTimeout);
+                try
                 {
-                    // If response is a error
-                    if (!response.IsSuccessStatusCode)
+                    // If not authorized exception and refresh token exists
+                    if ((response.StatusCode == HttpStatusCode.Unauthorized) && 
+                        !string.IsNullOrEmpty(Settings.Instance.GetValue(Settings.RefreshToken, string.Empty)))
                     {
-                        // Parse the returned error description
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine("Error ({0}): {1}", response.StatusCode, responseContent);
-                        var problem = Json.Json.Read(responseContent);
+                        // Refresh the access token
+                        var newToken = await WebHelper.RefreshToken(httpClient);
 
-                        // Read error description
-                        var title = problem.GetItemOrDefault("title").GetStringValueOrDefault(null);
-                        var detail = problem.GetItemOrDefault("detail").GetStringValueOrDefault(null);
-                        throw new RemoteServerException(title, detail);
-                    }
-
-                    // Parse success error response
-                    {
-                        // If response body does not have content
-                        if (response.StatusCode == HttpStatusCode.NoContent)
+                        // Prepare the modified request
+                        using (var newRequest = new HttpRequestMessage(request.Method, request.RequestUri))
                         {
-                            return null;
-                        }
+                            newRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", newToken);
+                            newRequest.Content = request.Content;
+                            foreach (var accepts in request.Headers.Accept)
+                            {
+                                newRequest.Headers.Accept.Add(accepts);
+                            }
 
-                        // Parse the returned JSON data
-                        var responseContent = await response.Content.ReadAsStringAsync();
-                        Debug.WriteLine("Response: " + responseContent);
-                        return await Task.Run(() => Json.Json.Read(responseContent));
+                            // Send request with new authorization
+                            response.Dispose();
+                            response = await WebHelper.SendRequest(httpClient, newRequest, socketTimeout);
+                        }
                     }
+
+                    // Parse the server response
+                    return await WebHelper.ParseResponse(response);
+                }
+                finally
+                {
+                    response.Dispose();
                 }
             }
             catch (Exception ex) when ((ex is WebException) || (ex is HttpRequestException))
             {
                 // Response cannot be received
-                // TODO: Localize
-                throw new TimeoutException("No connectivity", ex);
+                throw new TimeoutException(Localization.ErrorNotConnected, ex);
+            }
+        }
+
+        /// <summary>
+        /// Send request to the server.
+        /// </summary>
+        /// <param name="httpClient">The <see cref="HttpClient"/> to permorm the send operation.</param>
+        /// <param name="request">The <see cref="HttpRequestMessage"/> to send to the server.</param>
+        /// <param name="timeout">The timeout for the operation.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        private static async Task<HttpResponseMessage> SendRequest(HttpClient httpClient, HttpRequestMessage request, TimeSpan timeout)
+        {
+            return await Task.Run(
+                () =>
+                {
+                    // Send request to the server
+                    var cancelSource = new CancellationTokenSource();
+                    var requestTask = httpClient.SendAsync(request, cancelSource.Token);
+
+                    // If task timeout
+                    if (!requestTask.Wait(timeout))
+                    {
+                        // Cancel the task
+                        cancelSource.Cancel();
+                        throw new TimeoutException(Localization.ErrorNotConnected);
+                    }
+
+                    // Return the result
+                    return requestTask.GetAwaiter().GetResult();
+                }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Parses the response received from the server.
+        /// </summary>
+        /// <param name="response">The response received from the server.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
+        private static async Task<JsonValue> ParseResponse(HttpResponseMessage response)
+        {
+            // If response is a error
+            if (!response.IsSuccessStatusCode)
+            {
+                // Parse the returned error description
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine("Error ({0}): {1}", response.StatusCode, responseContent);
+                var problem = Json.Json.Read(responseContent);
+
+                // Read error description
+                var title = problem.GetItemOrDefault("title").GetStringValueOrDefault(null);
+                var detail = problem.GetItemOrDefault("detail").GetStringValueOrDefault(null);
+                throw new RemoteServerException(response.StatusCode, title, detail);
+            }
+
+            // Parse success error response
+            {
+                // If response body does not have content
+                if (response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    return null;
+                }
+
+                // Parse the returned JSON data
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine("Response: " + responseContent);
+                return await Task.Run(() => Json.Json.Read(responseContent));
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the expired access token.
+        /// </summary>
+        /// <param name="httpClient">The <see cref="HttpClient"/> to permorm the send operation.</param>
+        /// <returns>A task that represents the asynchronous refresh operation.</returns>
+        private static Task<string> RefreshToken(HttpClient httpClient)
+        {
+            // Start the token ferfesh operation
+            lock (WebHelper.Locker)
+            {
+                if (WebHelper.refreshOperation == null)
+                {
+                    WebHelper.refreshOperation = new TaskCompletionSource<string>();
+                    var task = WebHelper.InternalRefreshToken(httpClient);
+
+                    // Return the refreshed token
+                    task.ContinueWith(
+                        t =>
+                        {
+                            // Parse refresh operation task result
+                            if (t.IsFaulted)
+                            {
+                                Debug.Assert(t.Exception?.InnerExceptions != null, "Task is not faulted");
+                                WebHelper.refreshOperation.SetException(t.Exception?.InnerExceptions);
+                            }
+                            else
+                            {
+                                WebHelper.refreshOperation.SetResult(t.Result);
+                            }
+
+                            // Remove reference
+                            WebHelper.refreshOperation = null;
+                        });
+                }
+            }
+
+            // Return the refresh operation
+            return WebHelper.refreshOperation.Task;
+        }
+
+        /// <summary>
+        /// Refreshes the expired access token.
+        /// </summary>
+        /// <param name="httpClient">The <see cref="HttpClient"/> to perform the send operation.</param>
+        /// <returns>A task that represents the asynchronous refresh operation.</returns>
+        private static async Task<string> InternalRefreshToken(HttpClient httpClient)
+        {
+            // Prepare the refresh request
+            var endpoint = Uris.GetRefreshTokenUri();
+            var refreshRequest = new JsonObject
+                                        {
+                                                { "grant_type", "refresh_token" },
+                                                { "refresh_token", Settings.Instance.GetValue(Settings.RefreshToken, string.Empty) }
+                                        };
+            using (var request = new HttpRequestMessage(endpoint.Method, endpoint.Uri))
+            {
+                // Setup the request
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                request.Content = refreshRequest.AsHttpContent();
+
+                // Send the request to the server
+                var socketTimeout = httpClient.Timeout.Add(TimeSpan.FromSeconds(5));
+                var response = await WebHelper.SendRequest(httpClient, request, socketTimeout);
+                using (response)
+                {
+                    // Parse the server response
+                    var responseContent = await WebHelper.ParseResponse(response);
+
+                    // Parse the new access token data
+                    var accessToken = responseContent.GetItemOrDefault("access_token").GetStringValueOrDefault(string.Empty);
+                    var expiresIn = responseContent.GetItemOrDefault("expires_in").GetIntValueOrDefault(24 * 60 * 60);
+
+                    // If all of the fields are returned
+                    if (!string.IsNullOrEmpty(accessToken))
+                    {
+                        // Update access token
+                        Settings.Instance.SetValue(Settings.AccessToken, accessToken);
+                        Settings.Instance.SetValue(Settings.AccessTokenExpires, DateTime.UtcNow.AddSeconds(expiresIn));
+                        return accessToken;
+                    }
+
+                    // Report error
+                    throw new RemoteServerException(
+                              HttpStatusCode.Unauthorized,
+                              Localization.ErrorDialogTitle,
+                              Localization.ErrorUnauthorized);
+                }
             }
         }
 
@@ -662,11 +812,10 @@ namespace AppLimpia
                     // If the error is a not connected error
                     if ((ex is TimeoutException) || (ex is TaskCanceledException))
                     {
-                        // TODO: Localize
                         App.DisplayAlert(
-                            "Error",
-                            "No se pudo conectar con el servidor. Por favor verifica que esta conectado al Internet o intenta más tarde.",
-                            "OK");
+                            Localization.ErrorDialogTitle,
+                            Localization.ErrorNotConnected,
+                            Localization.ErrorDialogDismiss);
                         Debug.WriteLine(ex.ToString());
                     }
                     else if (ex is RemoteServerException)
@@ -677,8 +826,10 @@ namespace AppLimpia
                     }
                     else
                     {
-                        // TODO: Localize
-                        App.DisplayAlert("Error", "El servidor marco el error pero no ha regresado ninguna detalle.", "OK");
+                        App.DisplayAlert(
+                            Localization.ErrorDialogTitle,
+                            Localization.ErrorUnknownServerError,
+                            Localization.ErrorDialogDismiss);
                         Debug.WriteLine(ex.ToString());
                     }
                 }

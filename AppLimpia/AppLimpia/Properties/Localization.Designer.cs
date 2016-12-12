@@ -152,11 +152,38 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No se pudo conectar con el servidor. Por favor verifica que esta conectado al Internet o intenta más tarde.
+        /// </summary>
+        internal static string ErrorNotConnected {
+            get {
+                return ResourceManager.GetString("ErrorNotConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Esta función todavia no esta disponible.
         /// </summary>
         internal static string ErrorNotImplemented {
             get {
                 return ResourceManager.GetString("ErrorNotImplemented", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Esta función requiere propia authorización.
+        /// </summary>
+        internal static string ErrorUnauthorized {
+            get {
+                return ResourceManager.GetString("ErrorUnauthorized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El servidor marco el error pero no ha regresado ninguna detalle.
+        /// </summary>
+        internal static string ErrorUnknownServerError {
+            get {
+                return ResourceManager.GetString("ErrorUnknownServerError", resourceCulture);
             }
         }
         

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace AppLimpia
 {
@@ -10,13 +11,20 @@ namespace AppLimpia
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteServerException"/> class.
         /// </summary>
+        /// <param name="statusCode">The HTTP status code.</param>
         /// <param name="title">The error title.</param>
         /// <param name="message">The error message.</param>
-        public RemoteServerException(string title, string message)
+        public RemoteServerException(HttpStatusCode statusCode, string title, string message)
             : base(message)
         {
+            this.StatusCode = statusCode;
             this.Title = title;
         }
+
+        /// <summary>
+        /// Gets the HTTP status code.
+        /// </summary>
+        public HttpStatusCode StatusCode { get; }
 
         /// <summary>
         /// Gets the error title.
