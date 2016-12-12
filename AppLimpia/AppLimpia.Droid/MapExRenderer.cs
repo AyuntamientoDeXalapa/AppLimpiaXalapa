@@ -244,11 +244,11 @@ namespace AppLimpia.Droid
                     Android.Locations.LocationManager;
             if (manager == null)
             {
-                completionSource.SetCanceled();
+                completionSource.TrySetCanceled();
                 return;
             }
 
-            completionSource.SetResult(manager.IsProviderEnabled(Android.Locations.LocationManager.GpsProvider));
+            completionSource.TrySetResult(manager.IsProviderEnabled(Android.Locations.LocationManager.GpsProvider));
         }
 
         /// <summary>

@@ -115,11 +115,11 @@ namespace AppLimpia.iOS
             if ((status == CLAuthorizationStatus.Authorized) || (status == CLAuthorizationStatus.AuthorizedAlways)
                 || (status == CLAuthorizationStatus.AuthorizedWhenInUse))
             {
-                completionSource.SetResult(true);
+                completionSource.TrySetResult(true);
             }
             else if ((status == CLAuthorizationStatus.Denied) || (status == CLAuthorizationStatus.Restricted))
             {
-                completionSource.SetResult(false);
+                completionSource.TrySetResult(false);
             }
             else
             {
@@ -141,12 +141,12 @@ namespace AppLimpia.iOS
                             || (e.Status == CLAuthorizationStatus.AuthorizedAlways)
                             || (e.Status == CLAuthorizationStatus.AuthorizedWhenInUse))
                         {
-                            completionSource.SetResult(true);
+                            completionSource.TrySetResult(true);
                         }
                         else if ((e.Status == CLAuthorizationStatus.Denied) 
                             || (e.Status == CLAuthorizationStatus.Restricted))
                         {
-                            completionSource.SetResult(false);
+                            completionSource.TrySetResult(false);
                         }
                     };
             }

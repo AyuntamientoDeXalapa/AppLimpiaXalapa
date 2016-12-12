@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -127,7 +126,7 @@ namespace AppLimpia.WinPhone
         {
             // Get the location service
             var locationService = new Geolocator();
-            completionSource.SetResult(
+            completionSource.TrySetResult(
                 (locationService.LocationStatus != PositionStatus.NotAvailable)
                 && (locationService.LocationStatus != PositionStatus.Disabled));
         }
