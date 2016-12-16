@@ -1183,6 +1183,31 @@ namespace AppLimpia
             // Deactivate current view model
             this.IsActive = false;
 
+            // Prepare the data to be send to the server
+            var deviceId = ((App)Application.Current).DeviceId;
+            var request = new Json.JsonObject
+                                {
+                                        { "device", deviceId }
+                                };
+
+            // Send request to the server
+            this.IsBusy = true;
+            WebHelper.SendAsync(
+                Uris.GetLogoutUri(),
+                request.AsHttpContent(),
+                this.ProcessLogoutResult,
+                () => this.IsBusy = false);
+        }
+
+        /// <summary>
+        /// Processes the logout result returned by the server.
+        /// </summary>
+        /// <param name="result">The logout result.</param>
+        private void ProcessLogoutResult(JsonValue result)
+        {
+            // End the logout process
+            this.IsBusy = false;
+
             // Logout user
             Settings.Instance.Clear();
 

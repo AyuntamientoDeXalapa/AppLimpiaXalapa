@@ -668,6 +668,7 @@ namespace AppLimpia
 
                 // Parse the returned JSON data
                 var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine("From: " + response.RequestMessage.RequestUri);
                 Debug.WriteLine("Response: " + responseContent);
                 return await Task.Run(() => Json.Json.Read(responseContent));
             }

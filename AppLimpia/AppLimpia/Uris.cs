@@ -137,6 +137,15 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the logout URI.
+        /// </summary>
+        /// <returns>The logout URI.</returns>
+        public static UriMethodPair GetLogoutUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/sesiones"), HttpMethod.Delete);
+        }
+
+        /// <summary>
         /// Gets the submit report URI.
         /// </summary>
         /// <returns>The submit report URI.</returns>
