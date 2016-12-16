@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -571,8 +572,8 @@ namespace AppLimpia
                 try
                 {
                     // If not authorized exception and refresh token exists
-                    if ((response.StatusCode == HttpStatusCode.Unauthorized) && 
-                        !string.IsNullOrEmpty(Settings.Instance.GetValue(Settings.RefreshToken, string.Empty)))
+                    if ((response.StatusCode == HttpStatusCode.Unauthorized)
+                        && !string.IsNullOrEmpty(Settings.Instance.GetValue(Settings.RefreshToken, string.Empty)))
                     {
                         // Refresh the access token
                         var newToken = await WebHelper.RefreshToken(httpClient);
@@ -615,26 +616,38 @@ namespace AppLimpia
         /// <param name="request">The <see cref="HttpRequestMessage"/> to send to the server.</param>
         /// <param name="timeout">The timeout for the operation.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        private static async Task<HttpResponseMessage> SendRequest(HttpClient httpClient, HttpRequestMessage request, TimeSpan timeout)
+        private static async Task<HttpResponseMessage> SendRequest(
+            HttpClient httpClient,
+            HttpRequestMessage request,
+            TimeSpan timeout)
         {
             return await Task.Run(
-                () =>
-                {
-                    // Send request to the server
-                    var cancelSource = new CancellationTokenSource();
-                    var requestTask = httpClient.SendAsync(request, cancelSource.Token);
+                       () =>
+                           {
+                               // Send request to the server
+                               var cancelSource = new CancellationTokenSource();
+                               var requestTask = httpClient.SendAsync(request, cancelSource.Token);
 
-                    // If task timeout
-                    if (!requestTask.Wait(timeout))
-                    {
-                        // Cancel the task
-                        cancelSource.Cancel();
-                        throw new TimeoutException(Localization.ErrorNotConnected);
-                    }
+                               // If task fails an aggregate exception is thrown
+                               try
+                               {
+                                   // If task timeout
+                                   if (!requestTask.Wait(timeout))
+                                   {
+                                       // Cancel the task
+                                       cancelSource.Cancel();
+                                       throw new TimeoutException(Localization.ErrorNotConnected);
+                                   }
+                               }
+                               catch (AggregateException ex)
+                               {
+                                   // Get the first exception from an aggregate
+                                   throw ex.InnerExceptions.First();
+                               }
 
-                    // Return the result
-                    return requestTask.GetAwaiter().GetResult();
-                }).ConfigureAwait(false);
+                               // Return the result
+                               return requestTask.GetAwaiter().GetResult();
+                           }).ConfigureAwait(false);
         }
 
         /// <summary>
