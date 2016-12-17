@@ -37,6 +37,8 @@ namespace AppLimpia.Droid
         {
             // Launch the application on notification click
             var intent = new Intent(this, typeof(MainActivity));
+            intent.SetAction(Intent.ActionView);
+            intent.PutExtra(MainActivity.StartView, MainActivity.NotificationsView);
             intent.AddFlags(ActivityFlags.ClearTop);
             var pendingIntent = PendingIntent.GetActivity(this, 0, intent, PendingIntentFlags.OneShot);
 

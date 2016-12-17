@@ -27,6 +27,16 @@ namespace AppLimpia.Droid
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
         /// <summary>
+        /// The view to show at the application start.
+        /// </summary>
+        internal const string StartView = "StartView";
+
+        /// <summary>
+        /// The notification view identifier.
+        /// </summary>
+        internal const string NotificationsView = "NotificationsView";
+
+        /// <summary>
         /// Handles the creation of the current <see cref="MainActivity"/>.
         /// </summary>
         /// <param name="bundle">The saved instance state.</param>
@@ -109,10 +119,14 @@ namespace AppLimpia.Droid
             // If the current intent is a view action
             if (intent.Action.Equals(Intent.ActionView))
             {
-                // Resume the login process
-                var loginViewModel = application.MainPage?.BindingContext as Login.LoginViewModel;
-                var uri = new Uri(intent.DataString);
-                loginViewModel?.ResumeLoginWithCommand?.Execute(uri);
+                // If intent have data
+                if (intent.Data != null)
+                {
+                    // Resume the login process
+                    var loginViewModel = application.MainPage?.BindingContext as Login.LoginViewModel;
+                    var uri = new Uri(intent.DataString);
+                    loginViewModel?.ResumeLoginWithCommand?.Execute(uri);
+                }
             }
         }
 
