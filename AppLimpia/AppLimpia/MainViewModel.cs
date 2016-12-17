@@ -1190,13 +1190,21 @@ namespace AppLimpia
                                         { "device", deviceId }
                                 };
 
+            // Setup error handlers
+            // - If session is already closed by the server, close the sesion on the client
+            var handlers = new Dictionary<System.Net.HttpStatusCode, Action>
+                               {
+                                       { System.Net.HttpStatusCode.Unauthorized, () => this.ProcessLogoutResult(null) }
+                               };
+
             // Send request to the server
             this.IsBusy = true;
             WebHelper.SendAsync(
                 Uris.GetLogoutUri(),
                 request.AsHttpContent(),
                 this.ProcessLogoutResult,
-                () => this.IsBusy = false);
+                () => this.IsBusy = false,
+                handlers);
         }
 
         /// <summary>

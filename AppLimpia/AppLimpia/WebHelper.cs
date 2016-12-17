@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -108,7 +109,7 @@ namespace AppLimpia
 
             // Setup error handling
             var continuation = task.ContinueWith(
-                WebHelper.ParseTaskError,
+                t => WebHelper.ParseTaskError(t, null),
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);
@@ -163,7 +164,7 @@ namespace AppLimpia
 
             // Setup error handling
             var continuation = task.ContinueWith(
-                WebHelper.ParseTaskError,
+                t => WebHelper.ParseTaskError(t, null),
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);
@@ -218,7 +219,7 @@ namespace AppLimpia
 
             // Setup error handling
             var continuation = task.ContinueWith(
-                WebHelper.ParseTaskError,
+                t => WebHelper.ParseTaskError(t, null),
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);
@@ -283,7 +284,7 @@ namespace AppLimpia
 
             // Setup error handling
             var continuation = task.ContinueWith(
-                WebHelper.ParseTaskError,
+                t => WebHelper.ParseTaskError(t, null),
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnFaulted,
                 scheduler);
@@ -440,12 +441,14 @@ namespace AppLimpia
         /// <param name="content">The content to send to the server.</param>
         /// <param name="action">An action to be performed on successful remote operation.</param>
         /// <param name="failAction">An action to be executed on failed request.</param>
+        /// <param name="errorHandlers">Error handlers for different types of server errors.</param>
         /// <param name="timeout">An timeout for the operation.</param>
         public static void SendAsync(
             Uris.UriMethodPair uriMethod,
             HttpContent content,
             Action<JsonValue> action,
             Action failAction = null,
+            Dictionary<HttpStatusCode, Action> errorHandlers = null,
             TimeSpan? timeout = null)
         {
             // Add the nonce to negate caching
@@ -479,7 +482,7 @@ namespace AppLimpia
             if (setupContinuation)
             {
                 continuation = task.ContinueWith(
-                    WebHelper.ParseTaskError,
+                    t => WebHelper.ParseTaskError(t, errorHandlers),
                     default(CancellationToken),
                     TaskContinuationOptions.OnlyOnFaulted,
                     scheduler);
@@ -823,7 +826,8 @@ namespace AppLimpia
         /// Parses the task that have failed to execute.
         /// </summary>
         /// <param name="task">A task that represents the failed asynchronous operation.</param>
-        private static void ParseTaskError(Task task)
+        /// <param name="errorHandlers">Error handlers for different types of server errors.</param>
+        private static void ParseTaskError(Task task, Dictionary<HttpStatusCode, Action> errorHandlers)
         {
             // The task should be faulted
             System.Diagnostics.Debug.Assert(task.Status == TaskStatus.Faulted, "Asynchronous task must be faulted.");
@@ -844,9 +848,17 @@ namespace AppLimpia
                     }
                     else if (ex is RemoteServerException)
                     {
+                        // If handler for the current error is setup
                         var exception = (RemoteServerException)ex;
-                        App.DisplayAlert(exception.Title, exception.Message, "OK");
-                        Debug.WriteLine($"{exception.Title}: {exception.Message}");
+                        if (errorHandlers?.ContainsKey(exception.StatusCode) == true)
+                        {
+                            errorHandlers[exception.StatusCode].Invoke();
+                        }
+                        else
+                        {
+                            App.DisplayAlert(exception.Title, exception.Message, "OK");
+                            Debug.WriteLine($"{exception.Title}: {exception.Message}");
+                        }
                     }
                     else
                     {
