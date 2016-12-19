@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 using AppLimpia.Json;
@@ -57,7 +55,7 @@ namespace AppLimpia
         public ObservableCollection<FavoriteWrapper> Favorites { get; }
 
         /// <summary>
-        /// Gets or sets the primary favorite.
+        /// Gets the primary favorite.
         /// </summary>
         public FavoriteWrapper PrimaryFavorite
         {
@@ -66,7 +64,7 @@ namespace AppLimpia
                 return this.primaryFavorite;
             }
 
-            set
+            private set
             {
                 // Set the current primary favorite as not favorite
                 if (this.primaryFavorite != null)
@@ -268,49 +266,6 @@ namespace AppLimpia
                             newPrimary.IsPrimary = true;
                         }
                     }
-                }
-            }
-
-            /// <summary>
-            /// Parses the server data response.
-            /// </summary>
-            /// <param name="task">A task that represents the asynchronous server operation.</param>
-            private Json.JsonValue ParseServerData(Task<Json.JsonValue> task)
-            {
-                // Parse the server response
-                // NOTE: If the server data was not retrieved the exception will be propagated
-                this.ParseJson(task.Result);
-                return task.Result;
-            }
-
-            /// <summary>
-            /// Parses the task that have failed to execute.
-            /// </summary>
-            /// <param name="task">A task that represents the failed asynchronous operation.</param>
-            private void ParseTaskError(Task task)
-            {
-                // The task should be faulted
-                System.Diagnostics.Debug.Assert(task.Status == TaskStatus.Faulted, "Asynchronous task must be faulted.");
-
-                // Report the error to the user
-                foreach (var ex in task.Exception.Flatten().InnerExceptions)
-                {
-                    App.DisplayAlert("Error", ex.ToString(), "OK");
-                }
-            }
-
-            /// <summary>
-            /// Parsed the data returned by the server.
-            /// </summary>
-            /// <param name="json">The data in JSON format.</param>
-            private void ParseJson(Json.JsonValue json)
-            {
-                // If the result is an error
-                var error = json.GetItemOrDefault("error").GetStringValueOrDefault(string.Empty);
-                if (!string.IsNullOrEmpty(error))
-                {
-                    // Report error to application
-                    throw new Exception(error);
                 }
             }
         }

@@ -310,6 +310,49 @@ namespace AppLimpia
             }
 
             // Process each drop point in the collection
+            this.ProcessDropPointData(collection);
+
+            // Update status
+            this.UpdateStatus(this.havePosition, true);
+        }
+
+        /// <summary>
+        /// Seaches the nearest drop points near the user position.
+        /// </summary>
+        private void FindNearestDropPoints()
+        {
+            // Send request to the server
+            System.Diagnostics.Debug.Assert(this.havePosition, "Mush have user position");
+            WebHelper.SendAsync(
+                Uris.GetFindNearestDropPointsUri(this.userPosition.Longitude, this.userPosition.Latitude, 0.2),
+                null,
+                this.ProcessFindNearestDropPointsResult);
+        }
+
+        /// <summary>
+        /// Processes the search for the nearest points result returned by the server.
+        /// </summary>
+        /// <param name="result">The search result.</param>
+        private void ProcessFindNearestDropPointsResult(JsonValue result)
+        {
+            // Get the embedded data
+            var collection = result.GetItemOrDefault("_embedded").GetItemOrDefault("montoneras") as JsonArray;
+            if (collection == null)
+            {
+                return;
+            }
+
+            // Process each drop point in the collection
+            this.ProcessDropPointData(collection);
+        }
+
+        /// <summary>
+        /// Processes the drop points data received from the server.
+        /// </summary>
+        /// <param name="collection">The drop points data received from the server.</param>
+        private void ProcessDropPointData(JsonArray collection)
+        {
+            // Process each drop point in the collection
             foreach (var item in collection)
             {
                 // Get the id and subtype properties
@@ -366,94 +409,6 @@ namespace AppLimpia
                         this.favoriteDropPoints.Add(pin);
                         this.SetPrimaryFavorite(pin);
                     }
-
-                    // Setup event handlers
-                    pin.FavoriteToggled += this.OnPinFavoriteToggled;
-                    pin.VehicleLocationRequested += this.OnPinVehicleLocationRequested;
-                    pin.IncidentReported += this.OnPinIncidentReported;
-
-                    // Add the pin to the map
-                    this.pinsDictionary.Add(id, pin);
-                    this.Pins.Add(pin);
-                }
-
-                // Update the pin parameters
-                // TODO: Localize
-                pin.Label = "Punto de recolección " + item.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
-                pin.Address = item.GetItemOrDefault("turno").GetStringValueOrDefault(string.Empty);
-            }
-
-            // Update status
-            this.UpdateStatus(this.havePosition, true);
-        }
-
-        /// <summary>
-        /// Seaches the nearest drop points near the user position.
-        /// </summary>
-        private void FindNearestDropPoints()
-        {
-            // Send request to the server
-            System.Diagnostics.Debug.Assert(this.havePosition, "Mush have user position");
-            WebHelper.SendAsync(
-                Uris.GetFindNearestDropPointsUri(this.userPosition.Longitude, this.userPosition.Latitude, 0.2),
-                null,
-                this.ProcessFindNearestDropPointsResult);
-        }
-
-        /// <summary>
-        /// Processes the search for the nearest points result returned by the server.
-        /// </summary>
-        /// <param name="result">The search result.</param>
-        private void ProcessFindNearestDropPointsResult(JsonValue result)
-        {
-            // Get the embedded data
-            var collection = result.GetItemOrDefault("_embedded").GetItemOrDefault("montoneras") as JsonArray;
-            if (collection == null)
-            {
-                return;
-            }
-
-            // Process each drop point in the collection
-            foreach (var item in collection)
-            {
-                // Get the id and subtype properties
-                var id = item.GetItemOrDefault("id").GetStringValueOrDefault(null);
-                if (id == null)
-                {
-                    continue;
-                }
-
-                // Get the coordinates
-                var coordinates = item.GetItemOrDefault("coordenadas", null) as JsonArray;
-                var lon = coordinates.GetItemOrDefault(0).GetDoubleValueOrDefault(double.NaN);
-                var lat = coordinates.GetItemOrDefault(1).GetDoubleValueOrDefault(double.NaN);
-
-                // If coordinates are not present
-                if (double.IsNaN(lat) || double.IsNaN(lon))
-                {
-                    return;
-                }
-
-                // If the pin already exists
-                MapExPin pin;
-                if (this.pinsDictionary.TryGetValue(id, out pin))
-                {
-                    // Update the pin
-                    Debug.WriteLine("Replace: " + id);
-                    pin.Position = new Position(lat, lon);
-                }
-                else
-                {
-                    // Create a new pin
-                    Debug.WriteLine("New: " + id);
-                    pin = new MapExPin
-                    {
-                        Id = id,
-                        Position = new Position(lat, lon),
-                        Type = MapPinType.DropPoint,
-                        Label = string.Empty,
-                        Address = string.Empty
-                    };
 
                     // Setup event handlers
                     pin.FavoriteToggled += this.OnPinFavoriteToggled;
