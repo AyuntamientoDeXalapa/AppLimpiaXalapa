@@ -14,6 +14,7 @@ using AppLimpia.Login;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using System.Globalization;
+using System.Text;
 
 namespace AppLimpia
 {
@@ -288,32 +289,187 @@ namespace AppLimpia
             // Clear the favorites
             this.haveFavorites = false;
 
-            // Get the favorites from the server
-            var uri = new Uri(Uris.GetFavorites);
-            if (Settings.Instance.Contains(Settings.UserId))
-            {
-                var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
-                uri = new Uri($"{Uris.GetFavorites}?uid={uid}");
-            }
-
-            WebHelper.GetAsync(
-                uri,
-                json =>
-                    {
-                        this.ParseJson(json);
-                        this.UpdateStatus(this.havePosition, true);
-                    });
+            // Send request to the server
+            WebHelper.SendAsync(
+                Uris.GetGetFavoritesUri(),
+                null,
+                this.ProcessGetUserFavoritesResult);
         }
 
         /// <summary>
-        /// Gets the nearest drop points from the server.
+        /// Processes the search for the nearest points result returned by the server.
         /// </summary>
-        private void GetNearestPoints()
+        /// <param name="result">The search result.</param>
+        private void ProcessGetUserFavoritesResult(JsonValue result)
         {
-            // Get the drop points from the server
+            // Get the embedded data
+            var collection = result.GetItemOrDefault("_embedded").GetItemOrDefault("favoritos") as JsonArray;
+            if (collection == null)
+            {
+                return;
+            }
+
+            // Process each drop point in the collection
+            foreach (var item in collection)
+            {
+                // Get the id and subtype properties
+                var id = item.GetItemOrDefault("id").GetStringValueOrDefault(null);
+                var subtype = item.GetItemOrDefault("subtype").GetStringValueOrDefault(string.Empty);
+                if (id == null)
+                {
+                    continue;
+                }
+
+                // Get the coordinates
+                var coordinates = item.GetItemOrDefault("coordenadas", null) as JsonArray;
+                var lon = coordinates.GetItemOrDefault(0).GetDoubleValueOrDefault(double.NaN);
+                var lat = coordinates.GetItemOrDefault(1).GetDoubleValueOrDefault(double.NaN);
+
+                // If coordinates are not present
+                if (double.IsNaN(lat) || double.IsNaN(lon))
+                {
+                    return;
+                }
+
+                // If the pin already exists
+                MapExPin pin;
+                if (this.pinsDictionary.TryGetValue(id, out pin))
+                {
+                    // Update the pin
+                    Debug.WriteLine("Replace: " + id);
+                    pin.Position = new Position(lat, lon);
+                }
+                else
+                {
+                    // Create a new pin
+                    Debug.WriteLine("New: " + id);
+                    pin = new MapExPin
+                    {
+                        Id = id,
+                        Position = new Position(lat, lon),
+                        Type = MapPinType.DropPoint,
+                        Label = string.Empty,
+                        Address = string.Empty
+                    };
+
+                    // If the pin is a favorite
+                    if (string.Compare(subtype, "favorito", StringComparison.CurrentCultureIgnoreCase) == 0)
+                    {
+                        // Add the pin to the favorites
+                        pin.Type = MapPinType.Favorite;
+                        this.favoriteDropPoints.Add(pin);
+                    }
+                    else if (string.Compare(subtype, "favorito principal", StringComparison.CurrentCultureIgnoreCase) == 0)
+                    {
+                        // Add the pin to the favorites
+                        pin.Type = MapPinType.PrimaryFavorite;
+                        this.favoriteDropPoints.Add(pin);
+                        this.SetPrimaryFavorite(pin);
+                    }
+
+                    // Setup event handlers
+                    pin.FavoriteToggled += this.OnPinFavoriteToggled;
+                    pin.VehicleLocationRequested += this.OnPinVehicleLocationRequested;
+                    pin.IncidentReported += this.OnPinIncidentReported;
+
+                    // Add the pin to the map
+                    this.pinsDictionary.Add(id, pin);
+                    this.Pins.Add(pin);
+                }
+
+                // Update the pin parameters
+                // TODO: Localize
+                pin.Label = "Punto de recolección " + item.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                pin.Address = item.GetItemOrDefault("turno").GetStringValueOrDefault(string.Empty);
+            }
+
+            // Update status
+            this.UpdateStatus(this.havePosition, true);
+        }
+
+        /// <summary>
+        /// Seaches the nearest drop points near the user position.
+        /// </summary>
+        private void FindNearestDropPoints()
+        {
+            // Send request to the server
             System.Diagnostics.Debug.Assert(this.havePosition, "Mush have user position");
-            var uri = $"{Uris.GetNearest}?lat={this.userPosition.Latitude}&lon={this.userPosition.Longitude}";
-            WebHelper.GetAsync(new Uri(uri), this.ParseJson);
+            WebHelper.SendAsync(
+                Uris.GetFindNearestDropPointsUri(this.userPosition.Longitude, this.userPosition.Latitude, 0.2),
+                null,
+                this.ProcessFindNearestDropPointsResult);
+        }
+
+        /// <summary>
+        /// Processes the search for the nearest points result returned by the server.
+        /// </summary>
+        /// <param name="result">The search result.</param>
+        private void ProcessFindNearestDropPointsResult(JsonValue result)
+        {
+            // Get the embedded data
+            var collection = result.GetItemOrDefault("_embedded").GetItemOrDefault("montoneras") as JsonArray;
+            if (collection == null)
+            {
+                return;
+            }
+
+            // Process each drop point in the collection
+            foreach (var item in collection)
+            {
+                // Get the id and subtype properties
+                var id = item.GetItemOrDefault("id").GetStringValueOrDefault(null);
+                if (id == null)
+                {
+                    continue;
+                }
+
+                // Get the coordinates
+                var coordinates = item.GetItemOrDefault("coordenadas", null) as JsonArray;
+                var lon = coordinates.GetItemOrDefault(0).GetDoubleValueOrDefault(double.NaN);
+                var lat = coordinates.GetItemOrDefault(1).GetDoubleValueOrDefault(double.NaN);
+
+                // If coordinates are not present
+                if (double.IsNaN(lat) || double.IsNaN(lon))
+                {
+                    return;
+                }
+
+                // If the pin already exists
+                MapExPin pin;
+                if (this.pinsDictionary.TryGetValue(id, out pin))
+                {
+                    // Update the pin
+                    Debug.WriteLine("Replace: " + id);
+                    pin.Position = new Position(lat, lon);
+                }
+                else
+                {
+                    // Create a new pin
+                    Debug.WriteLine("New: " + id);
+                    pin = new MapExPin
+                    {
+                        Id = id,
+                        Position = new Position(lat, lon),
+                        Type = MapPinType.DropPoint,
+                        Label = string.Empty,
+                        Address = string.Empty
+                    };
+
+                    // Setup event handlers
+                    pin.FavoriteToggled += this.OnPinFavoriteToggled;
+                    pin.VehicleLocationRequested += this.OnPinVehicleLocationRequested;
+                    pin.IncidentReported += this.OnPinIncidentReported;
+
+                    // Add the pin to the map
+                    this.pinsDictionary.Add(id, pin);
+                    this.Pins.Add(pin);
+                }
+
+                // Update the pin parameters
+                // TODO: Localize
+                pin.Label = "Punto de recolección " + item.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                pin.Address = item.GetItemOrDefault("turno").GetStringValueOrDefault(string.Empty);
+            }
         }
 
         /// <summary>
@@ -328,42 +484,20 @@ namespace AppLimpia
                 return;
             }
 
-            // Add the drop points to favorites on the server
+            // Prepare the data to be send to the server
+            var request = new Json.JsonObject { { "montonera", id } };
+
+            // Send request to the server
             this.IsBusy = true;
-            var uri = $"{Uris.AddFavorites}?id={id}";
-            if (Settings.Instance.Contains(Settings.UserId))
-            {
-                var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
-                uri = $"{Uris.AddFavorites}?uid={uid}&id={id}";
-            }
-
-            var task = WebHelper.GetAsync(new Uri(uri));
-
-            // Parse the server response
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            var continuation = task.ContinueWith(this.ParseServerData, scheduler);
-
-            // Update pin status
-            continuation.ContinueWith(
+            WebHelper.SendAsync(
+                Uris.GetAddToFavoritesUri(),
+                request.AsHttpContent(),
                 _ =>
                     {
                         this.SetFavoriteStatus(id, true);
                         this.IsBusy = false;
                     },
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnRanToCompletion,
-                scheduler);
-
-            // Setup error handling
-            continuation.ContinueWith(
-                t =>
-                    {
-                        this.ParseTaskError(t);
-                        this.IsBusy = false;
-                    },
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnFaulted,
-                scheduler);
+                () => this.IsBusy = false);
         }
 
         /// <summary>
@@ -378,45 +512,20 @@ namespace AppLimpia
                 return;
             }
 
-            // Remove the drop points from favorites on the server
+            // Prepare the data to be send to the server
+            var request = new Json.JsonObject { { "montonera", id } };
+
+            // Send request to the server
             this.IsBusy = true;
-            var uri = $"{Uris.RemoveFavorites}?id={id}";
-            if (Settings.Instance.Contains(Settings.UserId))
-            {
-                var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
-                uri = $"{Uris.RemoveFavorites}?uid={uid}&id={id}";
-            }
-
-            var task = WebHelper.GetAsync(new Uri(uri));
-
-            // Parse the server response
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            var continuation = task.ContinueWith(this.ParseServerData, scheduler);
-
-            // Update pin status
-            continuation.ContinueWith(
-                value =>
-                    {
-                        this.SetFavoriteStatus(
-                            id,
-                            false,
-                            value.Result.GetItemOrDefault("primary").GetStringValueOrDefault(null));
-                        this.IsBusy = false;
-                    },
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnRanToCompletion,
-                scheduler);
-
-            // Setup error handling
-            continuation.ContinueWith(
-                t =>
-                    {
-                        this.ParseTaskError(t);
-                        this.IsBusy = false;
-                    },
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnFaulted,
-                scheduler);
+            WebHelper.SendAsync(
+                Uris.GetRemoveFromFavoritesUri(),
+                request.AsHttpContent(),
+                _ =>
+                {
+                    this.SetFavoriteStatus(id, false);
+                    this.IsBusy = false;
+                },
+                () => this.IsBusy = false);
         }
 
         /// <summary>
@@ -893,7 +1002,7 @@ namespace AppLimpia
                 this.lastUpdatePosition = this.userPosition;
                 if (min > 100)
                 {
-                    this.GetNearestPoints();
+                    this.FindNearestDropPoints(); //.GetNearestPoints();
                 }
             }
 
@@ -902,7 +1011,7 @@ namespace AppLimpia
             {
                 if (MapEx.GetDistance(this.userPosition, this.lastUpdatePosition) >= 50)
                 {
-                    this.GetNearestPoints();
+                    this.FindNearestDropPoints(); //.GetNearestPoints();
                     this.lastUpdatePosition = this.userPosition;
                 }
             }
@@ -913,8 +1022,7 @@ namespace AppLimpia
         /// </summary>
         /// <param name="id">The identifier of a map pin.</param>
         /// <param name="isFavorite"><c>true</c> to set as favorite; <c>false</c> to remove from favorite.</param>
-        /// <param name="newPrimaryId">The identifier of the new primary favorite.</param>
-        private void SetFavoriteStatus(string id, bool isFavorite, string newPrimaryId = null)
+        private void SetFavoriteStatus(string id, bool isFavorite)
         {
             // Get the map pin by id
             MapExPin pin;
@@ -944,14 +1052,11 @@ namespace AppLimpia
                     {
                         this.primaryFavorite = null;
 
-                        // If new primary id is specified
-                        if (!string.IsNullOrEmpty(newPrimaryId))
+                        // Set the new primary id
+                        var newPrimary = this.favoriteDropPoints.FirstOrDefault();
+                        if (newPrimary != null)
                         {
-                            MapExPin newPrimary;
-                            if (this.pinsDictionary.TryGetValue(newPrimaryId, out newPrimary))
-                            {
-                                this.SetPrimaryFavorite(newPrimary);
-                            }
+                            this.SetPrimaryFavorite(newPrimary);
                         }
                     }
                 }
@@ -1071,7 +1176,7 @@ namespace AppLimpia
                 this.MapCenterCoordinates = this.userPosition;
 
                 // Search nearest drop points
-                this.GetNearestPoints();
+                this.FindNearestDropPoints(); //.GetNearestPoints();
             }
         }
 

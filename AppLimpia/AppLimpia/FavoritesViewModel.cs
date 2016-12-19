@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -203,48 +204,20 @@ namespace AppLimpia
                     return;
                 }
 
-                // If the current favorite is primary
-                if (this.IsPrimary)
-                {
-                    return;
-                }
+                // Prepare the data to be send to the server
+                var request = new Json.JsonObject { { "montonera", this.favorite.Id }, { "principal", true } };
 
-                // Set the drop point as primary on the server
+                // Send request to the server
                 this.viewModel.IsBusy = true;
-                var uri = $"{Uris.SetPrimaryFavorite}?id={this.favorite.Id}";
-                if (Settings.Instance.Contains(Settings.UserId))
-                {
-                    var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
-                    uri = $"{Uris.SetPrimaryFavorite}?uid={uid}&id={this.favorite.Id}";
-                }
-
-                var task = WebHelper.GetAsync(new Uri(uri));
-
-                // Parse the server response
-                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-                var continuation = task.ContinueWith(this.ParseServerData, scheduler);
-
-                // Update pin status
-                continuation.ContinueWith(
+                WebHelper.SendAsync(
+                    Uris.GetAddToFavoritesUri(),
+                    request.AsHttpContent(),
                     _ =>
-                        {
-                            this.IsPrimary = true;
-                            this.viewModel.IsBusy = false;
-                        },
-                    default(CancellationToken),
-                    TaskContinuationOptions.OnlyOnRanToCompletion,
-                    scheduler);
-
-                // Setup error handling
-                continuation.ContinueWith(
-                    t =>
-                        {
-                            this.ParseTaskError(t);
-                            this.viewModel.IsBusy = false;
-                        },
-                    default(CancellationToken),
-                    TaskContinuationOptions.OnlyOnFaulted,
-                    scheduler);
+                    {
+                        this.IsPrimary = true;
+                        this.viewModel.IsBusy = false;
+                    },
+                    () => this.viewModel.IsBusy = false);
             }
 
             /// <summary>
@@ -258,50 +231,26 @@ namespace AppLimpia
                     return;
                 }
 
-                // Remove the drop points from favorites on the server
+                // Prepare the data to be send to the server
+                var request = new Json.JsonObject { { "montonera", this.favorite.Id } };
+
+                // Send request to the server
                 this.viewModel.IsBusy = true;
-                var uri = $"{Uris.RemoveFavorites}?id={this.favorite.Id}";
-                if (Settings.Instance.Contains(Settings.UserId))
-                {
-                    var uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
-                    uri = $"{Uris.RemoveFavorites}?uid={uid}&id={this.favorite.Id}";
-                }
-
-                var task = WebHelper.GetAsync(new Uri(uri));
-
-                // Parse the server response
-                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-                var continuation = task.ContinueWith(this.ParseServerData, scheduler);
-
-                // Update pin status
-                continuation.ContinueWith(
-                    value =>
-                        {
-                            this.OnFavoriteRemoved(
-                                value.Result.GetItemOrDefault("primary").GetStringValueOrDefault(null));
-                            this.viewModel.IsBusy = false;
-                        },
-                    default(CancellationToken),
-                    TaskContinuationOptions.OnlyOnRanToCompletion,
-                    scheduler);
-
-                // Setup error handling
-                continuation.ContinueWith(
-                    t =>
-                        {
-                            this.ParseTaskError(t);
-                            this.viewModel.IsBusy = false;
-                        },
-                    default(CancellationToken),
-                    TaskContinuationOptions.OnlyOnFaulted,
-                    scheduler);
+                WebHelper.SendAsync(
+                    Uris.GetRemoveFromFavoritesUri(),
+                    request.AsHttpContent(),
+                    _ =>
+                    {
+                        this.OnFavoriteRemoved();
+                        this.viewModel.IsBusy = false;
+                    },
+                    () => this.viewModel.IsBusy = false);
             }
 
             /// <summary>
             /// Called when the current favorite was removed from the server.
             /// </summary>
-            /// <param name="newPrimaryId">The identifier of the new primary favorite.</param>
-            private void OnFavoriteRemoved(string newPrimaryId = null)
+            private void OnFavoriteRemoved()
             {
                 // Remove the favorite from view model
                 this.favorite.Type = MapPinType.DropPoint;
@@ -312,17 +261,11 @@ namespace AppLimpia
                     {
                         this.viewModel.PrimaryFavorite = null;
 
-                        // If new primary id is specified
-                        if (!string.IsNullOrEmpty(newPrimaryId))
+                        // Set the new primary id
+                        var newPrimary = this.viewModel.Favorites.FirstOrDefault();
+                        if (newPrimary != null)
                         {
-                            foreach (var dropPoint in this.viewModel.Favorites)
-                            {
-                                if (dropPoint.Pin.Id == newPrimaryId)
-                                {
-                                    dropPoint.IsPrimary = true;
-                                    break;
-                                }
-                            }
+                            newPrimary.IsPrimary = true;
                         }
                     }
                 }

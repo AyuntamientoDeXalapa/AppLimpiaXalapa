@@ -164,6 +164,49 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the find nearest drop points URI.
+        /// </summary>
+        /// <param name="longitude">The longitude to search drop points.</param>
+        /// <param name="latitude">The latitude to search drop points.</param>
+        /// <param name="distance">The distance in km of the serach radius.</param>
+        /// <returns>The find nearest drop points URI.</returns>
+        public static UriMethodPair GetFindNearestDropPointsUri(double longitude, double latitude, double distance)
+        {
+            return
+                new UriMethodPair(
+                    new Uri(
+                        $"{Uris.Server}api/montoneras?longitude={longitude}&latitude={latitude}&distance={distance}"),
+                    HttpMethod.Get);
+        }
+
+        /// <summary>
+        /// Gets the get favorites URI.
+        /// </summary>
+        /// <returns>The get favorites URI.</returns>
+        public static UriMethodPair GetGetFavoritesUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/favoritos"), HttpMethod.Get);
+        }
+
+        /// <summary>
+        /// Gets the add to favorite URI.
+        /// </summary>
+        /// <returns>The add to favorite URI.</returns>
+        public static UriMethodPair GetAddToFavoritesUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/favoritos"), HttpMethod.Post);
+        }
+
+        /// <summary>
+        /// Gets the remove from favorites URI.
+        /// </summary>
+        /// <returns>The remove from favorites URI.</returns>
+        public static UriMethodPair GetRemoveFromFavoritesUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/favoritos"), HttpMethod.Delete);
+        }
+
+        /// <summary>
         /// Represents the URI and method pair.
         /// </summary>
         internal sealed class UriMethodPair
