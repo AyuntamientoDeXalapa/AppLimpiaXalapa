@@ -157,6 +157,16 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the locate vehicle URI.
+        /// </summary>
+        /// <param name="dropPoint">The drop point to locate vehicle for.</param>
+        /// <returns>The locate vehicle URI.</returns>
+        public static UriMethodPair GetLocateVehicleUri(string dropPoint)
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/montoneras/{dropPoint}?expand=true"), HttpMethod.Get);
+        }
+
+        /// <summary>
         /// Represents the URI and method pair.
         /// </summary>
         internal sealed class UriMethodPair

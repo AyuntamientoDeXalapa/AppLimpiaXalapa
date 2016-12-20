@@ -39,6 +39,11 @@ namespace AppLimpia
         private MapExPin primaryFavorite;
 
         /// <summary>
+        /// The currenly monitored drop point.
+        /// </summary>
+        private string currentDropPoint;
+
+        /// <summary>
         /// The currently shown vehicle pin.
         /// </summary>
         private MapExPin currentVehicle;
@@ -486,8 +491,8 @@ namespace AppLimpia
         /// <summary>
         /// Locates the vehicle for specified drop point.
         /// </summary>
-        /// <param name="id">The id of drop point to locate vehicle.</param>
-        private void LocateVehicleForDropPoint(string id)
+        /// <param name="dropPoint">The id of drop point to locate vehicle.</param>
+        private void LocateVehicleForDropPoint(string dropPoint)
         {
             // If the current view model is busy do nothing
             if (this.IsBusy)
@@ -495,36 +500,143 @@ namespace AppLimpia
                 return;
             }
 
-            // Remove the drop points from favorites on the server
-            this.IsBusy = true;
-            var uri = $"{Uris.LocateVehicle}?id={id}";
-            var task = WebHelper.GetAsync(new Uri(uri));
-
-            // Parse the server response
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            var continuation = task.ContinueWith(this.ParseServerData, scheduler);
-
-            // Show vehicle pin on the map
-            continuation.ContinueWith(
-                _ =>
+            // Send request to the server
+            WebHelper.SendAsync(
+                Uris.GetLocateVehicleUri(dropPoint),
+                null,
+                v =>
                     {
-                        this.ShowVehiclePosition();
+                        this.ProcessLocateVehicleResult(v, true);
                         this.IsBusy = false;
                     },
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnRanToCompletion,
-                scheduler);
+                () => this.IsBusy = false);
+        }
 
-            // Setup error handling
-            continuation.ContinueWith(
-                t =>
+        /// <summary>
+        /// Updates the vehicle position for specified drop point.
+        /// </summary>
+        /// <param name="dropPoint">The id of drop point to update vehicle position.</param>
+        private void UpdateVehiclePosition(string dropPoint)
+        {
+            // Send request to the server
+            WebHelper.SendAsync(
+                Uris.GetLocateVehicleUri(dropPoint),
+                null,
+                v => this.ProcessLocateVehicleResult(v, false));
+        }
+
+        /// <summary>
+        /// Processes the locate vehicle result returned by the server.
+        /// </summary>
+        /// <param name="result">The locate vehicle result.</param>
+        /// <param name="center"><c>true</c> to center map on the vehicle; <c>false</c> to leave map uncahnged.</param>
+        private void ProcessLocateVehicleResult(JsonValue result, bool center)
+        {
+            //// {
+            ////     "id": "5845cd44d2f78853364a18b2",
+            ////     "name":" 01018",
+            ////     "distancia": null,
+            ////     "coordenadas": [-96.924794702981, 19.52909931538],
+            ////     "ruta": "01",
+            ////     "turno": null,
+            ////     "vehiculo": "ECO-191",
+            ////     "_links": 
+            ////     {
+            ////         "self":
+            ////         {
+            ////             "href":"http:\/\/limpia.xalapa.gob.mx\/api\/montoneras\/5845cd44d2f78853364a18b2"
+            ////         }
+            ////     }
+            //// }
+
+            // Get the id of the drop point
+            var dropPoint = result.GetItemOrDefault("id").GetStringValueOrDefault(string.Empty);
+
+            //// {
+            ////     "id": "80a8dfda-75f6-466b-96cf-ef9ea2640831",
+            ////     "number": "ECO-024",
+            ////     "location": "38 Poeta Angel Núñez Beltrán, Emiliano Zapata, Xalapa Enríquez, Xalapa, 91090, México",
+            ////     "status": "activo",
+            ////     "coordinates": [-96.92559, 19.51463],
+            ////     "route": "Sin ruta asignada",
+            ////     "_links": 
+            ////     {
+            ////         "self":
+            ////         {
+            ////             "href": "http://limpia.xalapa.gob.mx/api/vehiculos/80a8dfda-75f6-466b-96cf-ef9ea2640831"
+            ////         }
+            ////     }
+            //// }
+
+            // Get the vehicle id
+            var vehicle = result.GetItemOrDefault("vehiculo");
+            var vehicleId = vehicle.GetItemOrDefault("id").GetStringValueOrDefault(string.Empty);
+
+            // Get the vehicle coordinates
+            var coordinates = vehicle.GetItemOrDefault("coordinates", null) as JsonArray;
+            var lon = coordinates.GetItemOrDefault(0).GetDoubleValueOrDefault(double.NaN);
+            var lat = coordinates.GetItemOrDefault(1).GetDoubleValueOrDefault(double.NaN);
+
+            // If vehicle data is not present
+            if (!string.IsNullOrEmpty(vehicleId) && !double.IsNaN(lat) && !double.IsNaN(lon))
+            {
+                // If the pin already exists
+                MapExPin pin;
+                if (this.pinsDictionary.TryGetValue(vehicleId, out pin))
+                {
+                    // Update the pin
+                    Debug.WriteLine("Replace: " + vehicleId);
+                    pin.Position = new Position(lat, lon);
+                }
+                else
+                {
+                    // Create a new pin
+                    Debug.WriteLine("New: " + vehicleId);
+                    pin = new MapExPin
+                              {
+                                  Id = vehicleId,
+                                  Position = new Position(lat, lon),
+                                  Type = MapPinType.Vehicle,
+                                  Label = string.Empty,
+                                  Address = string.Empty
+                              };
+
+                    // Replace vehicle if any
+                    if (this.currentVehicle != null)
                     {
-                        this.ParseTaskError(t);
-                        this.IsBusy = false;
-                    },
-                default(CancellationToken),
-                TaskContinuationOptions.OnlyOnFaulted,
-                scheduler);
+                        this.pinsDictionary.Remove(this.currentVehicle.Id);
+                        this.Pins.Remove(this.currentVehicle);
+                    }
+
+                    // Save the current vehicle
+                    this.currentVehicle = pin;
+
+                    // Add the pin to the map
+                    this.pinsDictionary.Add(vehicleId, pin);
+                    this.Pins.Add(pin);
+                }
+
+                // Update the pin parameters
+                pin.Label = vehicle.GetItemOrDefault("number").GetStringValueOrDefault(string.Empty);
+                pin.Address = vehicle.GetItemOrDefault("location").GetStringValueOrDefault(string.Empty);
+
+                // Start vehicle position updates
+                this.currentDropPoint = dropPoint;
+
+                // Center map on vehicle
+                if (center)
+                {
+                    this.MapCenterCoordinates = this.currentVehicle.Position;
+                }
+            }
+            else
+            {
+                // TODO: Localize
+                App.DisplayAlert(
+                    "Error",
+                    "La unidad asignada a ruta no cuenta con servicio de localización",
+                    "OK");
+            }
         }
 
         /// <summary>
@@ -903,11 +1015,10 @@ namespace AppLimpia
             Debug.WriteLine("TimerUpdate");
             if (this.isActive)
             {
-                // If current vehicle is loaded
-                if (this.currentVehicle != null)
+                // If drop point is monitored
+                if (!string.IsNullOrEmpty(this.currentDropPoint))
                 {
-                    // Update vehicle position
-                    this.GetVehiclePosition();
+                    this.UpdateVehiclePosition(this.currentDropPoint);
                 }
             }
 
