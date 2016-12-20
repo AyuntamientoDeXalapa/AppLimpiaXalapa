@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest" xmlns:m3="http://schemas.microsoft.com/appx/2014/manifest" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest">
-  <Identity Name="H.AyuntamientodeXalapa.XalapaLimpia" Publisher="CN=5A9ACCF1-F4F0-4011-A22F-BD5B1E68F0A1" Version="1.0.6.6" />
+  <Identity Name="H.AyuntamientodeXalapa.XalapaLimpia" Publisher="CN=5A9ACCF1-F4F0-4011-A22F-BD5B1E68F0A1" Version="1.0.7.7" />
   <mp:PhoneIdentity PhoneProductId="e8ebdf4c-1a3c-4b54-919a-429e98e93142" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Xalapa Limpia</DisplayName>
