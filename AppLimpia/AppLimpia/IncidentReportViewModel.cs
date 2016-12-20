@@ -213,22 +213,11 @@ namespace AppLimpia
             // Prepare report data
             // ReSharper disable once UseObjectOrCollectionInitializer
             var report = new MultipartFormDataContent();
-            report.Add(new StringContent(this.reportDate.Value.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'")), "fecha");
             report.Add(new StringContent(this.pin.Id), "montonera");
             if (this.incidentTypeIndex != -1)
             {
                 report.Add(new StringContent(this.IncidentTypes[this.incidentTypeIndex]), "incidencia");
             }
-
-            // TODO: Remove when they are retrieved from the server
-            var uid = $"Usuario de {Device.OS}";
-            if (Settings.Instance.Contains(Settings.UserId))
-            {
-                uid = Settings.Instance.GetValue(Settings.UserId, string.Empty);
-            }
-
-            report.Add(new StringContent(uid), "usuario");
-            report.Add(new StringContent(((App)Application.Current).DeviceId), "device");
 
             // Add image if any
             if (this.reportPhoto != null)
