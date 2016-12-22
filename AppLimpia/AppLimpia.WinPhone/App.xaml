@@ -5,10 +5,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:uwp="using:Xamarin.Forms.Platform"
     xmlns:local="using:AppLimpia.WinPhone"
     xmlns:winRt="using:Xamarin.Forms.Platform.WinRT">
     <Application.Resources>
         <ResourceDictionary>
+            <!-- Carousel view template -->
+            <DataTemplate x:Key="ItemTemplate">
+                <uwp:ItemControl HorizontalContentAlignment="Stretch"
+                                 VerticalContentAlignment="Stretch" />
+            </DataTemplate>
+            
             <!-- Drop point annotation template -->
             <DataTemplate x:Key="AnnotationTemplate">
                 <Grid MinWidth="150">
