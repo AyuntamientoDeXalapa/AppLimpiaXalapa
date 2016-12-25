@@ -253,6 +253,10 @@
     <value>Enviar reporte</value>
     <comment>The send report button on the incident screen</comment>
   </data>
+  <data name="Start" xml:space="preserve">
+    <value>Iniciar</value>
+    <comment>The start button on the last tutorial slide</comment>
+  </data>
   <data name="TakePhoto" xml:space="preserve">
     <value>Agregar foto</value>
     <comment>The take photo button on the incident screen</comment>

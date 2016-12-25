@@ -88,7 +88,7 @@ namespace AppLimpia
         /// </summary>
         private bool isActive;
 
-        private IList<IncidentReport> myReports; 
+        private IList<IncidentReport> myReports;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -106,18 +106,21 @@ namespace AppLimpia
             this.favoriteDropPoints = new List<MapExPin>();
             this.Pins = new ObservableCollection<MapExPin>();
             this.myReports = new ObservableCollection<IncidentReport>();
-            
+
             // Create commands
             this.SearchDropPointsCommand = new Command(this.SearchDropPoints);
-            this.LocateVehicleForPrimaryFavoriteCommand = new Command(
-                () => this.OnPinVehicleLocationRequested(this.primaryFavorite, EventArgs.Empty),
-                () => this.primaryFavorite != null);
+            this.LocateVehicleForPrimaryFavoriteCommand =
+                new Command(
+                    () => this.OnPinVehicleLocationRequested(this.primaryFavorite, EventArgs.Empty),
+                    () => this.primaryFavorite != null);
             this.ShowFavoritesCommand = new Command(this.ShowFavorites);
             this.ShowNotificationsCommand = new Command(this.ShowNotifications);
             this.ShowReportsCommand = new Command(this.ShowReports);
             this.ChangePasswordCommand = new Command(this.ChangePassword);
             this.LoginCommand = new Command(this.Login);
             this.LogoutCommand = new Command(this.Logout);
+
+            MonkeysViewModel();
         }
 
         /// <summary>
@@ -295,10 +298,7 @@ namespace AppLimpia
             this.haveFavorites = false;
 
             // Send request to the server
-            WebHelper.SendAsync(
-                Uris.GetGetFavoritesUri(),
-                null,
-                this.ProcessGetUserFavoritesResult);
+            WebHelper.SendAsync(Uris.GetGetFavoritesUri(), null, this.ProcessGetUserFavoritesResult);
         }
 
         /// <summary>
@@ -392,13 +392,13 @@ namespace AppLimpia
                     // Create a new pin
                     Debug.WriteLine("New: " + id);
                     pin = new MapExPin
-                    {
-                        Id = id,
-                        Position = new Position(lat, lon),
-                        Type = MapPinType.DropPoint,
-                        Label = string.Empty,
-                        Address = string.Empty
-                    };
+                              {
+                                  Id = id,
+                                  Position = new Position(lat, lon),
+                                  Type = MapPinType.DropPoint,
+                                  Label = string.Empty,
+                                  Address = string.Empty
+                              };
 
                     // If the pin is a favorite
                     if (string.Compare(subtype, "favorito", StringComparison.CurrentCultureIgnoreCase) == 0)
@@ -427,7 +427,8 @@ namespace AppLimpia
 
                 // Update the pin parameters
                 // TODO: Localize
-                pin.Label = "Punto de recolección " + item.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                pin.Label = "Punto de recolección "
+                            + item.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
                 pin.Address = item.GetItemOrDefault("turno").GetStringValueOrDefault(string.Empty);
             }
         }
@@ -481,10 +482,10 @@ namespace AppLimpia
                 Uris.GetRemoveFromFavoritesUri(),
                 request.AsHttpContent(),
                 _ =>
-                {
-                    this.SetFavoriteStatus(id, false);
-                    this.IsBusy = false;
-                },
+                    {
+                        this.SetFavoriteStatus(id, false);
+                        this.IsBusy = false;
+                    },
                 () => this.IsBusy = false);
         }
 
@@ -632,10 +633,7 @@ namespace AppLimpia
             else
             {
                 // TODO: Localize
-                App.DisplayAlert(
-                    "Error",
-                    "La unidad asignada a ruta no cuenta con servicio de localización",
-                    "OK");
+                App.DisplayAlert("Error", "La unidad asignada a ruta no cuenta con servicio de localización", "OK");
             }
         }
 
@@ -694,9 +692,7 @@ namespace AppLimpia
                 // Get my report field
                 var id = report.GetItemOrDefault("id").GetStringValueOrDefault(null);
                 var dateString =
-                    report.GetItemOrDefault("fecha")
-                        .GetItemOrDefault("date")
-                        .GetStringValueOrDefault(string.Empty);
+                    report.GetItemOrDefault("fecha").GetItemOrDefault("date").GetStringValueOrDefault(string.Empty);
                 var dropPoint = report.GetItemOrDefault("montonera").GetStringValueOrDefault(null);
                 var incident = report.GetItemOrDefault("incidencia").GetStringValueOrDefault(null);
                 var user = report.GetItemOrDefault("usuario").GetStringValueOrDefault(string.Empty);
@@ -884,13 +880,13 @@ namespace AppLimpia
                 // Create a new pin
                 Debug.WriteLine("New: " + id);
                 pin = new MapExPin
-                {
-                    Id = id,
-                    Position = new Position(lat, lon),
-                    Type = MapPinType.DropPoint,
-                    Label = string.Empty,
-                    Address = string.Empty
-                };
+                          {
+                              Id = id,
+                              Position = new Position(lat, lon),
+                              Type = MapPinType.DropPoint,
+                              Label = string.Empty,
+                              Address = string.Empty
+                          };
 
                 // If the pin is a favorite
                 if (string.Compare(subtype, "Favorite", StringComparison.CurrentCultureIgnoreCase) == 0)
@@ -949,7 +945,8 @@ namespace AppLimpia
             else
             {
                 // TODO: Localize
-                pin.Label = "Punto de recolección " + properties.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                pin.Label = "Punto de recolección "
+                            + properties.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
                 pin.Address = "Lun, Mie, Vie (Turno: " + properties.GetItemOrDefault("turno").GetStringValue() + ")";
             }
         }
@@ -990,8 +987,8 @@ namespace AppLimpia
                     out date);
 
                 // Add the report returned from the server
-                if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(dropPoint) &&
-                    !string.IsNullOrEmpty(incident))
+                if (!string.IsNullOrEmpty(id) && result && !string.IsNullOrEmpty(dropPoint)
+                    && !string.IsNullOrEmpty(incident))
                 {
                     var reportObject = new IncidentReport(id)
                                            {
@@ -1333,7 +1330,10 @@ namespace AppLimpia
             else
             {
                 // TODO: Localize
-                App.DisplayAlert("Cambiar contreseña", "Solo se permita cambio de contraseña si Usted entro con email", "OK");
+                App.DisplayAlert(
+                    "Cambiar contreseña",
+                    "Solo se permita cambio de contraseña si Usted entro con email",
+                    "OK");
             }
         }
 
@@ -1356,10 +1356,7 @@ namespace AppLimpia
 
             // Prepare the data to be send to the server
             var deviceId = ((App)Application.Current).DeviceId;
-            var request = new Json.JsonObject
-                                {
-                                        { "device", deviceId }
-                                };
+            var request = new Json.JsonObject { { "device", deviceId } };
 
             // Setup error handlers
             // - If session is already closed by the server, close the sesion on the client
@@ -1395,5 +1392,42 @@ namespace AppLimpia
             var view = new LoginView { BindingContext = viewModel };
             App.ReplaceMainView(view);
         }
+
+        public ObservableCollection<Zoo> Zoos { get; set; }
+
+        public void MonkeysViewModel()
+        {
+
+            Zoos = new ObservableCollection<Zoo>
+                       {
+                           new Zoo
+                               {
+                                   // ImageUrl = "http://content.screencast.com/users/JamesMontemagno/folders/Jing/media/23c1dd13-333a-459e-9e23-c3784e7cb434/2016-06-02_1049.png",
+                                   // ImageUrl = "Assets/Tutorial/Tutorial-01.png",
+                                   ImageUrl = "tutorial_01.png",
+                                   Name = "Woodland Park Zoo"
+                               },
+                           new Zoo
+                               {
+                                   // ImageUrl = "http://content.screencast.com/users/JamesMontemagno/folders/Jing/media/6b60d27e-c1ec-4fe6-bebe-7386d545bb62/2016-06-02_1051.png",
+                                   // ImageUrl = "Assets/Tutorial/Tutorial-02.png",
+                                   ImageUrl = "tutorial_02.png",
+                                   Name = "Cleveland Zoo"
+                               },
+                           new Zoo
+                               {
+                                   // ImageUrl = "http://content.screencast.com/users/JamesMontemagno/folders/Jing/media/e8179889-8189-4acb-bac5-812611199a03/2016-06-02_1053.png",
+                                   // ImageUrl = "Assets/Tutorial/Tutorial-03.png",
+                                   ImageUrl = "tutorial_10.png",
+                                   Name = "Phoenix Zoo"
+                               }
+                       };
+        }
+    }
+
+    public class Zoo
+    {
+        public string ImageUrl { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -81,6 +82,13 @@ namespace AppLimpia
                 default(CancellationToken),
                 TaskContinuationOptions.OnlyOnRanToCompletion,
                 scheduler);
+
+            // If tutorial was not shown
+            if (!Settings.Instance.Contains(Settings.TutorialShown))
+            {
+                this.ShowTutorial();
+                Settings.Instance.SetValue(Settings.TutorialShown, 1);
+            }
 
             // Call the base member
             base.OnAppearing();
@@ -212,6 +220,78 @@ namespace AppLimpia
             // Hide more commands view
             this.MoreCommands.IsVisible = false;
             this.BoxViewMoreCommands.IsVisible = this.MoreCommands.IsVisible;
+        }
+
+        /// <summary>
+        /// Shows the tutorial on the first time launch.
+        /// </summary>
+        private void ShowTutorial()
+        {
+            // Fade in the tutorial
+            this.TutorialContainer.IsVisible = true;
+            this.TutorialContainer.InputTransparent = false;
+            this.TutorialView.FadeTo(1);
+
+            // Fill in slides
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var slides = new ObservableCollection<string>();
+            slides.Add(Device.OnPlatform("Tutorial-01.png", "tutorial_01.png", "Assets/Tutorial/Tutorial-01.png"));
+            slides.Add(Device.OnPlatform("Tutorial-02.png", "tutorial_02.png", "Assets/Tutorial/Tutorial-02.png"));
+            slides.Add(Device.OnPlatform("Tutorial-03.png", "tutorial_03.png", "Assets/Tutorial/Tutorial-03.png"));
+            slides.Add(Device.OnPlatform("Tutorial-04.png", "tutorial_04.png", "Assets/Tutorial/Tutorial-04.png"));
+            slides.Add(Device.OnPlatform("Tutorial-05.png", "tutorial_05.png", "Assets/Tutorial/Tutorial-05.png"));
+            slides.Add(Device.OnPlatform("Tutorial-06.png", "tutorial_06.png", "Assets/Tutorial/Tutorial-06.png"));
+            slides.Add(Device.OnPlatform("Tutorial-07.png", "tutorial_07.png", "Assets/Tutorial/Tutorial-07.png"));
+            slides.Add(Device.OnPlatform("Tutorial-08.png", "tutorial_08.png", "Assets/Tutorial/Tutorial-08.png"));
+            slides.Add(Device.OnPlatform("Tutorial-09.png", "tutorial_09.png", "Assets/Tutorial/Tutorial-09.png"));
+            slides.Add(Device.OnPlatform("Tutorial-10.png", "tutorial_10.png", "Assets/Tutorial/Tutorial-10.png"));
+            this.TutorialSlides.ItemsSource = slides;
+
+            // Set up slide changed handler
+            this.TutorialSlides.ItemSelected += this.OnTutorialSlidesItemSelected;
+        }
+
+        /// <summary>
+        /// Handles the ItemSelected event of TutorialSlides.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A <see cref="SelectedItemChangedEventArgs"/> with arguments of the event.</param>
+        private void OnTutorialSlidesItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            // Get the tutorial slides
+            var slides = this.TutorialSlides.ItemsSource as ObservableCollection<string>;
+            if (slides == null)
+            {
+                return;
+            }
+
+            // If last slide is selected
+            if (e.SelectedItem.Equals(slides.LastOrDefault()))
+            {
+                // Show start button
+                this.TutorialLastSlideButtonContainer.IsVisible = true;
+                this.TutorialLastSlideButtonContainer.InputTransparent = false;
+                this.TutorialLastSlideButton.FadeTo(1);
+            }
+            else
+            {
+                // Hide start button
+                this.TutorialLastSlideButtonContainer.InputTransparent = true;
+                this.TutorialLastSlideButton.FadeTo(0);
+            }
+        }
+
+        /// <summary>
+        /// Handles the Clicked event of close tutorial button.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">A <see cref="EventArgs"/> with arguments of the event.</param>
+        private async void OnCloseTutorialClicked(object sender, EventArgs e)
+        {
+            // Fade out the tutorial
+            await this.TutorialView.FadeTo(0);
+            this.TutorialContainer.IsVisible = true;
+            this.TutorialContainer.InputTransparent = false;
         }
     }
 }

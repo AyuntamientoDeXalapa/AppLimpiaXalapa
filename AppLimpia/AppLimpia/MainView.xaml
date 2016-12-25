@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:cv="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.CarouselView"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
@@ -360,6 +361,104 @@
                          InputTransparent="True"
                          IsVisible="{Binding IsBusy}"
                          IsRunning="{Binding IsBusy}"/>
+    </Grid>
+
+    <!-- Tutorial -->
+    <Grid x:Name="TutorialContainer"
+          Grid.Column="0"
+          Grid.Row="0"
+          Grid.ColumnSpan="4"
+          Grid.RowSpan="2"
+          IsVisible="False"
+          InputTransparent="True">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Grid x:Name="TutorialView"
+            Grid.Column="1"
+            Grid.Row="1"
+            BackgroundColor="Black"
+            Opacity="0"
+            Padding="1">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="2*"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <cv:CarouselView x:Name="TutorialSlides"
+                         Grid.Column="0"
+                         Grid.Row="0"
+                         Grid.ColumnSpan="2"
+                         Grid.RowSpan="4"
+                         BackgroundColor="White">
+          <cv:CarouselView.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="246" Android="246" WinPhone="370"/>
+          </cv:CarouselView.WidthRequest>
+          <cv:CarouselView.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="420" Android="420" WinPhone="630"/>
+          </cv:CarouselView.HeightRequest>
+          <cv:CarouselView.ItemTemplate>
+            <DataTemplate>
+              <Image Source="{Binding .}">
+                <Image.WidthRequest>
+                  <OnPlatform x:TypeArguments="x:Double" iOS="246" Android="246" WinPhone="370"/>
+                </Image.WidthRequest>
+                <Image.HeightRequest>
+                  <OnPlatform x:TypeArguments="x:Double" iOS="420" Android="420" WinPhone="630"/>
+                </Image.HeightRequest>
+              </Image>
+            </DataTemplate>
+          </cv:CarouselView.ItemTemplate>
+        </cv:CarouselView>
+        
+        <!-- Close tutorial button -->
+        <Image Grid.Column="1"
+               Grid.Row="0">
+          <Image.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.WidthRequest>
+          <Image.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="32" Android="32" WinPhone="48"/>
+          </Image.HeightRequest>
+          <Image.Source>
+            <OnPlatform x:TypeArguments="ImageSource"
+                        iOS="Close.png"
+                        Android="close.png"
+                        WinPhone="Assets/Icons/Close.png"/>
+          </Image.Source>
+          <Image.GestureRecognizers>
+            <TapGestureRecognizer Tapped="OnCloseTutorialClicked"/>
+          </Image.GestureRecognizers>
+        </Image>
+        
+        <!-- Close tutorial on last slibe button -->
+        <StackLayout x:Name="TutorialLastSlideButtonContainer"
+                     Grid.Column="0"
+                     Grid.Row="2"
+                     Grid.ColumnSpan="2"
+                     Padding="20,0"
+                     IsVisible="False"
+                     InputTransparent="True">
+          <Button x:Name="TutorialLastSlideButton"
+                  Style="{DynamicResource GreenButton}"
+                  Opacity="0"
+                  Text="{local:Localize Start}"
+                  Clicked="OnCloseTutorialClicked">
+          </Button>
+        </StackLayout>
+      </Grid>
     </Grid>
   </Grid>
 </ContentPage>

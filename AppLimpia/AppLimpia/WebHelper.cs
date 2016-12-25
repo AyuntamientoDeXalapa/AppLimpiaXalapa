@@ -666,6 +666,7 @@ namespace AppLimpia
                 // Parse the returned error description
                 var responseContent = await response.Content.ReadAsStringAsync();
                 Debug.WriteLine("Error ({0}): {1}", response.StatusCode, responseContent);
+                Debug.WriteLine("Response: " + responseContent);
                 var problem = Json.Json.Read(responseContent);
 
                 // Read error description

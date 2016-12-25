@@ -43,6 +43,11 @@ namespace AppLimpia
         public const string OauthToken = "OauthToken";
 
         /// <summary>
+        /// The tutorial shown setting name.
+        /// </summary>
+        public const string TutorialShown = "TutorialShown";
+
+        /// <summary>
         /// Gets or sets the instance of the current <see cref="Settings"/> implementation.
         /// </summary>
         public static Settings Instance { get; set; }
