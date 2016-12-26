@@ -26,6 +26,10 @@
           <Style x:Key="WhiteLable" TargetType="Label">
             <Setter Property="TextColor" Value="White"/>
           </Style>
+          <Style x:Key="ErrorLabel" TargetType="Label">
+            <Setter Property="TextColor" Value="Red"/>
+            <Setter Property="IsVisible" Value="False"/>
+          </Style>
           <Style x:Key="LoginTitleLabel" TargetType="Label">
             <Setter Property="TextColor" Value="White"/>
             <Setter Property="FontSize" Value="26"/>
@@ -68,6 +72,11 @@
             <Setter Property="PlaceholderColor" Value="#598498"/>
             <Setter Property="TextColor" Value="White"/>
           </Style>
+          <Style x:Key="LoginPicker" TargetType="local:PickerEx">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="PlaceholderColor" Value="#598498"/>
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
         </ResourceDictionary>
       </OnPlatform.iOS>
       
@@ -91,6 +100,10 @@
           </Style>
           <Style x:Key="WhiteLable" TargetType="Label">
             <Setter Property="TextColor" Value="White"/>
+          </Style>
+          <Style x:Key="ErrorLabel" TargetType="Label">
+            <Setter Property="TextColor" Value="Red"/>
+            <Setter Property="IsVisible" Value="False"/>
           </Style>
           <Style x:Key="LoginTitleLabel" TargetType="Label">
             <Setter Property="TextColor" Value="White"/>
@@ -134,6 +147,11 @@
             <Setter Property="PlaceholderColor" Value="#598498"/>
             <Setter Property="TextColor" Value="White"/>
           </Style>
+          <Style x:Key="LoginPicker" TargetType="local:PickerEx">
+            <Setter Property="BackgroundColor" Value="Transparent"/>
+            <Setter Property="PlaceholderColor" Value="#598498"/>
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
         </ResourceDictionary>
       </OnPlatform.Android>
     
@@ -157,6 +175,10 @@
           </Style>
           <Style x:Key="WhiteLable" TargetType="Label">
             <Setter Property="TextColor" Value="White"/>
+          </Style>
+          <Style x:Key="ErrorLabel" TargetType="Label">
+            <Setter Property="TextColor" Value="Red"/>
+            <Setter Property="IsVisible" Value="False"/>
           </Style>
           <Style x:Key="LoginTitleLabel" TargetType="Label">
             <Setter Property="TextColor" Value="White"/>
@@ -198,6 +220,11 @@
 
           <!-- Login styles -->
           <Style x:Key="LoginEntry" TargetType="Entry">
+            <Setter Property="BackgroundColor" Value="#598498"/>
+            <Setter Property="PlaceholderColor" Value="Silver"/>
+            <Setter Property="TextColor" Value="White"/>
+          </Style>
+          <Style x:Key="LoginPicker" TargetType="local:PickerEx">
             <Setter Property="BackgroundColor" Value="#598498"/>
             <Setter Property="PlaceholderColor" Value="Silver"/>
             <Setter Property="TextColor" Value="White"/>

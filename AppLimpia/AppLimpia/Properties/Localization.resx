@@ -209,6 +209,10 @@
     <value>Notificaciones</value>
     <comment>The notifications page title</comment>
   </data>
+  <data name="NotificationTypes" xml:space="preserve">
+    <value>Notificaciones</value>
+    <comment>The notification types placeholder text</comment>
+  </data>
   <data name="Password" xml:space="preserve">
     <value>Contraseña</value>
     <comment>The password used to enter the application</comment>
@@ -276,5 +280,21 @@
   <data name="WelcomeTitle" xml:space="preserve">
     <value>BIENVENIDO</value>
     <comment>The welcome text on the main screen</comment>
+  </data>
+  <data name="DayBeforeNotifications" xml:space="preserve">
+    <value>Notificaciones un dia antes</value>
+    <comment>The user wants to receive notifications one day before</comment>
+  </data>
+  <data name="DistanceNotifications" xml:space="preserve">
+    <value>Notificaciones de distancia</value>
+    <comment>The user want to receive notifications about distance to vehicle</comment>
+  </data>
+  <data name="NoNotification" xml:space="preserve">
+    <value>No quiero recibir notificaciones</value>
+    <comment>The user does not want any notifications text</comment>
+  </data>
+  <data name="NoNotificationsTooltip" xml:space="preserve">
+    <value>Usted va a recibir los notificaciones de cancelaciones de servicios y otros notificaciones generales de Limpia Publica</value>
+    <comment>The tooltip to show when user does not want to receive notifications</comment>
   </data>
 </root>

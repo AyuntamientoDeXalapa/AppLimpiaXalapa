@@ -8,6 +8,21 @@ namespace AppLimpia
     public class Notification
     {
         /// <summary>
+        /// No notifications for the current user.
+        /// </summary>
+        public const int NoNotification = 0;
+
+        /// <summary>
+        /// Distance notification.
+        /// </summary>
+        public const int DistanceNotifications = 1;
+
+        /// <summary>
+        /// Notifications one day before.
+        /// </summary>
+        public const int DayBeforeNotifications = 2;
+
+        /// <summary>
         /// Gets or sets the identifier of the current.
         /// </summary>
         public string Id { get; set; }

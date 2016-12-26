@@ -71,6 +71,23 @@
                Placeholder="{local:Localize PasswordConfirm}"
                IsPassword="True"
                Text="{Binding PasswordConfirm}"/>
+        <local:PickerEx x:Name="PickerNotificationTypes"
+                        Style="{DynamicResource LoginPicker}"
+                        HorizontalOptions="FillAndExpand"
+                        PlaceholderText="{local:Localize NotificationTypes}"
+                        SelectedIndex="{Binding NotificationTypeIndex}"/>
+        <Label x:Name="NotificationTypesTooltip"
+               HorizontalOptions="FillAndExpand"
+               Style="{DynamicResource ErrorLabel}"
+               Text="{local:Localize NoNotificationsTooltip}">
+          <Label.Triggers>
+            <DataTrigger TargetType="Label"
+                         Binding="{Binding NotificationTypeIndex}"
+                         Value="0">
+              <Setter Property="IsVisible" Value="True"/>
+            </DataTrigger>
+          </Label.Triggers>
+        </Label>
       
         <!-- Register and cancel buttons -->
         <Button x:Name="ButtonRegister"

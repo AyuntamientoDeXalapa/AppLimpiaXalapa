@@ -28,6 +28,11 @@ namespace AppLimpia.Login
         private bool isRegistering;
 
         /// <summary>
+        /// The notification type index.
+        /// </summary>
+        private int notificationTypeIndex;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="RegisterViewModel"/> class.
         /// </summary>
         /// <param name="completionSource">The register task completion source.</param>
@@ -42,6 +47,7 @@ namespace AppLimpia.Login
             this.FullName = string.Empty;
             this.Password = string.Empty;
             this.PasswordConfirm = string.Empty;
+            this.NotificationTypeIndex = -1;
 
             // Setup commands
             this.RegisterCommand = new Command(this.Register);
@@ -56,22 +62,52 @@ namespace AppLimpia.Login
         /// <summary>
         /// Gets or sets the full user name.
         /// </summary>
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        // Justification = Used by data binding
         public string FullName { get; set; }
 
         /// <summary>
         /// Gets or sets the user name (login) for registration.
         /// </summary>
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        // Justification = Used by data binding
         public string Login { get; set; }
 
         /// <summary>
         /// Gets or sets the user password.
         /// </summary>
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        // Justification = Used by data binding
         public string Password { private get; set; }
 
         /// <summary>
         /// Gets or sets the user password confirmation.
         /// </summary>
+        // ReSharper disable once MemberCanBePrivate.Global
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+        // Justification = Used by data binding
         public string PasswordConfirm { private get; set; }
+
+        /// <summary>
+        /// Gets or sets the notification type index.
+        /// </summary>
+        public int NotificationTypeIndex
+        {
+            get
+            {
+                return this.notificationTypeIndex;
+            }
+
+            // ReSharper disable once MemberCanBePrivate.Global
+            // Justification = Used by data binding
+            set
+            {
+                this.SetProperty(ref this.notificationTypeIndex, value, nameof(this.NotificationTypeIndex));
+            }
+        }
 
         /// <summary>
         /// Gets the register command.
@@ -132,12 +168,21 @@ namespace AppLimpia.Login
                 return;
             }
 
+            // Validate that the notification type is valid
+            if (this.NotificationTypeIndex < 0)
+            {
+                // TODO: Localize
+                App.DisplayAlert("Error", "Debe de selecionar el tipo de notificación", "OK");
+                return;
+            }
+
             // Prepare the data to be send to the server
             var registrationForm = new Json.JsonObject
                                        {
                                                { "username", login },
                                                { "name", this.FullName.Trim() },
-                                               { "password", this.Password }
+                                               { "password", this.Password },
+                                               { "notification_types", this.NotificationTypeIndex }
                                        };
             var builder = new StringBuilder();
             Json.Json.Write(registrationForm, builder);

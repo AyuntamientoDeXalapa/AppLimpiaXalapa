@@ -1,5 +1,7 @@
 ﻿using System;
 
+using AppLimpia.Properties;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -39,6 +41,11 @@ namespace AppLimpia.Login
             this.EntryUserName.Completed += (s, e) => this.EntryPassword.Focus();
             this.EntryPassword.Completed += (s, e) => this.EntryPasswordConfirm.Focus();
             this.EntryPasswordConfirm.Completed += (s, e) => this.ButtonRegister.Focus();
+
+            // Fill notification types combobox
+            this.PickerNotificationTypes.Items.Add(Localization.NoNotification);
+            this.PickerNotificationTypes.Items.Add(Localization.DistanceNotifications);
+            this.PickerNotificationTypes.Items.Add(Localization.DayBeforeNotifications);
         }
 
         /// <summary>

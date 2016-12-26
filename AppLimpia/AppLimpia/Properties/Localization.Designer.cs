@@ -89,6 +89,24 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Notificaciones un dia antes.
+        /// </summary>
+        internal static string DayBeforeNotifications {
+            get {
+                return ResourceManager.GetString("DayBeforeNotifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notificaciones de distancia.
+        /// </summary>
+        internal static string DistanceNotifications {
+            get {
+                return ResourceManager.GetString("DistanceNotifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ingresa con.
         /// </summary>
         internal static string EnterWith {
@@ -260,11 +278,38 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No quiero recibir notificaciones.
+        /// </summary>
+        internal static string NoNotification {
+            get {
+                return ResourceManager.GetString("NoNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usted va a recibir los notificaciones de cancelaciones de servicios y otros notificaciones generales de Limpia Publica.
+        /// </summary>
+        internal static string NoNotificationsTooltip {
+            get {
+                return ResourceManager.GetString("NoNotificationsTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notificaciones.
         /// </summary>
         internal static string NotificationsTitle {
             get {
                 return ResourceManager.GetString("NotificationsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notificaciones.
+        /// </summary>
+        internal static string NotificationTypes {
+            get {
+                return ResourceManager.GetString("NotificationTypes", resourceCulture);
             }
         }
         
