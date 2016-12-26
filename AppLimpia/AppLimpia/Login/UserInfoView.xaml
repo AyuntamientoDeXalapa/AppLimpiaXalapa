@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,8 +6,8 @@
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
              xmlns:login="clr-namespace:AppLimpia.Login;assembly=AppLimpia"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance login:ChangePasswordViewModel}"
-             x:Class="AppLimpia.Login.ChangePasswordView">
+             d:DataContext="{d:DesignInstance login:UserInfoViewModel}"
+             x:Class="AppLimpia.Login.UserInfoView">
   <ContentPage.Padding>
     <OnPlatform x:TypeArguments="Thickness"
                 iOS="0,20,0,0"
@@ -58,42 +58,37 @@
              HorizontalOptions="Center"
              VerticalOptions="Center"
              Style="{DynamicResource LoginTitleLabel}"
-             Text="{local:Localize ChangePasswordTitle}"/>
+             Text="{local:Localize Settings}"/>
     </Grid>
 
-    <!-- Change password fields -->
+    <!-- Change user info fields -->
     <StackLayout Grid.Column="0"
                  Grid.Row="1"
                  Orientation="Vertical"
                  HorizontalOptions="FillAndExpand"
                  VerticalOptions="FillAndExpand"
                  Padding="30,10">
-      <Entry HorizontalOptions="FillAndExpand"
-             Placeholder="{local:Localize UserLogin}"
-             IsEnabled="False"
-             Text="{Binding Login}"/>
-      <Entry x:Name="EntryPasswordCurrent"
-             HorizontalOptions="FillAndExpand"
-             Placeholder="{local:Localize PasswordCurrent}"
-             IsPassword="True"
-             Text="{Binding PasswordCurrent}"/>
-      <Entry x:Name="EntryPasswordNew"
-             HorizontalOptions="FillAndExpand"
-             Placeholder="{local:Localize PasswordNew}"
-             IsPassword="True"
-             Text="{Binding PasswordNew}"/>
-      <Entry x:Name="EntryPasswordConfirm"
-             HorizontalOptions="FillAndExpand"
-             Placeholder="{local:Localize PasswordConfirm}"
-             IsPassword="True"
-             Text="{Binding PasswordConfirm}"/>
-
+      <local:PickerEx x:Name="PickerNotificationTypes"
+                      HorizontalOptions="FillAndExpand"
+                      PlaceholderText="{local:Localize NotificationTypes}"
+                      SelectedIndex="{Binding NotificationTypeIndex}"/>
+      <Label HorizontalOptions="FillAndExpand"
+             Style="{DynamicResource ErrorLabel}"
+             Text="{local:Localize NoNotificationsTooltip}">
+        <Label.Triggers>
+          <DataTrigger TargetType="Label"
+                       Binding="{Binding NotificationTypeIndex}"
+                       Value="0">
+            <Setter Property="IsVisible" Value="True"/>
+          </DataTrigger>
+        </Label.Triggers>
+      </Label>
+      
       <!-- Change password and cancel buttons -->
-      <Button x:Name="ButtonChangePassword"
-              Style="{DynamicResource GreenButton}"
+      <Button Style="{DynamicResource GreenButton}"
               HorizontalOptions="FillAndExpand"
-              Text="{local:Localize ChangePassword}"
-              Command="{Binding ChangePasswordCommand}"/>
+              Text="{local:Localize Save}"
+              Command="{Binding SaveCommand}"/>
       <Button Style="{DynamicResource CancelButton}"
               HorizontalOptions="FillAndExpand"
               Text="{local:Localize Cancel}"

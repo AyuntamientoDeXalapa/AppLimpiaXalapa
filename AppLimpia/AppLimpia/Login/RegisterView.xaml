@@ -76,8 +76,7 @@
                         HorizontalOptions="FillAndExpand"
                         PlaceholderText="{local:Localize NotificationTypes}"
                         SelectedIndex="{Binding NotificationTypeIndex}"/>
-        <Label x:Name="NotificationTypesTooltip"
-               HorizontalOptions="FillAndExpand"
+        <Label HorizontalOptions="FillAndExpand"
                Style="{DynamicResource ErrorLabel}"
                Text="{local:Localize NoNotificationsTooltip}">
           <Label.Triggers>

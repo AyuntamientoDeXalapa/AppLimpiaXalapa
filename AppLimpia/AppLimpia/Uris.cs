@@ -114,6 +114,24 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the get user information URI.
+        /// </summary>
+        /// <returns>The update user information URI.</returns>
+        public static UriMethodPair GetGetUserInfoUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/usuarios/this"), HttpMethod.Get);
+        }
+
+        /// <summary>
+        /// Gets the update user information URI.
+        /// </summary>
+        /// <returns>The update user information URI.</returns>
+        public static UriMethodPair GetUpdateUserInfoUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/usuarios/this"), new HttpMethod("PATCH"));
+        }
+
+        /// <summary>
         /// Gets the find nearest drop points URI.
         /// </summary>
         /// <param name="longitude">The longitude to search drop points.</param>

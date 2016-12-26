@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 
 using AppLimpia.Json;
-using AppLimpia.Login;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
@@ -116,6 +115,7 @@ namespace AppLimpia
             this.ShowFavoritesCommand = new Command(this.ShowFavorites);
             this.ShowNotificationsCommand = new Command(this.ShowNotifications);
             this.ShowReportsCommand = new Command(this.ShowReports);
+            this.ChangeUserInfoCommand = new Command(this.ChangeUserInfo);
             this.ChangePasswordCommand = new Command(this.ChangePassword);
             this.LoginCommand = new Command(this.Login);
             this.LogoutCommand = new Command(this.Logout);
@@ -252,6 +252,11 @@ namespace AppLimpia
         /// Gets the show reports command.
         /// </summary>
         public ICommand ShowReportsCommand { get; }
+
+        /// <summary>
+        /// Gets the change user info command.
+        /// </summary>
+        public ICommand ChangeUserInfoCommand { get; }
 
         /// <summary>
         /// Gets the change password command.
@@ -1315,6 +1320,17 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Changes the user information of the currently logged user.
+        /// </summary>
+        private void ChangeUserInfo()
+        {
+            // Show change user info view
+            var viewModel = new Login.UserInfoViewModel();
+            var view = new Login.UserInfoView { BindingContext = viewModel };
+            this.Navigation.PushModalAsync(view);
+        }
+
+        /// <summary>
         /// Changes the password of the currently logged user.
         /// </summary>
         private void ChangePassword()
@@ -1388,8 +1404,8 @@ namespace AppLimpia
             Settings.Instance.Clear();
 
             // Return to login view
-            var viewModel = new LoginViewModel();
-            var view = new LoginView { BindingContext = viewModel };
+            var viewModel = new Login.LoginViewModel();
+            var view = new Login.LoginView { BindingContext = viewModel };
             App.ReplaceMainView(view);
         }
 

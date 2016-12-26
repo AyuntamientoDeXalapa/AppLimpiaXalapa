@@ -88,10 +88,10 @@
     <Compile Include="PickerEx.cs" />
     <Compile Include="RemoteServerException.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="UserDataView.xaml.cs">
-      <DependentUpon>UserDataView.xaml</DependentUpon>
+    <Compile Include="Login\UserInfoView.xaml.cs">
+      <DependentUpon>UserInfoView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserDataViewModel.cs" />
+    <Compile Include="Login\UserInfoViewModel.cs" />
     <Compile Include="MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
@@ -160,7 +160,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UserDataView.xaml">
+    <EmbeddedResource Include="Login\UserInfoView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

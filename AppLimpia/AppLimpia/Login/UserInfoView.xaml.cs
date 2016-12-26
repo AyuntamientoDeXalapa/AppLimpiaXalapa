@@ -1,25 +1,27 @@
 ﻿using System;
 
+using AppLimpia.Properties;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace AppLimpia
+namespace AppLimpia.Login
 {
     /// <summary>
     /// Interaction logic for UserDataPage.xaml.
     /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class UserDataView
+    public partial class UserInfoView
     {
         /// <summary>
         /// The current binding context.
         /// </summary>
-        private UserDataViewModel currentBindingContext;
+        private UserInfoViewModel currentBindingContext;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UserDataView"/> class.
+        /// Initializes a new instance of the <see cref="UserInfoView"/> class.
         /// </summary>
-        public UserDataView()
+        public UserInfoView()
         {
             // Parse XAML content
             this.InitializeComponent();
@@ -33,6 +35,11 @@ namespace AppLimpia
             {
                 this.Resources.Add(resource.Key, resource.Value);
             }
+
+            // Fill notification types combobox
+            this.PickerNotificationTypes.Items.Add(Localization.NoNotification);
+            this.PickerNotificationTypes.Items.Add(Localization.DistanceNotifications);
+            this.PickerNotificationTypes.Items.Add(Localization.DayBeforeNotifications);
         }
 
         /// <summary>
@@ -47,7 +54,7 @@ namespace AppLimpia
             }
 
             // Set up the event handling from the binding context
-            this.currentBindingContext = this.BindingContext as UserDataViewModel;
+            this.currentBindingContext = this.BindingContext as UserInfoViewModel;
             if (this.currentBindingContext != null)
             {
                 // Set up navigation context
@@ -56,6 +63,23 @@ namespace AppLimpia
 
             // Call the base member
             base.OnBindingContextChanged();
+        }
+
+        /// <summary>
+        /// Called when the back button is pressed.
+        /// </summary>
+        /// <returns><c>true</c> if the button press was handled; <c>false</c> to handle the button by OS.</returns>
+        protected override bool OnBackButtonPressed()
+        {
+            // If no binding context
+            if (this.currentBindingContext == null)
+            {
+                return base.OnBackButtonPressed();
+            }
+
+            // Cancel the register operation
+            this.currentBindingContext.CancelCommand.Execute(null);
+            return true;
         }
     }
 }
