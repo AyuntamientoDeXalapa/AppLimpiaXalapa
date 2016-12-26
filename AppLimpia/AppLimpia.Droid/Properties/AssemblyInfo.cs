@@ -27,8 +27,8 @@ using Android.Content.PM;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.7.7")]
-[assembly: AssemblyFileVersion("1.0.7.7")]
+[assembly: AssemblyVersion("1.0.8.8")]
+[assembly: AssemblyFileVersion("1.0.8.8")]
 
 // Add some common permissions, these can be removed if not needed
 [assembly: UsesPermission(Android.Manifest.Permission.Internet)]

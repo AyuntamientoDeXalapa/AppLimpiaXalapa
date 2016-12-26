@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="mx.gob.xalapa.limpia" android:versionName="1.0.7" android:versionCode="8">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="mx.gob.xalapa.limpia" android:versionName="1.0.8" android:versionCode="9">
 	<uses-sdk android:minSdkVersion="15" />
 	<application android:label="Xalapa Limpia" android:icon="@drawable/icon">
 		<receiver android:name="com.google.android.gms.gcm.GcmReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
