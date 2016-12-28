@@ -152,6 +152,51 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to La contraseña y su confirmacion no coinciden.
+        /// </summary>
+        internal static string ErrorInvalidConfirmation {
+            get {
+                return ResourceManager.GetString("ErrorInvalidConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debe de proporcionar un nombre completo valido.
+        /// </summary>
+        internal static string ErrorInvalidFullName {
+            get {
+                return ResourceManager.GetString("ErrorInvalidFullName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debe de selecionar el tipo de notificación.
+        /// </summary>
+        internal static string ErrorInvalidNotificationTypes {
+            get {
+                return ResourceManager.GetString("ErrorInvalidNotificationTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debe de proporcionar una contraseña valida.
+        /// </summary>
+        internal static string ErrorInvalidPassword {
+            get {
+                return ResourceManager.GetString("ErrorInvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debe de proporcionar un email valido.
+        /// </summary>
+        internal static string ErrorInvalidUserLogin {
+            get {
+                return ResourceManager.GetString("ErrorInvalidUserLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El servicio de localizacion no esta disponible. Por favor activalo en configuracion de sistema.
         /// </summary>
         internal static string ErrorNoLocationService {

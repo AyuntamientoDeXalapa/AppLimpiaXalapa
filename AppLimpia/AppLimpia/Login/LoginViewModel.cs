@@ -41,7 +41,7 @@ namespace AppLimpia.Login
         }
 
         /// <summary>
-        /// Gets or sets the user name of the user to log.
+        /// Gets or sets the user name (login) of the user to log.
         /// </summary>
         public string UserName
         {
@@ -106,7 +106,6 @@ namespace AppLimpia.Login
             }
 
             // Validate that the user name is a valid email
-            // TODO: Change to email or phone number
             var user = this.UserName.Trim().ToLower();
             var isEmail = Regex.IsMatch(
                 user,
@@ -114,16 +113,20 @@ namespace AppLimpia.Login
                 RegexOptions.IgnoreCase);
             if (!isEmail)
             {
-                // TODO: Localize
-                App.DisplayAlert("Error", "Debe de proporcionar un email valido", "OK");
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorInvalidUserLogin,
+                    Localization.ErrorDialogDismiss);
                 return;
             }
 
             // Validate that the password is present
             if (this.Password.Length <= 2)
             {
-                // TODO: Localize
-                App.DisplayAlert("Error", "Debe de proporcionar una contraseña valida", "OK");
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorInvalidPassword,
+                    Localization.ErrorDialogDismiss);
                 return;
             }
 
@@ -366,15 +369,15 @@ namespace AppLimpia.Login
         private void ProcessRegisterResult(Task<bool> registerTask, RegisterViewModel viewModel)
         {
             // If task is canceled do nothing
-            System.Diagnostics.Debug.WriteLine("Register task done");
             if (registerTask.IsCanceled)
             {
-                System.Diagnostics.Debug.WriteLine("Register canceled");
                 return;
             }
 
-            // Show the main view
-            App.ShowMainView();
+            // Login the current user
+            this.UserName = viewModel.UserName;
+            this.Password = viewModel.Password;
+            this.Login();
         }
 
         /// <summary>

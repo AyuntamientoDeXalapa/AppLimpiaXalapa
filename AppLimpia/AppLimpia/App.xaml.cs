@@ -33,7 +33,7 @@ namespace AppLimpia
             var accessToken = string.Empty;
             if (Settings.Instance.Contains(Settings.AccessToken))
             {
-                accessToken = Settings.Instance.GetValue(Settings.UserId, string.Empty);
+                accessToken = Settings.Instance.GetValue(Settings.AccessToken, string.Empty);
                 Debug.WriteLine("Access Token  = " + accessToken);
             }
 

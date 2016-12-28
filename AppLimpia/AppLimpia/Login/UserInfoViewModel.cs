@@ -110,8 +110,10 @@ namespace AppLimpia.Login
             // Validate that the notification type is valid
             if (this.NotificationTypeIndex < 0)
             {
-                // TODO: Localize
-                App.DisplayAlert("Error", "Debe de selecionar el tipo de notificación", "OK");
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorInvalidNotificationTypes,
+                    Localization.ErrorDialogDismiss);
                 return;
             }
 

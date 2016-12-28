@@ -58,7 +58,7 @@
                Style="{DynamicResource LoginEntry}"
                HorizontalOptions="FillAndExpand"
                Placeholder="{local:Localize UserLogin}"
-               Text="{Binding Login}"/>
+               Text="{Binding UserName}"/>
         <Entry x:Name="EntryPassword"
                Style="{DynamicResource LoginEntry}"
                HorizontalOptions="FillAndExpand"

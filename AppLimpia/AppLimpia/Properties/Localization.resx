@@ -305,4 +305,24 @@
     <value>Guardar</value>
     <comment>The save changes button text</comment>
   </data>
+  <data name="ErrorInvalidConfirmation" xml:space="preserve">
+    <value>La contraseña y su confirmacion no coinciden</value>
+    <comment>The user password confirmation is not equal to the password</comment>
+  </data>
+  <data name="ErrorInvalidFullName" xml:space="preserve">
+    <value>Debe de proporcionar un nombre completo valido</value>
+    <comment>The full name of the user is not valid</comment>
+  </data>
+  <data name="ErrorInvalidNotificationTypes" xml:space="preserve">
+    <value>Debe de selecionar el tipo de notificación</value>
+    <comment>The selected user notification type is not valid</comment>
+  </data>
+  <data name="ErrorInvalidPassword" xml:space="preserve">
+    <value>Debe de proporcionar una contraseña valida</value>
+    <comment>The user password is not valid</comment>
+  </data>
+  <data name="ErrorInvalidUserLogin" xml:space="preserve">
+    <value>Debe de proporcionar un email valido</value>
+    <comment>The user name (login) is not valid</comment>
+  </data>
 </root>
