@@ -64,7 +64,7 @@ namespace AppLimpia.Login
         // ReSharper disable once MemberCanBePrivate.Global
         // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         // Justification = Used by data binding
-        public string Password { private get; set; }
+        public string Password { get; set; }
 
         /// <summary>
         /// Gets the login command.
@@ -138,8 +138,7 @@ namespace AppLimpia.Login
                                         { "username", user },
                                         { "password", this.Password },
                                         { "scope", "user submit-report" },
-                                        { "device", deviceId },
-                                        { "override", true }
+                                        { "device", deviceId }
                                 };
 
             // If push token exists
@@ -149,13 +148,55 @@ namespace AppLimpia.Login
                 request.Add("push_token", pushToken);
             }
 
+            // Setup error handlers
+            // - If session is already opened by another device, request user consent
+            var handlers = new Dictionary<System.Net.HttpStatusCode, Action>
+                               {
+                                       { System.Net.HttpStatusCode.Conflict, () => this.RetryLogin(request) }
+                               };
+
             // Send request to the server
             this.IsBusy = true;
             WebHelper.SendAsync(
                 Uris.GetLoginUri(),
                 request.AsHttpContent(),
                 this.ProcessLoginResult,
-                () => this.IsBusy = false);
+                () => this.IsBusy = false,
+                handlers);
+        }
+
+        /// <summary>
+        /// Retries the login process after user consent to change session.
+        /// </summary>
+        /// <param name="request">The request to retry.</param>
+        private async void RetryLogin(JsonObject request)
+        {
+            // Ask the user consent to override session
+            var consent = await App.DisplayAlert(
+                                    Localization.ConfirmationDialogTitle,
+                                    Localization.ConfirmationSesionChange,
+                                    Localization.ButtonConfirm,
+                                    Localization.Cancel);
+
+            // If the user consent received
+            if (consent)
+            {
+                // Resent the request to the server
+                request.Add("override", true);
+                WebHelper.SendAsync(
+                    Uris.GetLoginUri(),
+                    request.AsHttpContent(),
+                    this.ProcessLoginResult,
+                    () => this.IsBusy = false);
+            }
+            else
+            {
+                // Cancel the task
+                this.UserName = string.Empty;
+                this.Password = string.Empty;
+                this.OnPropertyChanged(nameof(this.Password));
+                this.IsBusy = false;
+            }
         }
 
         /// <summary>
@@ -330,8 +371,12 @@ namespace AppLimpia.Login
                 oauthState.Add("push_token", pushToken);
             }
 
-            // TODO: Move to failed login
-            oauthState.Add("override", true);
+            // Setup error handlers
+            // - If session is already opened by another device, request user consent
+            var handlers = new Dictionary<System.Net.HttpStatusCode, Action>
+                               {
+                                       { System.Net.HttpStatusCode.Conflict, () => this.RetryLogin(oauthState) }
+                               };
 
             // Send request to the server
             this.IsBusy = true;
@@ -339,7 +384,8 @@ namespace AppLimpia.Login
                 Uris.GetLoginUri(),
                 oauthState.AsHttpContent(),
                 this.ProcessLoginResult,
-                () => this.IsBusy = false);
+                () => this.IsBusy = false,
+                handlers);
         }
 
         /// <summary>

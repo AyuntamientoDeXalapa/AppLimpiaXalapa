@@ -325,4 +325,16 @@
     <value>Debe de proporcionar un email valido</value>
     <comment>The user name (login) is not valid</comment>
   </data>
+  <data name="ButtonConfirm" xml:space="preserve">
+    <value>Confirmar</value>
+    <comment>The confirm dialog button</comment>
+  </data>
+  <data name="ConfirmationSesionChange" xml:space="preserve">
+    <value>Usted ya tiene una sesión abierta en otro dispositivo. Usted quere cerrar sesión y abrir una nueva en ese dispositivo?</value>
+    <comment>The confirmation sesion change text</comment>
+  </data>
+  <data name="ConfirmationDialogTitle" xml:space="preserve">
+    <value>Confirmación</value>
+    <comment>The confirmation dialog title</comment>
+  </data>
 </root>

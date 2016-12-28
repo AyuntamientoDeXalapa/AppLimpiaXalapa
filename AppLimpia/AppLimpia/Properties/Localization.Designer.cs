@@ -62,6 +62,15 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirmar.
+        /// </summary>
+        internal static string ButtonConfirm {
+            get {
+                return ResourceManager.GetString("ButtonConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancelar.
         /// </summary>
         internal static string Cancel {
@@ -85,6 +94,24 @@ namespace AppLimpia.Properties {
         internal static string ChangePasswordTitle {
             get {
                 return ResourceManager.GetString("ChangePasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirmación.
+        /// </summary>
+        internal static string ConfirmationDialogTitle {
+            get {
+                return ResourceManager.GetString("ConfirmationDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Usted ya tiene una sesión abierta en otro dispositivo. Usted quere cerrar sesión y abrir una nueva en ese dispositivo?.
+        /// </summary>
+        internal static string ConfirmationSesionChange {
+            get {
+                return ResourceManager.GetString("ConfirmationSesionChange", resourceCulture);
             }
         }
         
