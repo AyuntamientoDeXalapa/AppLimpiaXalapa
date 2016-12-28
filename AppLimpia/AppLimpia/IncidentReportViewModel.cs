@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 using AppLimpia.Json;
+using AppLimpia.Media;
+using AppLimpia.Properties;
 
 using Xamarin.Forms;
 
@@ -34,9 +36,9 @@ namespace AppLimpia
         private int incidentTypeIndex;
 
         /// <summary>
-        /// The encoded report photo.
+        /// The report photo data.
         /// </summary>
-        private byte[] reportPhoto;
+        private Stream reportPhotoData;
 
         /// <summary>
         /// The date and time of the current incident report.
@@ -50,11 +52,14 @@ namespace AppLimpia
         {
             // Get incident types from the server
             this.typesDictionary = new Dictionary<string, string>();
+            this.IncidentTypeIndex = -1;
             this.IncidentTypes = new ObservableCollection<string>();
             this.GetIncidentTypes();
 
             // Setup commands
+            this.TakePhotoCommand = new Command(this.TakePhoto);
             this.ReportIncidentCommand = new Command(this.ReportIncident);
+            this.CancelCommand = new Command(this.Cancel);
         }
 
         /// <summary>
@@ -82,11 +87,10 @@ namespace AppLimpia
         /// Gets the incident types collection.
         /// </summary>
         public ObservableCollection<string> IncidentTypes { get; }
-
+        
         /// <summary>
         /// Gets or sets the selected incident type.
         /// </summary>
-        [SuppressMessage("ReSharper", "UnusedMember.Global", Justification = "Used in data binding")]
         public int IncidentTypeIndex
         {
             get
@@ -94,6 +98,8 @@ namespace AppLimpia
                 return this.incidentTypeIndex;
             }
 
+            // ReSharper disable once MemberCanBePrivate.Global
+            // Justification = Used by data binding
             set
             {
                 this.SetProperty(ref this.incidentTypeIndex, value, nameof(this.IncidentTypeIndex));
@@ -101,31 +107,92 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets or sets he report photo data.
+        /// </summary>
+        public Stream ReportPhotoData
+        {
+            get
+            {
+                return this.reportPhotoData;
+            }
+
+            // ReSharper disable once MemberCanBePrivate.Global
+            // Justification = Used by data binding
+            set
+            {
+                this.SetProperty(ref this.reportPhotoData, value, nameof(this.ReportPhotoData));
+            }
+        }
+
+        /// <summary>
+        /// Gets the take photo command.
+        /// </summary>
+        public ICommand TakePhotoCommand { get; private set; }
+
+        /// <summary>
         /// Gets the report incident command.
         /// </summary>
         public ICommand ReportIncidentCommand { get; private set; }
 
         /// <summary>
-        /// Sets the incident report photo.
+        /// Gets the cancel command.
         /// </summary>
-        /// <param name="stream">The stream containing the incident report photo.</param>
-        public void SetIncidentReportPhoto(Stream stream)
-        {
-            // If new photo is present
-            if (stream != null)
-            {
-                // Encode photo
-                this.reportPhoto = new byte[stream.Length];
-                stream.Position = 0;
-                stream.Read(this.reportPhoto, 0, this.reportPhoto.Length);
+        public ICommand CancelCommand { get; private set; }
 
-                // Reset the stream position
-                stream.Position = 0;
+        /// <summary>
+        /// Takes the photo from the device camera.
+        /// </summary>
+        private void TakePhoto()
+        {
+            // If the camera available
+            var picker = MediaPicker.Instance;
+            if ((picker != null) && picker.IsCameraAvailable)
+            {
+                // Take the photo
+                var options = new CameraMediaStorageOptions();
+                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+                var task = picker.TakePhotoAsync(options);
+                if (task != null)
+                {
+                    // Process taken photo
+                    task.ContinueWith(this.OnPhotoChoosen, scheduler);
+                }
+                else
+                {
+                    App.DisplayAlert(
+                        Localization.ErrorDialogTitle,
+                        Localization.ErrorCameraForbidden,
+                        Localization.ErrorDialogDismiss);
+                }
             }
             else
             {
-                // Clear photo
-                this.reportPhoto = null;
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorCameraUnavailable,
+                    Localization.ErrorDialogDismiss);
+            }
+        }
+
+        /// <summary>
+        /// Handles when the photo was chosen.
+        /// </summary>
+        /// <param name="task">The asynchronous choose operation.</param>
+        private void OnPhotoChoosen(Task<MediaFile> task)
+        {
+            // If the photo was taken
+            if (task.Status == TaskStatus.RanToCompletion)
+            {
+                // Resize and save report photo data
+                var mediaFile = task.Result;
+                this.ReportPhotoData = MediaPicker.Instance.ResizeImage(mediaFile.Source, 800, 800);
+            }
+            else if (task.IsFaulted)
+            {
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    task.Exception.InnerException.Message,
+                    Localization.ErrorDialogDismiss);
             }
         }
 
@@ -141,30 +208,29 @@ namespace AppLimpia
             }
 
             // Get the incident types from the server
-            WebHelper.GetAsync(new Uri(Uris.GetIncidentTypes), this.ParseIncidentTypesData, () => this.IsBusy = false);
+            this.IsBusy = true;
+            WebHelper.SendAsync(
+                Uris.GetGetIncidentTypesUri(),
+                null,
+                this.ProcessGetIncidentTypesResult,
+                () => this.IsBusy = false);
         }
 
         /// <summary>
         /// Parsed the incident type data returned by the server.
         /// </summary>
-        /// <param name="json">The incident type data returned by the server.</param>
-        private void ParseIncidentTypesData(JsonValue json)
+        /// <param name="result">The incident type data returned by the server.</param>
+        private void ProcessGetIncidentTypesResult(JsonValue result)
         {
             // Process the HAL
             string nextUri;
-            var types = WebHelper.ParseHalCollection(json, "incidencias", out nextUri);
+            var types = WebHelper.ParseHalCollection(result, "incidencias", out nextUri);
 
             // Parse incident types data
             foreach (var type in types)
             {
                 // Get the incident type field
                 var id = type.GetItemOrDefault("id").GetStringValueOrDefault(null);
-                // TODO: Remove when fixed
-                if (id == null)
-                {
-                    id = Guid.NewGuid().ToString();
-                }
-
                 var incidentType = type.GetItemOrDefault("incidencia").GetStringValueOrDefault(null);
 
                 // If all fields present
@@ -184,7 +250,11 @@ namespace AppLimpia
             if (nextUri != null)
             {
                 // Get the favorites from the server
-                WebHelper.GetAsync(new Uri(nextUri), this.ParseIncidentTypesData, () => this.IsBusy = false);
+                WebHelper.SendAsync(
+                    new Uris.UriMethodPair(new Uri(nextUri), HttpMethod.Get),
+                    null,
+                    this.ProcessGetIncidentTypesResult,
+                    () => this.IsBusy = false);
             }
             else
             {
@@ -204,6 +274,16 @@ namespace AppLimpia
                 return;
             }
 
+            // Validate that the notification type is valid
+            if (this.IncidentTypeIndex < 0)
+            {
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorInvalidIncidentType,
+                    Localization.ErrorDialogDismiss);
+                return;
+            }
+
             // Save the report date
             if (!this.reportDate.HasValue)
             {
@@ -219,12 +299,13 @@ namespace AppLimpia
                 report.Add(new StringContent(this.IncidentTypes[this.incidentTypeIndex]), "incidencia");
             }
 
-            // Add image if any
-            if (this.reportPhoto != null)
+            // Is report photo is specified
+            if (this.reportPhotoData != null)
             {
-                var imageContent = new ByteArrayContent(this.reportPhoto);
+                // Add photo to the report
+                var imageContent = new StreamContent(this.reportPhotoData);
                 imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
-                report.Add(new ByteArrayContent(this.reportPhoto), "imagen", "imagen.jpg");
+                report.Add(imageContent, "imagen", "imagen.jpg");
             }
 
             // Send the report to the server
@@ -232,7 +313,7 @@ namespace AppLimpia
             WebHelper.SendAsync(
                 Uris.GetSubmitReportUri(),
                 report,
-                this.ParseNewIncidentData,
+                this.ProcessReportIncidentResult,
                 () => this.IsBusy = false,
                 timeout: TimeSpan.FromMinutes(5));
         }
@@ -240,12 +321,12 @@ namespace AppLimpia
         /// <summary>
         /// Parsed the new incident data returned by the server.
         /// </summary>
-        /// <param name="json">The new incident data returned by the server.</param>
-        private void ParseNewIncidentData(JsonValue json)
+        /// <param name="result">The new incident data returned by the server.</param>
+        private void ProcessReportIncidentResult(JsonValue result)
         {
             // Get the new incident report id
-            var id = json.GetItemOrDefault("id").GetStringValueOrDefault(null);
-            var status = json.GetItemOrDefault("status").GetStringValueOrDefault(string.Empty);
+            var id = result.GetItemOrDefault("id").GetStringValueOrDefault(null);
+            var status = result.GetItemOrDefault("status").GetStringValueOrDefault(string.Empty);
 
             if (!string.IsNullOrEmpty(id))
             {
@@ -268,6 +349,15 @@ namespace AppLimpia
 
             // Close the current view
             this.Navigation.PopModalAsync();
+        }
+
+        /// <summary>
+        /// Cancels the register task.
+        /// </summary>
+        private async void Cancel()
+        {
+            // Return to main view
+            await this.Navigation.PopModalAsync();
         }
     }
 }

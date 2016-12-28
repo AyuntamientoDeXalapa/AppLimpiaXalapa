@@ -337,4 +337,16 @@
     <value>Confirmación</value>
     <comment>The confirmation dialog title</comment>
   </data>
+  <data name="ErrorInvalidIncidentType" xml:space="preserve">
+    <value>Debe de selecionar el tipo de incidencia</value>
+    <comment>The selected incident type is not valid</comment>
+  </data>
+  <data name="ErrorCameraForbidden" xml:space="preserve">
+    <value>Para tomar la foto abilita el permiso de camara en configuracion de sistema</value>
+    <comment>The application does not have a camera permission error text</comment>
+  </data>
+  <data name="ErrorCameraUnavailable" xml:space="preserve">
+    <value>La aplicación no puede aceder a camara</value>
+    <comment>The camera is not available for the current application</comment>
+  </data>
 </root>

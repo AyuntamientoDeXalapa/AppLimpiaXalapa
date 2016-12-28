@@ -185,6 +185,15 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the get incident types URI.
+        /// </summary>
+        /// <returns>Teh get incident types URI.</returns>
+        public static UriMethodPair GetGetIncidentTypesUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/catalogos/incidencias"), HttpMethod.Get);
+        }
+
+        /// <summary>
         /// Represents the URI and method pair.
         /// </summary>
         internal sealed class UriMethodPair

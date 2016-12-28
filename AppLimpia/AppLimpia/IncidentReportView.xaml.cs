@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
-
-using AppLimpia.Media;
+using System.ComponentModel;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -54,6 +52,10 @@ namespace AppLimpia
                 this.typesSynchronizer.Dispose();
                 this.typesSynchronizer = null;
                 this.currentBindingContext.Navigation = null;
+
+                // Remove events handler
+                this.PickerIncidentTypes.Items.Clear();
+                this.currentBindingContext.PropertyChanged -= this.OnPropertyChanged;
             }
 
             // Set up the event handling from the binding context
@@ -64,6 +66,7 @@ namespace AppLimpia
                 this.currentBindingContext.Navigation = this.Navigation;
 
                 // Set up event handlers
+                this.currentBindingContext.PropertyChanged += this.OnPropertyChanged;
                 this.typesSynchronizer = new CollectionSynchronizer<string>(
                     this.currentBindingContext.IncidentTypes,
                     this.PickerIncidentTypes.Items);
@@ -74,72 +77,46 @@ namespace AppLimpia
         }
 
         /// <summary>
-        /// Handles the TakePhoto event.
+        /// Called when the back button is pressed.
+        /// </summary>
+        /// <returns><c>true</c> if the button press was handled; <c>false</c> to handle the button by OS.</returns>
+        protected override bool OnBackButtonPressed()
+        {
+            // If no binding context
+            if (this.currentBindingContext == null)
+            {
+                return base.OnBackButtonPressed();
+            }
+
+            // Cancel the register operation
+            this.currentBindingContext.CancelCommand.Execute(null);
+            return true;
+        }
+
+        /// <summary>
+        /// Handles the PropertyChanged event of ViewModel.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">A <see cref="EventArgs"/> with arguments of the event.</param>
-        private void OnTakePhoto(object sender, EventArgs e)
+        /// <param name="e">A <see cref="PropertyChangedEventArgs"/> with arguments of the event.</param>
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var picker = MediaPicker.Instance;
-            if ((picker != null) && picker.IsCameraAvailable)
+            // If the report photo data was changed
+            if (e.PropertyName == nameof(IncidentReportViewModel.ReportPhotoData))
             {
-                var options = new CameraMediaStorageOptions();
-                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-                var task = picker.TakePhotoAsync(options);
-                if (task != null)
+                // If the image data is available
+                if (this.currentBindingContext.ReportPhotoData != null)
                 {
-                    task.ContinueWith(this.OnPhotoChoosen, scheduler);
+                    this.currentBindingContext.ReportPhotoData.Position = 0;
+                    this.ImageReportPhoto.Source =
+                        ImageSource.FromStream(() => this.currentBindingContext.ReportPhotoData);
+                    this.ImageReportPhoto.IsVisible = true;
+                    this.currentBindingContext.ReportPhotoData.Position = 0;
                 }
                 else
                 {
-                    // TODO: Localize
-                    this.DisplayAlert(
-                        "Error",
-                        "Para tomar la foto abilita el permiso de camara en configuracion de sistema",
-                        "OK");
+                    this.ImageReportPhoto.Source = null;
+                    this.ImageReportPhoto.IsVisible = false;
                 }
-            }
-            else
-            {
-                // TODO: Localize
-                this.DisplayAlert("Error", "La aplicación no puede aceder a camara", "OK");
-            }
-        }
-
-        /// <summary>
-        /// Handles the Canceled event.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">A <see cref="EventArgs"/> with arguments of the event.</param>
-        private void OnCanceled(object sender, EventArgs e)
-        {
-            this.Navigation.PopModalAsync();
-        }
-
-        /// <summary>
-        /// Handles when the photo was chosen.
-        /// </summary>
-        /// <param name="task">The asynchronous choose operation.</param>
-        private void OnPhotoChoosen(Task<MediaFile> task)
-        {
-            // If the task failed
-            if (task.IsFaulted)
-            {
-                this.DisplayAlert("Error", task.Exception.InnerException.ToString(), "OK");
-            }
-            else if (task.IsCanceled)
-            {
-#if DEBUG
-                this.DisplayAlert("Canceled", "Canceled", "OK");
-#endif
-            }
-            else
-            {
-                var mediaFile = task.Result;
-                this.currentBindingContext?.SetIncidentReportPhoto(mediaFile.Source);
-
-                this.Image1.Source = ImageSource.FromStream(() => mediaFile.Source);
-                this.Image1.IsVisible = true;
             }
         }
     }

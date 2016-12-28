@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AppLimpia.Media
@@ -29,5 +30,17 @@ namespace AppLimpia.Media
         /// <param name="options">The storage options.</param> 
         /// <returns>Task representing the asynchronous operation.</returns>
         public abstract Task<MediaFile> TakePhotoAsync(CameraMediaStorageOptions options);
+
+        /// <summary>
+        /// Resizes the image to have the specified maximum sizes.
+        /// </summary>
+        /// <param name="source">The source image to resize.</param>
+        /// <param name="maxWidth">The max width of the image.</param>
+        /// <param name="maxHeight">The max height of the image.</param>
+        /// <returns>The resized image data.</returns>
+        public virtual Stream ResizeImage(Stream source, int maxWidth, int maxHeight)
+        {
+            return source;
+        }
     }
 }

@@ -143,6 +143,24 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Para tomar la foto abilita el permiso de camara en configuracion de sistema.
+        /// </summary>
+        internal static string ErrorCameraForbidden {
+            get {
+                return ResourceManager.GetString("ErrorCameraForbidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to La aplicación no puede aceder a camara.
+        /// </summary>
+        internal static string ErrorCameraUnavailable {
+            get {
+                return ResourceManager.GetString("ErrorCameraUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to La operación fue cancelada.
         /// </summary>
         internal static string ErrorCancelled {
@@ -193,6 +211,15 @@ namespace AppLimpia.Properties {
         internal static string ErrorInvalidFullName {
             get {
                 return ResourceManager.GetString("ErrorInvalidFullName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debe de selecionar el tipo de incidencia.
+        /// </summary>
+        internal static string ErrorInvalidIncidentType {
+            get {
+                return ResourceManager.GetString("ErrorInvalidIncidentType", resourceCulture);
             }
         }
         
