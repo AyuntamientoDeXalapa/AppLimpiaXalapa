@@ -41,14 +41,7 @@ namespace AppLimpia
             }
 
             // Update the reports from server
-            // this.UpdateReports();
-            Device.StartTimer(
-                TimeSpan.FromSeconds(3),
-                () =>
-                    {
-                        this.UpdateReports();
-                        return false;
-                    });
+            this.UpdateReports();
 
             // Setup commands
             this.CloseCommand = new Command(this.Close);
