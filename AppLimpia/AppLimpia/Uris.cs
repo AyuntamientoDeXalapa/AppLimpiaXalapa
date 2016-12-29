@@ -132,6 +132,15 @@ namespace AppLimpia
         }
 
         /// <summary>
+        /// Gets the get reports URI.
+        /// </summary>
+        /// <returns>The get reports URI.</returns>
+        public static UriMethodPair GetGetReportsUri()
+        {
+            return new UriMethodPair(new Uri($"{Uris.Server}api/reportes"), HttpMethod.Get);
+        }
+
+        /// <summary>
         /// Gets the find nearest drop points URI.
         /// </summary>
         /// <param name="longitude">The longitude to search drop points.</param>

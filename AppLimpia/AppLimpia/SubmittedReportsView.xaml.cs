@@ -9,17 +9,17 @@ namespace AppLimpia
     /// Interaction logic for MyReportsView.xaml.
     /// </summary>
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class MyReportsView
+    public partial class SubmittedReportsView
     {
         /// <summary>
         /// The current binding context.
         /// </summary>
-        private MyReportsViewModel currentBindingContext;
+        private SubmittedReportsViewModel currentBindingContext;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MyReportsView"/> class.
+        /// Initializes a new instance of the <see cref="SubmittedReportsView"/> class.
         /// </summary>
-        public MyReportsView()
+        public SubmittedReportsView()
         {
             // Parse XAML content
             this.InitializeComponent();
@@ -47,7 +47,7 @@ namespace AppLimpia
             }
 
             // Set up the event handling from the binding context
-            this.currentBindingContext = this.BindingContext as MyReportsViewModel;
+            this.currentBindingContext = this.BindingContext as SubmittedReportsViewModel;
             if (this.currentBindingContext != null)
             {
                 // Set up navigation context

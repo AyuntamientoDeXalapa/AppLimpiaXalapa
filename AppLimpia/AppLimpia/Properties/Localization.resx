@@ -365,4 +365,8 @@
     <value>El usuario no ha entrado al sistema</value>
     <comment>The user has not log in error message</comment>
   </data>
+  <data name="NoSubmittedReports" xml:space="preserve">
+    <value>No existen reportes</value>
+    <comment>The user does not have any submitted reports</comment>
+  </data>
 </root>

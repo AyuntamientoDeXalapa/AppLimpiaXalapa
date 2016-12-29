@@ -5,8 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance local:MyReportsViewModel}"
-             x:Class="AppLimpia.MyReportsView">
+             d:DataContext="{d:DesignInstance local:SubmittedReportsViewModel}"
+             x:Class="AppLimpia.SubmittedReportsView">
   <ContentPage.Padding>
     <OnPlatform x:TypeArguments="Thickness"
                 iOS="0,20,0,0"
@@ -60,11 +60,69 @@
              Text="{local:Localize ReportsTitle}"/>
     </Grid>
 
-    <!-- My reports list -->
+    <Grid Grid.Column="0"
+          Grid.Row="0"
+          Grid.RowSpan="2"
+          InputTransparent="True">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <!-- No submitted reports -->
+      <StackLayout Grid.Column="0"
+                   Grid.Row="1">
+        <StackLayout.Triggers>
+          <DataTrigger TargetType="StackLayout"
+                       Binding="{Binding HaveReports}"
+                       Value="True">
+            <Setter Property="IsVisible" Value="False"/>
+          </DataTrigger>
+        </StackLayout.Triggers>
+        <Image InputTransparent="True">
+          <Image.WidthRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="64" Android="64" WinPhone="96"/>
+          </Image.WidthRequest>
+          <Image.HeightRequest>
+            <OnPlatform x:TypeArguments="x:Double" iOS="64" Android="64" WinPhone="96"/>
+          </Image.HeightRequest>
+          <Image.Source>
+            <OnPlatform x:TypeArguments="ImageSource"
+                        iOS="NoReports.png"
+                        Android="no_reports.png"
+                        WinPhone="Assets/NoReports.png"/>
+          </Image.Source>
+        </Image>
+        <Label HorizontalOptions="CenterAndExpand"
+               Text="{local:Localize NoSubmittedReports}"/>
+      </StackLayout>
+
+      <!-- City hall logo -->
+      <Image Grid.Column="0"
+             Grid.Row="3"
+             Margin="0,10"
+             InputTransparent="True">
+        <Image.WidthRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="175" Android="175" WinPhone="262"/>
+        </Image.WidthRequest>
+        <Image.HeightRequest>
+          <OnPlatform x:TypeArguments="x:Double" iOS="60" Android="60" WinPhone="90"/>
+        </Image.HeightRequest>
+        <Image.Source>
+          <OnPlatform x:TypeArguments="ImageSource"
+                      iOS="XalapaGray.png"
+                      Android="xalapa_gray.png"
+                      WinPhone="Assets/XalapaGray.png"/>
+        </Image.Source>
+      </Image>
+    </Grid>
+
+    <!-- Submitted reports list -->
     <ListView Grid.Column="0"
               Grid.Row="1"
-              BackgroundColor="#E3E4E5"
-              ItemsSource="{Binding MyReports}"
+              ItemsSource="{Binding SubmittedReports}"
               HasUnevenRows="True">
       <ListView.ItemTemplate>
         <DataTemplate>
@@ -101,33 +159,5 @@
         </DataTemplate>
       </ListView.ItemTemplate>
     </ListView>
-
-    <!-- City hall logo -->
-    <Grid Grid.Column="0"
-          Grid.Row="0"
-          Grid.RowSpan="2"
-          InputTransparent="True">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*"/>
-        <RowDefinition Height="Auto"/>
-      </Grid.RowDefinitions>
-      <Image Grid.Column="0"
-             Grid.Row="1"
-             Margin="0,10"
-             InputTransparent="True">
-        <Image.WidthRequest>
-          <OnPlatform x:TypeArguments="x:Double" iOS="175" Android="175" WinPhone="262"/>
-        </Image.WidthRequest>
-        <Image.HeightRequest>
-          <OnPlatform x:TypeArguments="x:Double" iOS="60" Android="60" WinPhone="90"/>
-        </Image.HeightRequest>
-        <Image.Source>
-          <OnPlatform x:TypeArguments="ImageSource"
-                      iOS="XalapaGray.png"
-                      Android="xalapa_gray.png"
-                      WinPhone="Assets/XalapaGray.png"/>
-        </Image.Source>
-      </Image>
-    </Grid>
   </Grid>
 </ContentPage>

@@ -2491,68 +2491,71 @@ namespace AppLimpia.Droid
 			// aapt resource value: 0x7f0200d5
 			public const int mr_ic_play_light = 2130837717;
 			
-			// aapt resource value: 0x7f0200ea
-			public const int notification_template_icon_bg = 2130837738;
-			
 			// aapt resource value: 0x7f0200d6
-			public const int pin_drop_point = 2130837718;
+			public const int no_reports = 2130837718;
+			
+			// aapt resource value: 0x7f0200eb
+			public const int notification_template_icon_bg = 2130837739;
 			
 			// aapt resource value: 0x7f0200d7
-			public const int pin_favorite = 2130837719;
+			public const int pin_drop_point = 2130837719;
 			
 			// aapt resource value: 0x7f0200d8
-			public const int pin_primary_favorite = 2130837720;
+			public const int pin_favorite = 2130837720;
 			
 			// aapt resource value: 0x7f0200d9
-			public const int pin_vehicle = 2130837721;
+			public const int pin_primary_favorite = 2130837721;
 			
 			// aapt resource value: 0x7f0200da
-			public const int remove = 2130837722;
+			public const int pin_vehicle = 2130837722;
 			
 			// aapt resource value: 0x7f0200db
-			public const int remove_from_favorites = 2130837723;
+			public const int remove = 2130837723;
 			
 			// aapt resource value: 0x7f0200dc
-			public const int set_as_primary = 2130837724;
+			public const int remove_from_favorites = 2130837724;
 			
 			// aapt resource value: 0x7f0200dd
-			public const int tutorial_01 = 2130837725;
+			public const int set_as_primary = 2130837725;
 			
 			// aapt resource value: 0x7f0200de
-			public const int tutorial_02 = 2130837726;
+			public const int tutorial_01 = 2130837726;
 			
 			// aapt resource value: 0x7f0200df
-			public const int tutorial_03 = 2130837727;
+			public const int tutorial_02 = 2130837727;
 			
 			// aapt resource value: 0x7f0200e0
-			public const int tutorial_04 = 2130837728;
+			public const int tutorial_03 = 2130837728;
 			
 			// aapt resource value: 0x7f0200e1
-			public const int tutorial_05 = 2130837729;
+			public const int tutorial_04 = 2130837729;
 			
 			// aapt resource value: 0x7f0200e2
-			public const int tutorial_06 = 2130837730;
+			public const int tutorial_05 = 2130837730;
 			
 			// aapt resource value: 0x7f0200e3
-			public const int tutorial_07 = 2130837731;
+			public const int tutorial_06 = 2130837731;
 			
 			// aapt resource value: 0x7f0200e4
-			public const int tutorial_08 = 2130837732;
+			public const int tutorial_07 = 2130837732;
 			
 			// aapt resource value: 0x7f0200e5
-			public const int tutorial_09 = 2130837733;
+			public const int tutorial_08 = 2130837733;
 			
 			// aapt resource value: 0x7f0200e6
-			public const int tutorial_10 = 2130837734;
+			public const int tutorial_09 = 2130837734;
 			
 			// aapt resource value: 0x7f0200e7
-			public const int twitter = 2130837735;
+			public const int tutorial_10 = 2130837735;
 			
 			// aapt resource value: 0x7f0200e8
-			public const int xalapa_blue = 2130837736;
+			public const int twitter = 2130837736;
 			
 			// aapt resource value: 0x7f0200e9
-			public const int xalapa_gray = 2130837737;
+			public const int xalapa_blue = 2130837737;
+			
+			// aapt resource value: 0x7f0200ea
+			public const int xalapa_gray = 2130837738;
 			
 			static Drawable()
 			{

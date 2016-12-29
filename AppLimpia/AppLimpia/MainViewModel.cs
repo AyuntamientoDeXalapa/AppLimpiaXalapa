@@ -89,7 +89,7 @@ namespace AppLimpia
         /// </summary>
         private bool isActive;
 
-        private IList<IncidentReport> myReports;
+        private ObservableCollection<IncidentReport> myReports;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -285,7 +285,7 @@ namespace AppLimpia
                 this.GetUserFavorites();
 
                 // TODO: Move to after login
-                this.GetMyReports();
+                ////this.GetMyReports();
             }
             else
             {
@@ -1279,19 +1279,10 @@ namespace AppLimpia
         /// </summary>
         private void ShowReports()
         {
-            // TODO: Move to reports view
-            if (this.myReports.Count > 0)
-            {
-                // Show notifications view
-                var viewModel = new MyReportsViewModel(this.myReports);
-                var view = new MyReportsView { BindingContext = viewModel };
-                this.Navigation.PushModalAsync(view);
-            }
-            else
-            {
-                // TODO: Localize
-                App.DisplayAlert("Reportes", "Usted todavía no ha enviado ningun reporte", "OK");
-            }
+            // Show submitted reports view
+            var viewModel = new SubmittedReportsViewModel(this.myReports);
+            var view = new SubmittedReportsView { BindingContext = viewModel };
+            this.Navigation.PushModalAsync(view);
         }
 
         /// <summary>

@@ -431,6 +431,15 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No existen reportes.
+        /// </summary>
+        internal static string NoSubmittedReports {
+            get {
+                return ResourceManager.GetString("NoSubmittedReports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notificaciones.
         /// </summary>
         internal static string NotificationsTitle {

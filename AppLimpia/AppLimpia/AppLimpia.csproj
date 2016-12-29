@@ -81,10 +81,10 @@
       <DependentUpon>RegisterView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Login\RegisterViewModel.cs" />
-    <Compile Include="MyReportsView.xaml.cs">
-      <DependentUpon>MyReportsView.xaml</DependentUpon>
+    <Compile Include="SubmittedReportsView.xaml.cs">
+      <DependentUpon>SubmittedReportsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MyReportsViewModel.cs" />
+    <Compile Include="SubmittedReportsViewModel.cs" />
     <Compile Include="PickerEx.cs" />
     <Compile Include="RemoteServerException.cs" />
     <Compile Include="Settings.cs" />
@@ -184,7 +184,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="MyReportsView.xaml">
+    <EmbeddedResource Include="SubmittedReportsView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
