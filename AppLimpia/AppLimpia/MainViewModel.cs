@@ -15,6 +15,8 @@ using Xamarin.Forms.Maps;
 using System.Globalization;
 using System.Text;
 
+using AppLimpia.Properties;
+
 namespace AppLimpia
 {
     /// <summary>
@@ -276,11 +278,20 @@ namespace AppLimpia
         /// </summary>
         public void Initialize()
         {
-            // Load the user favorites
-            this.GetUserFavorites();
+            // If user is logged in
+            if (Settings.Instance.Contains(Settings.AccessToken))
+            {
+                // Load the user favorites
+                this.GetUserFavorites();
 
-            // TODO: Move to after login
-            this.GetMyReports();
+                // TODO: Move to after login
+                this.GetMyReports();
+            }
+            else
+            {
+                // Favorites will be loaded when user logs in
+                this.UpdateStatus(this.havePosition, true);
+            }
         }
 
         /// <summary>
@@ -403,21 +414,6 @@ namespace AppLimpia
                                   Address = string.Empty
                               };
 
-                    // If the pin is a favorite
-                    if (string.Compare(subtype, "favorito", StringComparison.CurrentCultureIgnoreCase) == 0)
-                    {
-                        // Add the pin to the favorites
-                        pin.Type = MapPinType.Favorite;
-                        this.favoriteDropPoints.Add(pin);
-                    }
-                    else if (string.Compare(subtype, "favorito principal", StringComparison.CurrentCultureIgnoreCase) == 0)
-                    {
-                        // Add the pin to the favorites
-                        pin.Type = MapPinType.PrimaryFavorite;
-                        this.favoriteDropPoints.Add(pin);
-                        this.SetPrimaryFavorite(pin);
-                    }
-
                     // Setup event handlers
                     pin.FavoriteToggled += this.OnPinFavoriteToggled;
                     pin.VehicleLocationRequested += this.OnPinVehicleLocationRequested;
@@ -428,10 +424,24 @@ namespace AppLimpia
                     this.Pins.Add(pin);
                 }
 
+                // If the pin is a favorite
+                if (string.Compare(subtype, "favorito", StringComparison.CurrentCultureIgnoreCase) == 0)
+                {
+                    // Add the pin to the favorites
+                    pin.Type = MapPinType.Favorite;
+                    this.favoriteDropPoints.Add(pin);
+                }
+                else if (string.Compare(subtype, "favorito principal", StringComparison.CurrentCultureIgnoreCase) == 0)
+                {
+                    // Add the pin to the favorites
+                    pin.Type = MapPinType.PrimaryFavorite;
+                    this.favoriteDropPoints.Add(pin);
+                    this.SetPrimaryFavorite(pin);
+                }
+
                 // Update the pin parameters
-                // TODO: Localize
-                pin.Label = "Punto de recolección "
-                            + item.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                var name = item.GetItemOrDefault("name").GetStringValueOrDefault(string.Empty);
+                pin.Label = $"{Localization.DropPointTitle} {name}";
                 pin.Address = item.GetItemOrDefault("turno").GetStringValueOrDefault(string.Empty);
             }
         }
@@ -536,41 +546,8 @@ namespace AppLimpia
         /// <param name="center"><c>true</c> to center map on the vehicle; <c>false</c> to leave map uncahnged.</param>
         private void ProcessLocateVehicleResult(JsonValue result, bool center)
         {
-            //// {
-            ////     "id": "5845cd44d2f78853364a18b2",
-            ////     "name":" 01018",
-            ////     "distancia": null,
-            ////     "coordenadas": [-96.924794702981, 19.52909931538],
-            ////     "ruta": "01",
-            ////     "turno": null,
-            ////     "vehiculo": "ECO-191",
-            ////     "_links": 
-            ////     {
-            ////         "self":
-            ////         {
-            ////             "href":"http:\/\/limpia.xalapa.gob.mx\/api\/montoneras\/5845cd44d2f78853364a18b2"
-            ////         }
-            ////     }
-            //// }
-
             // Get the id of the drop point
             var dropPoint = result.GetItemOrDefault("id").GetStringValueOrDefault(string.Empty);
-
-            //// {
-            ////     "id": "80a8dfda-75f6-466b-96cf-ef9ea2640831",
-            ////     "number": "ECO-024",
-            ////     "location": "38 Poeta Angel Núñez Beltrán, Emiliano Zapata, Xalapa Enríquez, Xalapa, 91090, México",
-            ////     "status": "activo",
-            ////     "coordinates": [-96.92559, 19.51463],
-            ////     "route": "Sin ruta asignada",
-            ////     "_links": 
-            ////     {
-            ////         "self":
-            ////         {
-            ////             "href": "http://limpia.xalapa.gob.mx/api/vehiculos/80a8dfda-75f6-466b-96cf-ef9ea2640831"
-            ////         }
-            ////     }
-            //// }
 
             // Get the vehicle id
             var vehicle = result.GetItemOrDefault("vehiculo");
@@ -1343,11 +1320,10 @@ namespace AppLimpia
             }
             else
             {
-                // TODO: Localize
                 App.DisplayAlert(
-                    "Cambiar contreseña",
-                    "Solo se permita cambio de contraseña si Usted entro con email",
-                    "OK");
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorCanNotChangePassword,
+                    Localization.ErrorDialogDismiss);
             }
         }
 
@@ -1356,8 +1332,54 @@ namespace AppLimpia
         /// </summary>
         private void Login()
         {
-            // Show login view
-            this.UserLoggedIn = !this.UserLoggedIn;
+            this.LoginInternal();
+        }
+
+        /// <summary>
+        /// Logs in the current user.
+        /// </summary>
+        /// <returns>A task representing the login operation.</returns>
+        private Task LoginInternal()
+        {
+            // If the user already logged in
+            if (!Settings.Instance.Contains(Settings.AccessToken))
+            {
+                // Create the login completion source
+                var completionSource = new TaskCompletionSource<bool>();
+
+                // Show Login view
+                var viewModel = new Login.LoginViewModel(completionSource);
+                var view = new Login.LoginView { BindingContext = viewModel };
+                this.Navigation.PushModalAsync(view);
+
+                // Set the continuation options
+                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+                return completionSource.Task.ContinueWith(this.ProcessLoginResult, scheduler);
+            }
+
+            // Report error
+            App.DisplayAlert(
+                Localization.ErrorDialogTitle,
+                Localization.ErrorAlreadyLoggedIn,
+                Localization.ErrorDialogDismiss);
+            return null;
+        }
+
+        /// <summary>
+        /// Processes the login result.
+        /// </summary>
+        /// <param name="loginTask">The login task.</param>
+        private void ProcessLoginResult(Task<bool> loginTask)
+        {
+            // If user is logged in
+            Debug.WriteLine("Login status = {0}", loginTask.Status);
+            if (loginTask.Status == TaskStatus.RanToCompletion)
+            {
+                // Set the user as logged in
+                this.UserLoggedIn = true;
+                this.CanChangePassword = Settings.Instance.Contains(Settings.UserName);
+                this.Initialize();
+            }
         }
 
         /// <summary>
@@ -1365,28 +1387,39 @@ namespace AppLimpia
         /// </summary>
         private void Logout()
         {
-            // Deactivate current view model
-            this.IsActive = false;
+            // If the user is not logged in
+            if (Settings.Instance.Contains(Settings.AccessToken))
+            {
+                // Deactivate current view model
+                this.IsActive = false;
 
-            // Prepare the data to be send to the server
-            var deviceId = ((App)Application.Current).DeviceId;
-            var request = new Json.JsonObject { { "device", deviceId } };
+                // Prepare the data to be send to the server
+                var deviceId = ((App)Application.Current).DeviceId;
+                var request = new Json.JsonObject { { "device", deviceId } };
 
-            // Setup error handlers
-            // - If session is already closed by the server, close the sesion on the client
-            var handlers = new Dictionary<System.Net.HttpStatusCode, Action>
-                               {
-                                       { System.Net.HttpStatusCode.Unauthorized, () => this.ProcessLogoutResult(null) }
-                               };
+                // Setup error handlers
+                // - If session is already closed by the server, close the sesion on the client
+                var handlers = new Dictionary<System.Net.HttpStatusCode, Action>
+                                   {
+                                           { System.Net.HttpStatusCode.Unauthorized, () => this.ProcessLogoutResult(null) }
+                                   };
 
-            // Send request to the server
-            this.IsBusy = true;
-            WebHelper.SendAsync(
-                Uris.GetLogoutUri(),
-                request.AsHttpContent(),
-                this.ProcessLogoutResult,
-                () => this.IsBusy = false,
-                handlers);
+                // Send request to the server
+                this.IsBusy = true;
+                WebHelper.SendAsync(
+                    Uris.GetLogoutUri(),
+                    request.AsHttpContent(),
+                    this.ProcessLogoutResult,
+                    () => this.IsBusy = false,
+                    handlers);
+            }
+            else
+            {
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorNotLoggedIn,
+                    Localization.ErrorDialogDismiss);
+            }
         }
 
         /// <summary>
@@ -1398,13 +1431,20 @@ namespace AppLimpia
             // End the logout process
             this.IsBusy = false;
 
-            // Logout user
-            Settings.Instance.Clear();
+            // Remove all favorites
+            this.SetPrimaryFavorite(null);
+            foreach (var favorite in this.favoriteDropPoints)
+            {
+                favorite.Type = MapPinType.DropPoint;
+            }
 
-            // Return to login view
-            var viewModel = new Login.LoginViewModel();
-            var view = new Login.LoginView { BindingContext = viewModel };
-            App.ReplaceMainView(view);
+            // Reset favorites status
+            this.favoriteDropPoints.Clear();
+
+            // Logout user
+            this.UserLoggedIn = false;
+            this.CanChangePassword = false;
+            Settings.Instance.Clear();
         }
     }
 }

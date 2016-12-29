@@ -349,4 +349,20 @@
     <value>La aplicación no puede aceder a camara</value>
     <comment>The camera is not available for the current application</comment>
   </data>
+  <data name="DropPointTitle" xml:space="preserve">
+    <value>Punto de recolección</value>
+    <comment>The drop point annotation title</comment>
+  </data>
+  <data name="ErrorAlreadyLoggedIn" xml:space="preserve">
+    <value>El usuario ya tiene una sesión abierta</value>
+    <comment>The user has already been logged in error message</comment>
+  </data>
+  <data name="ErrorCanNotChangePassword" xml:space="preserve">
+    <value>Solo se permita cambio de contraseña si Usted entro con email</value>
+    <comment>The user can not change password error message</comment>
+  </data>
+  <data name="ErrorNotLoggedIn" xml:space="preserve">
+    <value>El usuario no ha entrado al sistema</value>
+    <comment>The user has not log in error message</comment>
+  </data>
 </root>

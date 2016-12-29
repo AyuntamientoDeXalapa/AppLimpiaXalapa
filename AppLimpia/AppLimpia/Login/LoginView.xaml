@@ -79,7 +79,11 @@
                   HorizontalOptions="FillAndExpand"
                   Text="{local:Localize RegisterHere}"
                   Command="{Binding RegisterCommand}"/>
-    
+          <Button Style="{DynamicResource TransparentButton}"
+                  HorizontalOptions="FillAndExpand"
+                  Text="{local:Localize Cancel}"
+                  Command="{Binding CancelCommand}"/>
+
           <!-- Enter with label -->
           <Grid>
             <Grid.ColumnDefinitions>

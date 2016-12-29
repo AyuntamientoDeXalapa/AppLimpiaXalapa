@@ -29,26 +29,8 @@ namespace AppLimpia
             // Parse the XAML file
             this.InitializeComponent();
 
-            // Get the stored user identifier
-            var accessToken = string.Empty;
-            if (Settings.Instance.Contains(Settings.AccessToken))
-            {
-                accessToken = Settings.Instance.GetValue(Settings.AccessToken, string.Empty);
-                Debug.WriteLine("Access Token  = " + accessToken);
-            }
-
-            // If user is not logged in
-            if (string.IsNullOrEmpty(accessToken))
-            {
-                // Show the login page
-                var startViewModel = new Login.LoginViewModel();
-                var startPage = new Login.LoginView { BindingContext = startViewModel };
-                this.MainPage = startPage;
-            }
-            else
-            {
-                App.ShowMainView();
-            }
+            // Show the main view
+            App.ShowMainView();
         }
 
         /// <summary>
@@ -87,21 +69,6 @@ namespace AppLimpia
         /// Gets or sets the main view model.
         /// </summary>
         private MainViewModel MainViewModel { get; set; }
-
-        /// <summary>
-        /// Replaces the main view of the current application.
-        /// </summary>
-        /// <param name="mainView">The main view to be shown.</param>
-        internal static void ReplaceMainView(Page mainView)
-        {
-            // Get the current application instance
-            var instance = Application.Current as App;
-            if (instance != null)
-            {
-                instance.MainViewModel = null;
-                instance.MainPage = mainView;
-            }
-        }
 
         /// <summary>
         /// Shows the main application view.

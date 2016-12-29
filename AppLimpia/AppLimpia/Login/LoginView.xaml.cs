@@ -61,5 +61,22 @@ namespace AppLimpia.Login
             // Call the base member
             base.OnBindingContextChanged();
         }
+
+        /// <summary>
+        /// Called when the back button is pressed.
+        /// </summary>
+        /// <returns><c>true</c> if the button press was handled; <c>false</c> to handle the button by OS.</returns>
+        protected override bool OnBackButtonPressed()
+        {
+            // If no binding context
+            if (this.currentBindingContext == null)
+            {
+                return base.OnBackButtonPressed();
+            }
+
+            // Cancel the login operation
+            this.currentBindingContext.CancelCommand.Execute(null);
+            return true;
+        }
     }
 }

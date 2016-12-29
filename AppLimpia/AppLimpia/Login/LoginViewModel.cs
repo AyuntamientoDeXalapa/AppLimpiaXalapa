@@ -19,6 +19,11 @@ namespace AppLimpia.Login
     public class LoginViewModel : ViewModelBase
     {
         /// <summary>
+        /// The login task completion source.
+        /// </summary>
+        private readonly TaskCompletionSource<bool> completionSource;
+
+        /// <summary>
         /// The user name of the user to log.
         /// </summary>
         private string userName;
@@ -26,9 +31,11 @@ namespace AppLimpia.Login
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginViewModel"/> class.
         /// </summary>
-        public LoginViewModel()
+        /// <param name="completionSource">The login task completion source.</param>
+        public LoginViewModel(TaskCompletionSource<bool> completionSource)
         {
             // Reset user name and password
+            this.completionSource = completionSource;
             this.userName = string.Empty;
             this.Password = string.Empty;
 
@@ -38,6 +45,7 @@ namespace AppLimpia.Login
             this.LoginWithCommand = new Command(par => this.LoginWith((string)par));
             this.ResumeLoginWithCommand = new Command(par => this.ResumeLoginWith((Uri)par));
             this.RecoverPasswordCommand = new Command(this.RecoverPassword);
+            this.CancelCommand = new Command(this.Cancel);
         }
 
         /// <summary>
@@ -90,6 +98,11 @@ namespace AppLimpia.Login
         /// Gets the restore password command.
         /// </summary>
         public ICommand RecoverPasswordCommand { get; private set; }
+
+        /// <summary>
+        /// Gets the cancel command.
+        /// </summary>
+        public ICommand CancelCommand { get; private set; }
 
         /// <summary>
         /// Logs in the user with the provided credentials.
@@ -245,8 +258,11 @@ namespace AppLimpia.Login
                 return;
             }
 
-            // Show the main view
-            App.ShowMainView();
+            // Return to main view
+            this.Navigation.PopModalAsync();
+
+            // Process with login operation
+            this.completionSource.SetResult(true);
         }
 
         /// <summary>
@@ -395,16 +411,16 @@ namespace AppLimpia.Login
         {
             // Create the register completion source
             System.Diagnostics.Debug.WriteLine("Register");
-            var completionSource = new TaskCompletionSource<bool>();
+            var registerCompletionSource = new TaskCompletionSource<bool>();
 
             // Show Register view
-            var viewModel = new RegisterViewModel(completionSource);
+            var viewModel = new RegisterViewModel(registerCompletionSource);
             var view = new RegisterView { BindingContext = viewModel };
             this.Navigation.PushModalAsync(view);
 
             // Set the continuation options
             var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            completionSource.Task.ContinueWith(t => this.ProcessRegisterResult(t, viewModel), scheduler);
+            registerCompletionSource.Task.ContinueWith(t => this.ProcessRegisterResult(t, viewModel), scheduler);
         }
 
         /// <summary>
@@ -435,6 +451,18 @@ namespace AppLimpia.Login
             var viewModel = new RecoverPasswordViewModel();
             var view = new RecoverPasswordView { BindingContext = viewModel };
             this.Navigation.PushModalAsync(view);
+        }
+
+        /// <summary>
+        /// Cancels the register task.
+        /// </summary>
+        private void Cancel()
+        {
+            // Return to login view
+            this.Navigation.PopModalAsync();
+
+            // Signal task cancellation
+            this.completionSource.SetCanceled();
         }
     }
 }

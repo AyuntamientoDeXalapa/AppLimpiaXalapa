@@ -134,11 +134,29 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Punto de recolección.
+        /// </summary>
+        internal static string DropPointTitle {
+            get {
+                return ResourceManager.GetString("DropPointTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ingresa con.
         /// </summary>
         internal static string EnterWith {
             get {
                 return ResourceManager.GetString("EnterWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El usuario ya tiene una sesión abierta.
+        /// </summary>
+        internal static string ErrorAlreadyLoggedIn {
+            get {
+                return ResourceManager.GetString("ErrorAlreadyLoggedIn", resourceCulture);
             }
         }
         
@@ -166,6 +184,15 @@ namespace AppLimpia.Properties {
         internal static string ErrorCancelled {
             get {
                 return ResourceManager.GetString("ErrorCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Solo se permita cambio de contraseña si Usted entro con email.
+        /// </summary>
+        internal static string ErrorCanNotChangePassword {
+            get {
+                return ResourceManager.GetString("ErrorCanNotChangePassword", resourceCulture);
             }
         }
         
@@ -283,6 +310,15 @@ namespace AppLimpia.Properties {
         internal static string ErrorNotImplemented {
             get {
                 return ResourceManager.GetString("ErrorNotImplemented", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El usuario no ha entrado al sistema.
+        /// </summary>
+        internal static string ErrorNotLoggedIn {
+            get {
+                return ResourceManager.GetString("ErrorNotLoggedIn", resourceCulture);
             }
         }
         
