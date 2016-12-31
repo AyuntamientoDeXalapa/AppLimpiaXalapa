@@ -1479,6 +1479,9 @@ namespace AppLimpia
             this.UserLoggedIn = false;
             this.CanChangePassword = false;
             Settings.Instance.Clear();
+
+            // Prevent tutorial from showing again
+            Settings.Instance.SetValue(Settings.TutorialShown, 1);
         }
     }
 }
