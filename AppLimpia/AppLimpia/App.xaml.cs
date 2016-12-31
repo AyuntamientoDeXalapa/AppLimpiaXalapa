@@ -66,9 +66,9 @@ namespace AppLimpia
         internal Action<Uri> LaunchUriDelegate { get; set; }
 
         /// <summary>
-        /// Gets or sets the main view model.
+        /// Gets the main view model.
         /// </summary>
-        private MainViewModel MainViewModel { get; set; }
+        internal MainViewModel MainViewModel { get; private set; }
 
         /// <summary>
         /// Shows the main application view.

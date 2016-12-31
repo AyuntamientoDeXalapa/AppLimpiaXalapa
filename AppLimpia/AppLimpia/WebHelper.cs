@@ -448,7 +448,7 @@ namespace AppLimpia
             HttpContent content,
             Action<JsonValue> action,
             Action failAction = null,
-            Dictionary<HttpStatusCode, Action> errorHandlers = null,
+            Dictionary<HttpStatusCode, Action<JsonValue>> errorHandlers = null,
             TimeSpan? timeout = null)
         {
             // Add the nonce to negate caching
@@ -672,7 +672,7 @@ namespace AppLimpia
                 // Read error description
                 var title = problem.GetItemOrDefault("title").GetStringValueOrDefault(null);
                 var detail = problem.GetItemOrDefault("detail").GetStringValueOrDefault(null);
-                throw new RemoteServerException(response.StatusCode, title, detail);
+                throw new RemoteServerException(response.StatusCode, title, detail, problem);
             }
 
             // Parse success error response
@@ -776,7 +776,8 @@ namespace AppLimpia
                     throw new RemoteServerException(
                               HttpStatusCode.Unauthorized,
                               Localization.ErrorDialogTitle,
-                              Localization.ErrorUnauthorized);
+                              Localization.ErrorUnauthorized,
+                              null);
                 }
             }
         }
@@ -828,7 +829,7 @@ namespace AppLimpia
         /// </summary>
         /// <param name="task">A task that represents the failed asynchronous operation.</param>
         /// <param name="errorHandlers">Error handlers for different types of server errors.</param>
-        private static void ParseTaskError(Task task, Dictionary<HttpStatusCode, Action> errorHandlers)
+        private static void ParseTaskError(Task task, Dictionary<HttpStatusCode, Action<JsonValue>> errorHandlers)
         {
             // The task should be faulted
             System.Diagnostics.Debug.Assert(task.Status == TaskStatus.Faulted, "Asynchronous task must be faulted.");
@@ -853,7 +854,7 @@ namespace AppLimpia
                         var exception = (RemoteServerException)ex;
                         if (errorHandlers?.ContainsKey(exception.StatusCode) == true)
                         {
-                            errorHandlers[exception.StatusCode].Invoke();
+                            errorHandlers[exception.StatusCode].Invoke(exception.ErrorResponse);
                         }
                         else
                         {

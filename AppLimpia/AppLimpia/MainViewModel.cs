@@ -274,6 +274,11 @@ namespace AppLimpia
         public ICommand LogoutCommand { get; }
 
         /// <summary>
+        /// Gets the login view model associated with the current user login operation.
+        /// </summary>
+        internal Login.LoginViewModel LoginViewModel { get; private set; }
+
+        /// <summary>
         /// Initializes the current view model.
         /// </summary>
         public void Initialize()
@@ -1341,6 +1346,7 @@ namespace AppLimpia
                 // Show Login view
                 var viewModel = new Login.LoginViewModel(completionSource);
                 var view = new Login.LoginView { BindingContext = viewModel };
+                this.LoginViewModel = viewModel;
                 this.Navigation.PushModalAsync(view);
 
                 // Set the continuation options
@@ -1369,6 +1375,7 @@ namespace AppLimpia
                 // Set the user as logged in
                 this.UserLoggedIn = true;
                 this.CanChangePassword = Settings.Instance.Contains(Settings.UserName);
+                this.LoginViewModel = null;
                 this.Initialize();
             }
         }
@@ -1390,9 +1397,9 @@ namespace AppLimpia
 
                 // Setup error handlers
                 // - If session is already closed by the server, close the sesion on the client
-                var handlers = new Dictionary<System.Net.HttpStatusCode, Action>
+                var handlers = new Dictionary<System.Net.HttpStatusCode, Action<JsonValue>>
                                    {
-                                           { System.Net.HttpStatusCode.Unauthorized, () => this.ProcessLogoutResult(null) }
+                                           { System.Net.HttpStatusCode.Unauthorized, _ => this.ProcessLogoutResult(null) }
                                    };
 
                 // Send request to the server

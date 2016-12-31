@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Net;
 
+using AppLimpia.Json;
+
 namespace AppLimpia
 {
     /// <summary>
     /// Exception that is thrown when the error is reported by the server.
     /// </summary>
-    public class RemoteServerException : Exception
+    internal sealed class RemoteServerException : Exception
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteServerException"/> class.
@@ -14,11 +16,13 @@ namespace AppLimpia
         /// <param name="statusCode">The HTTP status code.</param>
         /// <param name="title">The error title.</param>
         /// <param name="message">The error message.</param>
-        public RemoteServerException(HttpStatusCode statusCode, string title, string message)
+        /// <param name="errorResponse">The full error response received from the server.</param>
+        public RemoteServerException(HttpStatusCode statusCode, string title, string message, JsonValue errorResponse)
             : base(message)
         {
             this.StatusCode = statusCode;
             this.Title = title;
+            this.ErrorResponse = errorResponse;
         }
 
         /// <summary>
@@ -30,5 +34,10 @@ namespace AppLimpia
         /// Gets the error title.
         /// </summary>
         public string Title { get; }
+
+        /// <summary>
+        /// Gets the full error response received from the server.
+        /// </summary>
+        internal JsonValue ErrorResponse { get; }
     }
 }

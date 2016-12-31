@@ -19,7 +19,8 @@ namespace AppLimpia.Droid
         Icon = "@drawable/icon",
         MainLauncher = true, 
         ScreenOrientation = ScreenOrientation.Portrait, 
-        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation,
+        LaunchMode = LaunchMode.SingleTask)]
     [IntentFilter(new[] { "android.intent.action.VIEW" },
         Categories = new[] { "android.intent.category.DEFAULT", "android.intent.category.BROWSABLE" },
         DataScheme = "mx.gob.xalapa.limpia")]
@@ -123,7 +124,7 @@ namespace AppLimpia.Droid
                 if (intent.Data != null)
                 {
                     // Resume the login process
-                    var loginViewModel = application.MainPage?.BindingContext as Login.LoginViewModel;
+                    var loginViewModel = application.MainViewModel?.LoginViewModel;
                     var uri = new Uri(intent.DataString);
                     loginViewModel?.ResumeLoginWithCommand?.Execute(uri);
                 }

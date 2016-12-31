@@ -163,9 +163,9 @@ namespace AppLimpia.Login
 
             // Setup error handlers
             // - If session is already opened by another device, request user consent
-            var handlers = new Dictionary<System.Net.HttpStatusCode, Action>
+            var handlers = new Dictionary<System.Net.HttpStatusCode, Action<JsonValue>>
                                {
-                                       { System.Net.HttpStatusCode.Conflict, () => this.RetryLogin(request) }
+                                       { System.Net.HttpStatusCode.Conflict, resp => this.RetryLogin(request, resp) }
                                };
 
             // Send request to the server
@@ -182,7 +182,8 @@ namespace AppLimpia.Login
         /// Retries the login process after user consent to change session.
         /// </summary>
         /// <param name="request">The request to retry.</param>
-        private async void RetryLogin(JsonObject request)
+        /// <param name="response">The response received from the server.</param>
+        private async void RetryLogin(JsonObject request, JsonValue response)
         {
             // Ask the user consent to override session
             var consent = await App.DisplayAlert(
@@ -194,6 +195,19 @@ namespace AppLimpia.Login
             // If the user consent received
             if (consent)
             {
+                // Modify the request based on server response
+                var grantType = response.GetItemOrDefault("grant_type").GetStringValueOrDefault(string.Empty);
+                if (!string.IsNullOrEmpty(grantType))
+                {
+                    request["grant_type"] = grantType;
+                }
+
+                var state = response.GetItemOrDefault("state").GetStringValueOrDefault(string.Empty);
+                if (!string.IsNullOrEmpty(state))
+                {
+                    request["state"] = state;
+                }
+
                 // Resent the request to the server
                 request.Add("override", true);
                 WebHelper.SendAsync(
@@ -389,9 +403,9 @@ namespace AppLimpia.Login
 
             // Setup error handlers
             // - If session is already opened by another device, request user consent
-            var handlers = new Dictionary<System.Net.HttpStatusCode, Action>
+            var handlers = new Dictionary<System.Net.HttpStatusCode, Action<JsonValue>>
                                {
-                                       { System.Net.HttpStatusCode.Conflict, () => this.RetryLogin(oauthState) }
+                                       { System.Net.HttpStatusCode.Conflict, resp => this.RetryLogin(oauthState, resp) }
                                };
 
             // Send request to the server
