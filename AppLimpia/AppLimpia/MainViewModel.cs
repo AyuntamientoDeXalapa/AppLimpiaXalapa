@@ -1159,17 +1159,29 @@ namespace AppLimpia
             var pin = sender as MapExPin;
             if (pin != null)
             {
-                // If pin should be added to favorites
-                if (!pin.IsFavorite)
-                {
-                    // Add pin to favorites
-                    this.AddToFavorite(pin.Id);
-                }
-                else
-                {
-                    // Remove pin from favorites
-                    this.RemoveFromFavorite(pin.Id);
-                }
+                // Verify that the user is logged in
+                var loginTask = this.LoginInternal();
+                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+
+                // Show the report incident view
+                loginTask.ContinueWith(
+                    _ =>
+                    {
+                        // If pin should be added to favorites
+                        if (!pin.IsFavorite)
+                        {
+                            // Add pin to favorites
+                            this.AddToFavorite(pin.Id);
+                        }
+                        else
+                        {
+                            // Remove pin from favorites
+                            this.RemoveFromFavorite(pin.Id);
+                        }
+                    },
+                    default(CancellationToken),
+                    TaskContinuationOptions.OnlyOnRanToCompletion,
+                    scheduler);
             }
         }
 
@@ -1200,15 +1212,27 @@ namespace AppLimpia
             var pin = sender as MapExPin;
             if (pin != null)
             {
-                // Setup view model
-                var viewModel = new IncidentReportViewModel { Pin = pin };
+                // Verify that the user is logged in
+                var loginTask = this.LoginInternal();
+                var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
-                // Subscribe to incident report created event
-                viewModel.OnIncidentReportCreated += (s, report) => this.myReports.Add(report);
+                // Show the report incident view
+                loginTask.ContinueWith(
+                    _ =>
+                        {
+                            // Setup view model
+                            var viewModel = new IncidentReportViewModel { Pin = pin };
 
-                // Show incident report view
-                var view = new IncidentReportView { BindingContext = viewModel };
-                this.Navigation.PushModalAsync(view);
+                            // Subscribe to incident report created event
+                            viewModel.OnIncidentReportCreated += (s, report) => this.myReports.Add(report);
+
+                            // Show incident report view
+                            var view = new IncidentReportView { BindingContext = viewModel };
+                            this.Navigation.PushModalAsync(view);
+                        },
+                    default(CancellationToken),
+                    TaskContinuationOptions.OnlyOnRanToCompletion,
+                    scheduler);
             }
         }
 
@@ -1328,7 +1352,17 @@ namespace AppLimpia
         /// </summary>
         private void Login()
         {
-            this.LoginInternal();
+            // If the user is not logged in
+            if (!Settings.Instance.Contains(Settings.AccessToken))
+            {
+                this.LoginInternal();
+            }
+
+            // Report error
+            App.DisplayAlert(
+                Localization.ErrorDialogTitle,
+                Localization.ErrorAlreadyLoggedIn,
+                Localization.ErrorDialogDismiss);
         }
 
         /// <summary>
@@ -1337,7 +1371,7 @@ namespace AppLimpia
         /// <returns>A task representing the login operation.</returns>
         private Task LoginInternal()
         {
-            // If the user already logged in
+            // If the user is not logged in
             if (!Settings.Instance.Contains(Settings.AccessToken))
             {
                 // Create the login completion source
@@ -1351,15 +1385,17 @@ namespace AppLimpia
 
                 // Set the continuation options
                 var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-                return completionSource.Task.ContinueWith(this.ProcessLoginResult, scheduler);
+                return completionSource.Task.ContinueWith(
+                    this.ProcessLoginResult,
+                    default(CancellationToken),
+                    TaskContinuationOptions.OnlyOnRanToCompletion,
+                    scheduler);
             }
 
-            // Report error
-            App.DisplayAlert(
-                Localization.ErrorDialogTitle,
-                Localization.ErrorAlreadyLoggedIn,
-                Localization.ErrorDialogDismiss);
-            return null;
+            // Report user already in
+            var taskSource = new TaskCompletionSource<bool>();
+            taskSource.SetResult(true);
+            return taskSource.Task;
         }
 
         /// <summary>
@@ -1385,7 +1421,7 @@ namespace AppLimpia
         /// </summary>
         private void Logout()
         {
-            // If the user is not logged in
+            // If the user is logged in
             if (Settings.Instance.Contains(Settings.AccessToken))
             {
                 // Deactivate current view model

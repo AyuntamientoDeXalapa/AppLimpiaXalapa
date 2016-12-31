@@ -290,8 +290,8 @@ namespace AppLimpia
         {
             // Fade out the tutorial
             await this.TutorialView.FadeTo(0);
-            this.TutorialContainer.IsVisible = true;
-            this.TutorialContainer.InputTransparent = false;
+            this.TutorialContainer.IsVisible = false;
+            this.TutorialContainer.InputTransparent = true;
         }
     }
 }
