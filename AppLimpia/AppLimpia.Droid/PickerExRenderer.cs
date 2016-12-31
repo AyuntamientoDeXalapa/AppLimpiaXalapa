@@ -2,7 +2,6 @@
 using System.ComponentModel;
 
 using Android.Content.Res;
-using Android.Text;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;

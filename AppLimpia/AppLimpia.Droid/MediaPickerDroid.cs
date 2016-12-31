@@ -181,7 +181,7 @@ namespace AppLimpia.Droid
             MediaPickerDroid.Context.StartActivity(this.CreateMediaIntent(id, type, action, options));
 
             // Set the media picked event handler
-            EventHandler<MediaPickedEventArgs> handler = null;
+            EventHandler<MediaPickerActivity.MediaPickedEventArgs> handler = null;
             handler = (s, e) =>
             {
                 // Remove the handler

@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,173 +13,124 @@ using Android.Provider;
 using AppLimpia.Media;
 
 using Java.Lang;
-using Java.Util.Regex;
-
-using Environment = Android.OS.Environment;
-using Exception = System.Exception;
-using String = System.String;
-using Uri = Android.Net.Uri;
 
 namespace AppLimpia.Droid
 {
+    // Resolve ambiguous types
+    using Environment = Android.OS.Environment;
+    using Exception = System.Exception;
+    using Uri = Android.Net.Uri;
+
     /// <summary>
     /// Class MediaPickerActivity.
     /// </summary>
     [Activity]
-    internal class MediaPickerActivity
-        : Activity
+    internal class MediaPickerActivity : Activity
     {
-        #region Constants
         /// <summary>
-        /// The extra path
+        /// The media path bundle variable name.
         /// </summary>
         internal const string ExtraPath = "path";
+
         /// <summary>
-        /// The extra location
-        /// </summary>
-        internal const string ExtraLocation = "location";
-        /// <summary>
-        /// The extra type
+        /// The media type bundle variable name.
         /// </summary>
         internal const string ExtraType = "type";
+
         /// <summary>
-        /// The extra identifier
+        /// The operation identifier bundle variable name.
         /// </summary>
         internal const string ExtraId = "id";
+
         /// <summary>
-        /// The extra action
+        /// The action bundle variable name.
         /// </summary>
         internal const string ExtraAction = "action";
+
         /// <summary>
-        /// The extra tasked
+        /// The value indicating whether the current operation was tasked bundle variable name.
         /// </summary>
         internal const string ExtraTasked = "tasked";
 
         /// <summary>
-        /// The medi a_ fil e_ extr a_ name
+        /// The media file name bundle variable name.
         /// </summary>
-        internal const string MediaFileExtraName = "MediaFile";
-        #endregion Constants
-
-        #region Private Member Variables
-        /// <summary>
-        /// The action
-        /// </summary>
-        private string _action;
+        private const string MediaFileExtraName = "MediaFile";
 
         /// <summary>
-        /// The description
+        /// The requested action.
         /// </summary>
-        private string _description;
-        /// <summary>
-        /// The identifier
-        /// </summary>
-        private int _id;
+        private string action;
 
         /// <summary>
-        /// The is photo
+        /// The operation description.
         /// </summary>
-        private bool _isPhoto;
+        private string description;
 
         /// <summary>
-        /// The user's destination path.
+        /// The current operation identifier.
         /// </summary>
-        private Uri _path;
+        private int id;
 
         /// <summary>
-        /// The seconds
+        /// The value indicating whether the current media is a photo.
         /// </summary>
-        private int _seconds;
+        private bool isPhoto;
 
         /// <summary>
-        /// The tasked
+        /// The media destination path.
         /// </summary>
-        private bool _tasked;
-        /// <summary>
-        /// The title
-        /// </summary>
-        private string _title;
-        /// <summary>
-        /// The type
-        /// </summary>
-        private string _type;
-        #endregion Private Member Variables
+        private Uri path;
 
-        #region Event Handlers
         /// <summary>
-        /// Occurs when [media picked].
+        /// The media duration limit in seconds.
+        /// </summary>
+        private int durationLimit;
+
+        /// <summary>
+        /// The value indicating whether the current operation was tasked.
+        /// </summary>
+        private bool tasked;
+
+        /// <summary>
+        /// The media title.
+        /// </summary>
+        private string title;
+
+        /// <summary>
+        /// The media type.
+        /// </summary>
+        private string type;
+
+        /// <summary>
+        /// The event that is raised when the media was picked.
         /// </summary>
         internal static event EventHandler<MediaPickedEventArgs> MediaPicked;
-        #endregion Event Handlers
 
-        #region Methods
-        #region Overides
         /// <summary>
         /// Called to retrieve per-instance state from an activity before being killed
-        /// so that the state can be restored in <c><see cref="M:Android.App.Activity.OnCreate(Android.OS.Bundle)" /></c> or
-        /// <c><see cref="M:Android.App.Activity.OnRestoreInstanceState(Android.OS.Bundle)" /></c> (the <c><see cref="T:Android.OS.Bundle" /></c> populated by this method
-        /// will be passed to both).
+        /// so that the state can be restored in <c><see cref="M:Android.App.Activity.OnCreate(Android.OS.Bundle)" /></c>
+        /// or <c><see cref="M:Android.App.Activity.OnRestoreInstanceState(Android.OS.Bundle)" /></c> (the 
+        /// <c><see cref="T:Android.OS.Bundle" /></c> populated by this method will be passed to both).
         /// </summary>
         /// <param name="outState">Bundle in which to place your saved state.</param>
-        /// <since version="Added in API level 1" />
-        /// <altmember cref="M:Android.App.Activity.OnCreate(Android.OS.Bundle)" />
-        /// <altmember cref="M:Android.App.Activity.OnRestoreInstanceState(Android.OS.Bundle)" />
-        /// <altmember cref="M:Android.App.Activity.OnPause" />
-        /// <remarks><para tool="javadoc-to-mdoc">Called to retrieve per-instance state from an activity before being killed
-        /// so that the state can be restored in <c><see cref="M:Android.App.Activity.OnCreate(Android.OS.Bundle)" /></c> or
-        /// <c><see cref="M:Android.App.Activity.OnRestoreInstanceState(Android.OS.Bundle)" /></c> (the <c><see cref="T:Android.OS.Bundle" /></c> populated by this method
-        /// will be passed to both).
-        /// </para>
-        /// <para tool="javadoc-to-mdoc">This method is called before an activity may be killed so that when it
-        /// comes back some time in the future it can restore its state.  For example,
-        /// if activity B is launched in front of activity A, and at some point activity
-        /// A is killed to reclaim resources, activity A will have a chance to save the
-        /// current state of its user interface via this method so that when the user
-        /// returns to activity A, the state of the user interface can be restored
-        /// via <c><see cref="M:Android.App.Activity.OnCreate(Android.OS.Bundle)" /></c> or <c><see cref="M:Android.App.Activity.OnRestoreInstanceState(Android.OS.Bundle)" /></c>.
-        /// </para>
-        /// <para tool="javadoc-to-mdoc">Do not confuse this method with activity lifecycle callbacks such as
-        /// <c><see cref="M:Android.App.Activity.OnPause" /></c>, which is always called when an activity is being placed
-        /// in the background or on its way to destruction, or <c><see cref="M:Android.App.Activity.OnStop" /></c> which
-        /// is called before destruction.  One example of when <c><see cref="M:Android.App.Activity.OnPause" /></c> and
-        /// <c><see cref="M:Android.App.Activity.OnStop" /></c> is called and not this method is when a user navigates back
-        /// from activity B to activity A: there is no need to call <c><see cref="M:Android.App.Activity.OnSaveInstanceState(Android.OS.Bundle)" /></c>
-        /// on B because that particular instance will never be restored, so the
-        /// system avoids calling it.  An example when <c><see cref="M:Android.App.Activity.OnPause" /></c> is called and
-        /// not <c><see cref="M:Android.App.Activity.OnSaveInstanceState(Android.OS.Bundle)" /></c> is when activity B is launched in front of activity A:
-        /// the system may avoid calling <c><see cref="M:Android.App.Activity.OnSaveInstanceState(Android.OS.Bundle)" /></c> on activity A if it isn't
-        /// killed during the lifetime of B since the state of the user interface of
-        /// A will stay intact.
-        /// </para>
-        /// <para tool="javadoc-to-mdoc">The default implementation takes care of most of the UI per-instance
-        /// state for you by calling <c><see cref="M:Android.Views.View.OnSaveInstanceState" /></c> on each
-        /// view in the hierarchy that has an id, and by saving the id of the currently
-        /// focused view (all of which is restored by the default implementation of
-        /// <c><see cref="M:Android.App.Activity.OnRestoreInstanceState(Android.OS.Bundle)" /></c>).  If you override this method to save additional
-        /// information not captured by each individual view, you will likely want to
-        /// call through to the default implementation, otherwise be prepared to save
-        /// all of the state of each view yourself.
-        /// </para>
-        /// <para tool="javadoc-to-mdoc">If called, this method will occur before <c><see cref="M:Android.App.Activity.OnStop" /></c>.  There are
-        /// no guarantees about whether it will occur before or after <c><see cref="M:Android.App.Activity.OnPause" /></c>.</para>
-        /// <para tool="javadoc-to-mdoc">
-        ///   <format type="text/html">
-        ///     <a href="http://developer.android.com/reference/android/app/Activity.html#onSaveInstanceState(android.os.Bundle)" target="_blank">[Android Documentation]</a>
-        ///   </format>
-        /// </para></remarks>
         protected override void OnSaveInstanceState(Bundle outState)
         {
+            // Save the state of the current activity
             outState.PutBoolean("ran", true);
-            outState.PutString(MediaStore.MediaColumns.Title, _title);
-            outState.PutString(MediaStore.Images.ImageColumns.Description, _description);
-            outState.PutInt(ExtraId, _id);
-            outState.PutString(ExtraType, _type);
-            outState.PutString(ExtraAction, _action);
-            outState.PutInt(MediaStore.ExtraDurationLimit, _seconds);
-            outState.PutBoolean(ExtraTasked, _tasked);
+            outState.PutString(MediaStore.MediaColumns.Title, this.title);
+            outState.PutString(MediaStore.Images.ImageColumns.Description, this.description);
+            outState.PutInt(MediaPickerActivity.ExtraId, this.id);
+            outState.PutString(MediaPickerActivity.ExtraType, this.type);
+            outState.PutString(MediaPickerActivity.ExtraAction, this.action);
+            outState.PutInt(MediaStore.ExtraDurationLimit, this.durationLimit);
+            outState.PutBoolean(MediaPickerActivity.ExtraTasked, this.tasked);
 
-            if (_path != null)
-                outState.PutString(ExtraPath, _path.Path);
+            // Store the image path if any
+            if (this.path != null)
+            {
+                outState.PutString(MediaPickerActivity.ExtraPath, this.path.Path);
+            }
 
             base.OnSaveInstanceState(outState);
         }
@@ -199,291 +149,343 @@ namespace AppLimpia.Droid
 
             // Take the state from the saved instance or an intent
             var b = savedInstanceState ?? this.Intent.Extras;
-
             var ran = b.GetBoolean("ran", false);
+            this.title = b.GetString(MediaStore.MediaColumns.Title);
+            this.description = b.GetString(MediaStore.Images.ImageColumns.Description);
+            this.tasked = b.GetBoolean(MediaPickerActivity.ExtraTasked);
+            this.id = b.GetInt(MediaPickerActivity.ExtraId, 0);
+            this.type = b.GetString(MediaPickerActivity.ExtraType);
 
-            _title = b.GetString(MediaStore.MediaColumns.Title);
-            _description = b.GetString(MediaStore.Images.ImageColumns.Description);
-
-            _tasked = b.GetBoolean(ExtraTasked);
-            _id = b.GetInt(ExtraId, 0);
-            _type = b.GetString(ExtraType);
-
-            if (_type == "image/*")
+            // Parse media type
+            if (this.type == "image/*")
             {
-                _isPhoto = true;
+                this.isPhoto = true;
             }
 
-            _action = b.GetString(ExtraAction);
+            // Get the requested action
+            this.action = b.GetString(MediaPickerActivity.ExtraAction);
             Intent pickIntent = null;
-
             try
             {
-                pickIntent = new Intent(_action);
-                if (_action == Intent.ActionPick)
-                    pickIntent.SetType(_type);
+                // Create the media pick intent
+                pickIntent = new Intent(this.action);
+                if (this.action == Intent.ActionPick)
+                {
+                    pickIntent.SetType(this.type);
+                }
                 else
                 {
-                    if (!_isPhoto)
+                    // Setup the video properties for video
+                    pickIntent.PutExtra(MediaStore.ExtraVideoQuality, 1);
+                    if (!this.isPhoto)
                     {
-                        _seconds = b.GetInt(MediaStore.ExtraDurationLimit, 0);
-                        if (_seconds != 0)
+                        this.durationLimit = b.GetInt(MediaStore.ExtraDurationLimit, 0);
+                        if (this.durationLimit != 0)
                         {
-                            pickIntent.PutExtra(MediaStore.ExtraDurationLimit, _seconds);
+                            pickIntent.PutExtra(MediaStore.ExtraDurationLimit, this.durationLimit);
                         }
                     }
 
-                    pickIntent.PutExtra(MediaStore.ExtraVideoQuality, 1);
-
+                    // If the activity was not run
                     if (!ran)
                     {
-                        _path = GetOutputMediaFile(this, b.GetString(ExtraPath), _title, _isPhoto);
-
-                        Touch();
-                        pickIntent.PutExtra(MediaStore.ExtraOutput, _path);
+                        this.path = MediaPickerActivity.GetOutputMediaFile(
+                            this,
+                            b.GetString(MediaPickerActivity.ExtraPath),
+                            this.title,
+                            this.isPhoto);
+                        this.Touch();
+                        pickIntent.PutExtra(MediaStore.ExtraOutput, this.path);
                     }
                     else
-                        _path = Uri.Parse(b.GetString(ExtraPath));
+                    {
+                        // Get the media location
+                        this.path = Uri.Parse(b.GetString(MediaPickerActivity.ExtraPath));
+                    }
                 }
 
+                // If the activity was not run before for the current operation
                 if (!ran)
                 {
+                    // Check camera permission
                     if (global::Android.OS.Build.VERSION.Release == "6.0")
                     {
-                        if (CheckSelfPermission(Manifest.Permission.Camera) != Android.Content.PM.Permission.Granted)
+                        if (this.CheckSelfPermission(Manifest.Permission.Camera)
+                            != Android.Content.PM.Permission.Granted)
                         {
-                            RequestPermissions(new string[] { Manifest.Permission.Camera }, 1);
+                            this.RequestPermissions(new[] { Manifest.Permission.Camera }, 1);
                         }
                     }
-                    StartActivityForResult(pickIntent, _id);
+
+                    // Start the media operation
+                    this.StartActivityForResult(pickIntent, this.id);
                 }
             }
             catch (Exception ex)
             {
-                RaiseOnMediaPicked(new MediaPickedEventArgs(_id, ex));
+                // Handle exception
+                MediaPickerActivity.RaiseOnMediaPicked(new MediaPickedEventArgs(this.id, ex));
             }
             finally
             {
-                if (pickIntent != null)
-                    pickIntent.Dispose();
+                // Cleanup
+                pickIntent?.Dispose();
             }
         }
 
         /// <summary>
-        /// Called when an activity you launched exits, giving you the requestCode
-        /// you started it with, the resultCode it returned, and any additional
-        /// data from it.
+        /// Called when an activity you launched exits, giving you the requestCode you started it with, the
+        /// resultCode it returned, and any additional data from it.
         /// </summary>
-        /// <param name="requestCode">The integer request code originally supplied to
-        /// startActivityForResult(), allowing you to identify who this
-        /// result came from.</param>
-        /// <param name="resultCode">The integer result code returned by the child activity
-        /// through its setResult().</param>
-        /// <param name="data">An Intent, which can return result data to the caller
-        /// (various data can be attached to Intent "extras").</param>
-        /// <since version="Added in API level 1" />
-        /// <altmember cref="M:Android.App.Activity.StartActivityForResult(Android.Content.Intent, System.Int32)" />
-        /// <altmember cref="M:Android.App.Activity.CreatePendingResult(System.Int32, Android.Content.Intent, Android.Content.Intent)" />
-        /// <altmember cref="M:Android.App.Activity.SetResult(Android.App.Result)" />
-        /// <remarks><para tool="javadoc-to-mdoc">Called when an activity you launched exits, giving you the requestCode
-        /// you started it with, the resultCode it returned, and any additional
-        /// data from it.  The <format type="text/html"><var>resultCode</var></format> will be
-        /// <c><see cref="F:Android.App.Result.Canceled" /></c> if the activity explicitly returned that,
-        /// didn't return any result, or crashed during its operation.
-        /// </para>
-        /// <para tool="javadoc-to-mdoc">You will receive this call immediately before onResume() when your
-        /// activity is re-starting.</para>
-        /// <para tool="javadoc-to-mdoc">
-        ///   <format type="text/html">
-        ///     <a href="http://developer.android.com/reference/android/app/Activity.html#onActivityResult(int, int, android.content.Intent)" target="_blank">[Android Documentation]</a>
-        ///   </format>
-        /// </para></remarks>
+        /// <param name="requestCode">
+        ///   The integer request code originally supplied to startActivityForResult(), allowing you to identify who
+        ///   this result came from.
+        /// </param>
+        /// <param name="resultCode">
+        ///   The integer result code returned by the child activity through its setResult().
+        /// </param>
+        /// <param name="data">
+        ///   An Intent, which can return result data to the caller (various data can be attached to Intent "extras").
+        /// </param>
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
 
-            if (_tasked)
+            // If the operation was tasked
+            if (this.tasked)
             {
+                // Get the media from task result
                 var future = resultCode == Result.Canceled
-                    ? MediaPickerActivity.TaskFromResult(new MediaPickedEventArgs(requestCode, true))
-                    : GetMediaFileAsync(this, requestCode, _action, _isPhoto, ref _path, (data != null) ? data.Data : null);
+                                 ? MediaPickerActivity.TaskFromResult(new MediaPickedEventArgs(requestCode, true))
+                                 : MediaPickerActivity.GetMediaFileAsync(
+                                     this,
+                                     requestCode,
+                                     this.action,
+                                     this.isPhoto,
+                                     ref this.path,
+                                     data?.Data);
 
-                Finish();
-
-                future.ContinueWith(t => RaiseOnMediaPicked(t.Result));
+                // Finish the current activity
+                this.Finish();
+                future.ContinueWith(t => MediaPickerActivity.RaiseOnMediaPicked(t.Result));
             }
             else
             {
+                // If the task was canceled
                 if (resultCode == Result.Canceled)
                 {
-                    SetResult(Result.Canceled);
+                    this.SetResult(Result.Canceled);
                 }
                 else
                 {
+                    // Return the media resule
                     var resultData = new Intent();
-                    resultData.PutExtra(MediaFileExtraName, (data != null) ? data.Data : null);
-                    resultData.PutExtra(ExtraPath, _path);
-                    resultData.PutExtra("isPhoto", _isPhoto);
-                    resultData.PutExtra(ExtraAction, _action);
+                    resultData.PutExtra(MediaPickerActivity.MediaFileExtraName, data?.Data);
+                    resultData.PutExtra(MediaPickerActivity.ExtraPath, this.path);
+                    resultData.PutExtra("isPhoto", this.isPhoto);
+                    resultData.PutExtra(MediaPickerActivity.ExtraAction, this.action);
 
-                    SetResult(Result.Ok, resultData);
+                    this.SetResult(Result.Ok, resultData);
                 }
 
-                Finish();
+                // Finish the current activity
+                this.Finish();
             }
         }
-        #endregion Overides
 
-        #region Private Static Methods
         /// <summary>
         /// Gets the media file asynchronous.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="requestCode">The request code.</param>
-        /// <param name="action">The action.</param>
-        /// <param name="isPhoto">if set to <c>true</c> [is photo].</param>
-        /// <param name="path">The path.</param>
-        /// <param name="data">The data.</param>
-        /// <returns>Task&lt;MediaPickedEventArgs&gt;.</returns>
-        internal static Task<MediaPickedEventArgs> GetMediaFileAsync(Context context, int requestCode, string action,
-            bool isPhoto, ref Uri path, Uri data)
+        /// <param name="context">The execution context.</param>
+        /// <param name="requestCode">The request operation code.</param>
+        /// <param name="action">The action to perform.</param>
+        /// <param name="isPhoto">A value indicating whenter the operation is performed on a photo.</param>
+        /// <param name="path">The media path.</param>
+        /// <param name="data">The media data URI.</param>
+        /// <returns>A <see cref="Task"/> represening the asyncroneous operation.</returns>
+        private static Task<MediaPickedEventArgs> GetMediaFileAsync(
+            Context context,
+            int requestCode,
+            string action,
+            bool isPhoto,
+            ref Uri path,
+            Uri data)
         {
+            // If requested to take a photo
             Task<Tuple<string, bool>> pathFuture;
             Action<bool> dispose = null;
             string originalPath = null;
-
             if (action != Intent.ActionPick)
             {
                 originalPath = path.Path;
 
-                // Not all camera apps respect EXTRA_OUTPUT, some will instead
-                // return a content or file uri from data.
-                if (data != null && data.Path != originalPath)
+                // Not all camera apps respect EXTRA_OUTPUT, some will instead return a content or file uri from data.
+                if ((data != null) && (data.Path != originalPath))
                 {
+                    // Move the camera output
                     originalPath = data.ToString();
                     var currentPath = path.Path;
-
-                    pathFuture = TryMoveFileAsync(context, data, path, isPhoto).ContinueWith(t =>
-                        new Tuple<string, bool>(t.Result ? currentPath : null, false));
+                    pathFuture =
+                        MediaPickerActivity.TryMoveFileAsync(context, data, path, isPhoto)
+                            .ContinueWith(t => new Tuple<string, bool>(t.Result ? currentPath : null, false));
                 }
                 else
+                {
                     pathFuture = MediaPickerActivity.TaskFromResult(new Tuple<string, bool>(path.Path, false));
+                }
             }
             else if (data != null)
             {
+                // Pick the file from  media galery
                 originalPath = data.ToString();
                 path = data;
-                pathFuture = GetFileForUriAsync(context, path, isPhoto);
+                pathFuture = MediaPickerActivity.GetFileForUriAsync(context, path, isPhoto);
             }
             else
             {
+                // Nothing to perform
                 pathFuture = MediaPickerActivity.TaskFromResult<Tuple<string, bool>>(null);
             }
 
-            return pathFuture.ContinueWith(t =>
-            {
-                string resultPath = t.Result.Item1;
-                if (resultPath != null && File.Exists(t.Result.Item1))
-                {
-                    if (t.Result.Item2)
+            return pathFuture.ContinueWith(
+                t =>
                     {
-                        dispose = d => File.Delete(resultPath);
-                    }
+                        // If selected file exists
+                        var resultPath = t.Result.Item1;
+                        if ((resultPath != null) && File.Exists(t.Result.Item1))
+                        {
+                            // Return the selected media
+                            if (t.Result.Item2)
+                            {
+                                dispose = d => File.Delete(resultPath);
+                            }
 
-                    var mf = new MediaFile(resultPath, () => File.OpenRead(t.Result.Item1), dispose);
+                            var mf = new MediaFile(resultPath, () => File.OpenRead(t.Result.Item1), dispose);
+                            return new MediaPickedEventArgs(requestCode, false, mf);
+                        }
 
-                    return new MediaPickedEventArgs(requestCode, false, mf);
-                }
-                return new MediaPickedEventArgs(requestCode, new FileNotFoundException("Media file not found", originalPath));
-            });
+                        // Return an error
+                        return new MediaPickedEventArgs(
+                                   requestCode,
+                                   new FileNotFoundException("Media file not found", originalPath));
+                    });
         }
 
         /// <summary>
         /// Tries the move file asynchronous.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="url">The URL.</param>
-        /// <param name="path">The path.</param>
-        /// <param name="isPhoto">if set to <c>true</c> [is photo].</param>
-        /// <returns>Task&lt;System.Boolean&gt;.</returns>
+        /// <param name="context">The execution context.</param>
+        /// <param name="url">The original file to move.</param>
+        /// <param name="path">The file destination.</param>
+        /// <param name="isPhoto">A value indicating whenter the operation is performed on a photo.</param>
+        /// <returns>A <see cref="Task"/> represening the asyncroneous operation.</returns>
         private static Task<bool> TryMoveFileAsync(Context context, Uri url, Uri path, bool isPhoto)
         {
-            string moveTo = GetLocalPath(path);
-            return GetFileForUriAsync(context, url, isPhoto).ContinueWith(t =>
-            {
-                if (t.Result.Item1 == null)
-                    return false;
+            var moveTo = MediaPickerActivity.GetLocalPath(path);
+            return MediaPickerActivity.GetFileForUriAsync(context, url, isPhoto).ContinueWith(
+                t =>
+                    {
+                        // If nothing to move
+                        if (t.Result.Item1 == null)
+                        {
+                            return false;
+                        }
 
-                File.Delete(moveTo);
-                File.Move(t.Result.Item1, moveTo);
+                        // Move the file to required destination
+                        File.Delete(moveTo);
+                        File.Move(t.Result.Item1, moveTo);
 
-                if (url.Scheme == "content")
-                    context.ContentResolver.Delete(url, null, null);
+                        // If the schema is content
+                        if (url.Scheme == "content")
+                        {
+                            // Delete content file
+                            context.ContentResolver.Delete(url, null, null);
+                        }
 
-                return true;
-            }, TaskScheduler.Default);
+                        return true;
+                    },
+                TaskScheduler.Default);
         }
 
         /// <summary>
         /// Gets the output media file.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="subdir">The subdir.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="isPhoto">if set to <c>true</c> [is photo].</param>
-        /// <returns>Uri.</returns>
-        /// <exception cref="System.IO.IOException">Couldn't create directory, have you added the WRITE_EXTERNAL_STORAGE permission?</exception>
+        /// <param name="context">The execution context.</param>
+        /// <param name="subdir">The sub-directory name to place file.</param>
+        /// <param name="name">The file name.</param>
+        /// <param name="isPhoto">A value indicating whenter the operation is performed on a photo.</param>
+        /// <returns>The Uri of the output media file.</returns>
         private static Uri GetOutputMediaFile(Context context, string subdir, string name, bool isPhoto)
         {
-            subdir = subdir ?? String.Empty;
-
-            if (String.IsNullOrWhiteSpace(name))
+            // Get the media file name
+            subdir = subdir ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(name))
             {
                 name = MediaPickerActivity.GetMediaFileWithPath(isPhoto, subdir, string.Empty, name);
             }
 
-            var mediaType = (isPhoto) ? Environment.DirectoryPictures : Environment.DirectoryMovies;
+            var mediaType = isPhoto ? Environment.DirectoryPictures : Environment.DirectoryMovies;
             using (var mediaStorageDir = new Java.IO.File(context.GetExternalFilesDir(mediaType), subdir))
             {
+                // If directory does not exists
                 if (!mediaStorageDir.Exists())
                 {
+                    // If create directory failed
                     if (!mediaStorageDir.Mkdirs())
-                        throw new IOException("Couldn't create directory, have you added the WRITE_EXTERNAL_STORAGE permission?");
+                    {
+                        throw new IOException(
+                                  "Couldn't create directory, have you added the WRITE_EXTERNAL_STORAGE permission?");
+                    }
 
                     // Ensure this media doesn't show up in gallery apps
                     using (var nomedia = new Java.IO.File(mediaStorageDir, ".nomedia"))
+                    {
                         nomedia.CreateNewFile();
+                    }
                 }
 
-                return Uri.FromFile(new Java.IO.File(MediaPickerActivity.GetUniqueMediaFileWithPath(isPhoto, mediaStorageDir.Path, name, File.Exists)));
+                // Return the media file URI
+                return
+                    Uri.FromFile(
+                        new Java.IO.File(
+                            MediaPickerActivity.GetUniqueMediaFileWithPath(
+                                isPhoto,
+                                mediaStorageDir.Path,
+                                name,
+                                File.Exists)));
             }
         }
 
         /// <summary>
-        /// FIx uripath for 5.0.2 new Gallery Picker Error 
-        /// see https://forums.xamarin.com/discussion/43908/issue-with-xlabs-mediapicker-selectpicture-and-selectvideo
+        /// FIX for URI path for new Gallery Picker Error.
         /// </summary>
-        /// <param name="uriPath"></param>
-        /// <returns>if result != null uri is fixed</returns>
+        /// <param name="uriPath">The URI to fix.</param>
+        /// <returns>The fixed URI path.</returns>
         private static Uri FixUri(string uriPath)
         {
-            //remove /ACTUAL
+            // Remove /ACTUAL
             if (uriPath.Contains("/ACTUAL"))
+            {
                 uriPath = uriPath.Substring(0, uriPath.IndexOf("/ACTUAL", StringComparison.Ordinal));
+            }
 
-            Java.Util.Regex.Pattern pattern = Java.Util.Regex.Pattern.Compile("(content://media/.*\\d)");
-
+            // If URI is a content URI
+            var pattern = Java.Util.Regex.Pattern.Compile("(content://media/.*\\d)");
             if (uriPath.Contains("content"))
             {
-                Matcher matcher = pattern.Matcher(uriPath);
-
+                // Return the mathced URI
+                var matcher = pattern.Matcher(uriPath);
                 if (matcher.Find())
+                {
                     return Uri.Parse(matcher.Group(1));
-                else
-                    throw new IllegalArgumentException("Cannot handle this URI");
+                }
+
+                // Invalid URI
+                throw new IllegalArgumentException("Cannot handle this URI");
             }
-            else
-                return null;
+
+            // Nothing to fix
+            return null;
         }
 
         /// <summary>
@@ -502,15 +504,17 @@ namespace AppLimpia.Droid
         /// <summary>
         /// Gets the output file with folder.
         /// </summary>
-        /// <param name="isPhoto">if set to <c>true</c> [is photo].</param>
+        /// <param name="isPhoto">A value indicating whenter the operation is performed on a photo.</param>
         /// <param name="folder">The root folder.</param>
         /// <param name="subdir">The subdir.</param>
-        /// <param name="name">The name.</param>
-        /// <returns>System.String.</returns>
-        public static string GetMediaFileWithPath(bool isPhoto, string folder, string subdir, string name)
+        /// <param name="name">The file name.</param>
+        /// <returns>The full file path.</returns>
+        private static string GetMediaFileWithPath(bool isPhoto, string folder, string subdir, string name)
         {
-            if (String.IsNullOrWhiteSpace(name))
+            // If no name is provided
+            if (string.IsNullOrWhiteSpace(name))
             {
+                // Create a unique file name
                 var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
                 if (isPhoto)
                 {
@@ -522,123 +526,123 @@ namespace AppLimpia.Droid
                 }
             }
 
+            // Get the file extension
             var ext = Path.GetExtension(name);
-            if (ext == String.Empty)
+            if (ext == string.Empty)
             {
-                ext = ((isPhoto) ? ".jpg" : ".mp4");
+                ext = isPhoto ? ".jpg" : ".mp4";
             }
 
+            // Return the media file name
             name = Path.GetFileNameWithoutExtension(name);
-
-            var newFolder = Path.Combine(folder ?? String.Empty, subdir ?? String.Empty);
-
+            var newFolder = Path.Combine(folder ?? string.Empty, subdir ?? string.Empty);
             return Path.Combine(newFolder, name + ext);
         }
-
-
 
         /// <summary>
         /// Gets the unique file folder.
         /// </summary>
-        /// <param name="isPhoto">if set to <c>true</c> [is photo].</param>
-        /// <param name="folder">The folder.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="checkExists">The check exists.</param>
-        /// <returns>System.String.</returns>
-        public static string GetUniqueMediaFileWithPath(bool isPhoto, string folder, string name, Func<string, bool> checkExists)
+        /// <param name="isPhoto">A value indicating whenter the operation is performed on a photo.</param>
+        /// <param name="folder">The root folder.</param>
+        /// <param name="name">The file name.</param>
+        /// <param name="checkExists">The check existance delegate.</param>
+        /// <returns>The unique full file path.</returns>
+        private static string GetUniqueMediaFileWithPath(
+            bool isPhoto,
+            string folder,
+            string name,
+            Func<string, bool> checkExists)
         {
+            // Separate filename and extension
             var ext = Path.GetExtension(name);
-
-            if (String.IsNullOrEmpty(ext))
+            name = Path.GetFileNameWithoutExtension(name);
+            if (string.IsNullOrEmpty(ext))
             {
-                ext = (isPhoto) ? ".jpg" : "mp4";
+                ext = isPhoto ? ".jpg" : "mp4";
             }
 
-            var nname = name + ext;
+            // Generate the unique file name
+            var newName = name + ext;
             var i = 1;
-            while (checkExists(Path.Combine(folder, nname)))
+            while (checkExists(Path.Combine(folder, newName)))
             {
-                nname = name + "_" + (i++) + ext;
+                newName = name + "_" + (i++) + ext;
             }
 
-            return Path.Combine(folder, nname);
+            return Path.Combine(folder, newName);
         }
 
         /// <summary>
         /// Gets the file for URI asynchronous.
         /// </summary>
-        /// <param name="context">The context.</param>
-        /// <param name="uri">The URI.</param>
-        /// <param name="isPhoto">if set to <c>true</c> [is photo].</param>
-        /// <returns>Task&lt;Tuple&lt;System.String, System.Boolean&gt;&gt;.</returns>
-        internal static Task<Tuple<string, bool>> GetFileForUriAsync(Context context, Uri uri, bool isPhoto)
+        /// <param name="context">The execution context.</param>
+        /// <param name="uri">The file URI.</param>
+        /// <param name="isPhoto">A value indicating whenter the operation is performed on a photo.</param>
+        /// <returns>A <see cref="Task"/> represening the asyncroneous operation.</returns>
+        // ReSharper disable once UnusedParameter.Local
+        private static Task<Tuple<string, bool>> GetFileForUriAsync(Context context, Uri uri, bool isPhoto)
         {
             var tcs = new TaskCompletionSource<Tuple<string, bool>>();
 
-            var fixedUri = FixUri(uri.Path);
-
+            // Fix the content URI
+            var fixedUri = MediaPickerActivity.FixUri(uri.Path);
             if (fixedUri != null)
+            {
                 uri = fixedUri;
+            }
 
             if (uri.Scheme == "file")
+            {
+                // Return the media file
                 tcs.SetResult(new Tuple<string, bool>(new System.Uri(uri.ToString()).LocalPath, false));
+            }
             else if (uri.Scheme == "content")
             {
-                Task.Factory.StartNew(() =>
-                {
-                    ICursor cursor = null;
-                    try
-                    {
-                        cursor = context.ContentResolver.Query(uri, null, null, null, null);
-                        if (cursor == null || !cursor.MoveToNext())
-                            tcs.SetResult(new Tuple<string, bool>(null, false));
-                        else
+                // Return the content file
+                Task.Factory.StartNew(
+                    () =>
                         {
-                            int column = cursor.GetColumnIndex(MediaStore.MediaColumns.Data);
-                            string contentPath = null;
+                            ICursor cursor = null;
+                            try
+                            {
+                                // Get the content from resolver
+                                cursor = context.ContentResolver.Query(uri, null, null, null, null);
+                                if ((cursor == null) || !cursor.MoveToNext())
+                                {
+                                    // No data returned
+                                    tcs.SetResult(new Tuple<string, bool>(null, false));
+                                }
+                                else
+                                {
+                                    // Parse the content data
+                                    int column = cursor.GetColumnIndex(MediaStore.MediaColumns.Data);
+                                    string contentPath = null;
+                                    if (column != -1)
+                                    {
+                                        contentPath = cursor.GetString(column);
+                                    }
 
-                            if (column != -1)
-                                contentPath = cursor.GetString(column);
-
-                            bool copied = false;
-
-                            // If they don't follow the "rules", try to copy the file locally
-                            //							if (contentPath == null || !contentPath.StartsWith("file"))
-                            //							{
-                            //								copied = true;
-                            //								Uri outputPath = GetOutputMediaFile(context, "temp", null, isPhoto);
-                            //
-                            //								try
-                            //								{
-                            //									using (Stream input = context.ContentResolver.OpenInputStream(uri))
-                            //									using (Stream output = File.Create(outputPath.Path))
-                            //										input.CopyTo(output);
-                            //
-                            //									contentPath = outputPath.Path;
-                            //								}
-                            //								catch (FileNotFoundException)
-                            //								{
-                            //									// If there's no data associated with the uri, we don't know
-                            //									// how to open this. contentPath will be null which will trigger
-                            //									// MediaFileNotFoundException.
-                            //								}
-                            //							}
-
-                            tcs.SetResult(new Tuple<string, bool>(contentPath, copied));
-                        }
-                    }
-                    finally
-                    {
-                        if (cursor != null)
-                        {
-                            cursor.Close();
-                            cursor.Dispose();
-                        }
-                    }
-                }, CancellationToken.None, TaskCreationOptions.None, TaskScheduler.Default);
+                                    tcs.SetResult(new Tuple<string, bool>(contentPath, false));
+                                }
+                            }
+                            finally
+                            {
+                                if (cursor != null)
+                                {
+                                    cursor.Close();
+                                    cursor.Dispose();
+                                }
+                            }
+                        },
+                    CancellationToken.None,
+                    TaskCreationOptions.None,
+                    TaskScheduler.Default);
             }
             else
+            {
+                // Not a file not content
                 tcs.SetResult(new Tuple<string, bool>(null, false));
+            }
 
             return tcs.Task;
         }
@@ -646,128 +650,93 @@ namespace AppLimpia.Droid
         /// <summary>
         /// Gets the local path.
         /// </summary>
-        /// <param name="uri">The URI.</param>
-        /// <returns>System.String.</returns>
+        /// <param name="uri">The file URI.</param>
+        /// <returns>The locel file URI.</returns>
         private static string GetLocalPath(Uri uri)
         {
             return new System.Uri(uri.ToString()).LocalPath;
         }
-        #endregion Private Static Methods
 
-        #region Private Methods
+        /// <summary>
+        /// Raises the <see cref="MediaPicked"/> event.
+        /// </summary>
+        /// <param name="e">The <see cref="MediaPickedEventArgs"/> instance containing the event data.</param>
+        private static void RaiseOnMediaPicked(MediaPickedEventArgs e)
+        {
+            MediaPickerActivity.MediaPicked?.Invoke(null, e);
+        }
+
         /// <summary>
         /// Touches this instance.
         /// </summary>
         private void Touch()
         {
-            if (_path.Scheme != "file")
-                return;
-
-            File.Create(GetLocalPath(_path)).Close();
-        }
-        #endregion Private Methods
-
-        #region Raise Event Handlers
-        /// <summary>
-        /// Handles the <see cref="E:MediaPicked" /> event.
-        /// </summary>
-        /// <param name="e">The <see cref="MediaPickedEventArgs"/> instance containing the event data.</param>
-        private static void RaiseOnMediaPicked(MediaPickedEventArgs e)
-        {
-            var picked = MediaPicked;
-            if (picked != null)
+            if (this.path.Scheme != "file")
             {
-                picked(null, e);
+                return;
             }
-        }
-        #endregion Raise Event Handlers
-        #endregion Methods
-    }
 
-    /// <summary>
-    /// Class MediaPickedEventArgs.
-    /// </summary>
-    internal class MediaPickedEventArgs
-        : EventArgs
-    {
-        #region Constructors
+            File.Create(MediaPickerActivity.GetLocalPath(this.path)).Close();
+        }
+        
         /// <summary>
-        /// Initializes a new instance of the <see cref="MediaPickedEventArgs"/> class.
+        /// The media picked event arguments.
         /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="error">The error.</param>
-        /// <exception cref="System.ArgumentNullException">error</exception>
-        public MediaPickedEventArgs(int id, Exception error)
+        internal class MediaPickedEventArgs : EventArgs
         {
-            if (error == null)
-                throw new ArgumentNullException("error");
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MediaPickedEventArgs"/> class.
+            /// </summary>
+            /// <param name="id">The operation identifier.</param>
+            /// <param name="error">The error.</param>
+            public MediaPickedEventArgs(int id, Exception error)
+            {
+                if (error == null)
+                {
+                    throw new ArgumentNullException(nameof(error));
+                }
 
-            RequestId = id;
-            Error = error;
+                this.RequestId = id;
+                this.Error = error;
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="MediaPickedEventArgs"/> class.
+            /// </summary>
+            /// <param name="id">The operation identifier.</param>
+            /// <param name="isCanceled">A value indicating whether the operation was canceled.</param>
+            /// <param name="media">The media file.</param>
+            public MediaPickedEventArgs(int id, bool isCanceled, MediaFile media = null)
+            {
+                this.RequestId = id;
+                this.IsCanceled = isCanceled;
+                if (!this.IsCanceled && media == null)
+                {
+                    throw new ArgumentNullException(nameof(media));
+                }
+
+                this.Media = media;
+            }
+
+            /// <summary>
+            /// Gets the request identifier.
+            /// </summary>
+            public int RequestId { get; }
+
+            /// <summary>
+            /// Gets a value indicating whether the operation is canceled.
+            /// </summary>
+            public bool IsCanceled { get; }
+
+            /// <summary>
+            /// Gets the error.
+            /// </summary>
+            public Exception Error { get; }
+
+            /// <summary>
+            /// Gets the media file.
+            /// </summary>
+            public MediaFile Media { get; }
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MediaPickedEventArgs"/> class.
-        /// </summary>
-        /// <param name="id">The identifier.</param>
-        /// <param name="isCanceled">if set to <c>true</c> [is canceled].</param>
-        /// <param name="media">The media.</param>
-        /// <exception cref="System.ArgumentNullException">media</exception>
-        public MediaPickedEventArgs(int id, bool isCanceled, MediaFile media = null)
-        {
-            RequestId = id;
-            IsCanceled = isCanceled;
-            if (!IsCanceled && media == null)
-                throw new ArgumentNullException("media");
-
-            Media = media;
-        }
-        #endregion Constructors
-
-        #region Public Properties
-        /// <summary>
-        /// Gets the request identifier.
-        /// </summary>
-        /// <value>The request identifier.</value>
-        public int RequestId { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is canceled.
-        /// </summary>
-        /// <value><c>true</c> if this instance is canceled; otherwise, <c>false</c>.</value>
-        public bool IsCanceled { get; private set; }
-
-        /// <summary>
-        /// Gets the error.
-        /// </summary>
-        /// <value>The error.</value>
-        public Exception Error { get; private set; }
-
-        /// <summary>
-        /// Gets the media.
-        /// </summary>
-        /// <value>The media.</value>
-        public MediaFile Media { get; private set; }
-        #endregion Public Properties
-
-        #region Public Methods
-        /// <summary>
-        /// To the task.
-        /// </summary>
-        /// <returns>Task&lt;MediaFile&gt;.</returns>
-        public Task<MediaFile> ToTask()
-        {
-            var tcs = new TaskCompletionSource<MediaFile>();
-
-            if (IsCanceled)
-                tcs.SetCanceled();
-            else if (Error != null)
-                tcs.SetException(Error);
-            else
-                tcs.SetResult(Media);
-
-            return tcs.Task;
-        }
-        #endregion Public Methods
     }
 }
