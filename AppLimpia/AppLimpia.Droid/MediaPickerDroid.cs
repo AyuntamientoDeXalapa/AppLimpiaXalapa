@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
 using Android.OS;
 using Android.Provider;
 
 using AppLimpia.Media;
+
+using Path = System.IO.Path;
 
 namespace AppLimpia.Droid
 {
@@ -89,6 +92,71 @@ namespace AppLimpia.Droid
 
             // Take the photo
             return this.TakeMediaAsync("image/*", MediaStore.ActionImageCapture, options);
+        }
+
+        /// <summary>
+        /// Resizes the image to have the specified maximum sizes.
+        /// </summary>
+        /// <param name="source">The source image to resize.</param>
+        /// <param name="maxWidth">The max width of the image.</param>
+        /// <param name="maxHeight">The max height of the image.</param>
+        /// <returns>The resized image data.</returns>
+        public override Stream ResizeImage(Stream source, int maxWidth, int maxHeight)
+        {
+            // Load the bitmap
+            using (var originalBitmap = BitmapFactory.DecodeStream(source))
+            {
+                // If the image does not need to be resized
+                var originalWidth = originalBitmap.Width;
+                var originalHeight = originalBitmap.Height;
+                if ((originalWidth <= maxWidth) && (originalHeight <= maxHeight))
+                {
+                    System.Diagnostics.Debug.WriteLine("O: Width = {0}; Height = {1}", originalWidth, originalHeight);
+                    System.Diagnostics.Debug.WriteLine("No resize");
+                    return source;
+                }
+
+                // Calculate the resized image size
+                float resizedHeight = originalHeight;
+                float resizedWidth = originalWidth;
+
+                // If height is greater than the maximum height
+                if (resizedHeight > maxHeight)
+                {
+                    resizedHeight = maxHeight;
+                    var factor = (float)originalHeight / maxHeight;
+                    resizedWidth = originalWidth / factor;
+                }
+
+                // If the width is greater than the maximum width
+                if (resizedWidth > maxWidth)
+                {
+                    resizedWidth = maxWidth;
+                    var factor = (float)originalWidth / maxWidth;
+                    resizedHeight = originalHeight / factor;
+                }
+
+                System.Diagnostics.Debug.WriteLine("O: Width = {0}; Height = {1}", originalWidth, originalHeight);
+                System.Diagnostics.Debug.WriteLine(
+                    "R: Width = {0}; Height = {1}",
+                    (int)resizedWidth,
+                    (int)resizedHeight);
+
+                // Resize the image
+                var resizedBitmap = Bitmap.CreateScaledBitmap(
+                    originalBitmap,
+                    (int)resizedWidth,
+                    (int)resizedHeight,
+                    false);
+
+                // Save the rescaled image
+                using (resizedBitmap)
+                {
+                    var imageData = new MemoryStream();
+                    resizedBitmap.Compress(Bitmap.CompressFormat.Jpeg, 95, imageData);
+                    return imageData;
+                }
+            }
         }
 
         /// <summary>

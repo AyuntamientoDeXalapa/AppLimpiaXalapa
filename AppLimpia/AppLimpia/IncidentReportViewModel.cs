@@ -183,9 +183,21 @@ namespace AppLimpia
             // If the photo was taken
             if (task.Status == TaskStatus.RanToCompletion)
             {
-                // Resize and save report photo data
-                var mediaFile = task.Result;
-                this.ReportPhotoData = MediaPicker.Instance.ResizeImage(mediaFile.Source, 800, 800);
+                // Save report photo data
+                Stream memoryData;
+                using (var mediaFile = task.Result)
+                {
+                    memoryData = mediaFile.Source as MemoryStream;
+                    if (memoryData == null)
+                    {
+                        memoryData = new MemoryStream();
+                        mediaFile.Source.CopyTo(memoryData);
+                    }
+                }
+
+                // Resize report photo if required
+                memoryData.Position = 0;
+                this.ReportPhotoData = MediaPicker.Instance.ResizeImage(memoryData, 800, 800);
             }
             else if (task.IsFaulted)
             {
