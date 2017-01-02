@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -38,7 +39,7 @@ namespace AppLimpia
         /// <summary>
         /// The report photo data.
         /// </summary>
-        private Stream reportPhotoData;
+        private byte[] reportPhotoData;
 
         /// <summary>
         /// The date and time of the current incident report.
@@ -109,7 +110,7 @@ namespace AppLimpia
         /// <summary>
         /// Gets or sets he report photo data.
         /// </summary>
-        public Stream ReportPhotoData
+        public byte[] ReportPhotoData
         {
             get
             {
@@ -184,20 +185,18 @@ namespace AppLimpia
             if (task.Status == TaskStatus.RanToCompletion)
             {
                 // Save report photo data
-                Stream memoryData;
                 using (var mediaFile = task.Result)
                 {
-                    memoryData = mediaFile.Source as MemoryStream;
-                    if (memoryData == null)
-                    {
-                        memoryData = new MemoryStream();
-                        mediaFile.Source.CopyTo(memoryData);
-                    }
-                }
+                    // Resize photo if required
+                    var imageData = MediaPicker.Instance.ResizeImage(mediaFile.Source, 800, 800);
 
-                // Resize report photo if required
-                memoryData.Position = 0;
-                this.ReportPhotoData = MediaPicker.Instance.ResizeImage(memoryData, 800, 800);
+                    // Store image data in memory
+                    var imageDataBytes = new byte[imageData.Length];
+                    imageData.Position = 0;
+                    imageData.Read(imageDataBytes, 0, imageDataBytes.Length);
+
+                    this.ReportPhotoData = imageDataBytes;
+                }
             }
             else if (task.IsFaulted)
             {
@@ -312,10 +311,10 @@ namespace AppLimpia
             }
 
             // Is report photo is specified
-            if (this.reportPhotoData != null)
+            if (this.ReportPhotoData != null)
             {
                 // Add photo to the report
-                var imageContent = new StreamContent(this.reportPhotoData);
+                var imageContent = new ByteArrayContent(this.ReportPhotoData);
                 imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
                 report.Add(imageContent, "imagen", "imagen.jpg");
             }
@@ -370,6 +369,97 @@ namespace AppLimpia
         {
             // Return to main view
             await this.Navigation.PopModalAsync();
+        }
+
+        private class ProxyStream : Stream
+        {
+            public Stream BaseStream;
+
+            public ProxyStream(Stream baseStream)
+            {
+                this.BaseStream = baseStream;
+            }
+
+            public override void Flush()
+            {
+                Debug.WriteLine("=== Flush");
+                this.BaseStream.Flush();
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                Debug.WriteLine("=== Read");
+                return this.BaseStream.Read(buffer, offset, count);
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                Debug.WriteLine("=== Seek");
+                return this.BaseStream.Seek(offset, origin);
+            }
+
+            public override void SetLength(long value)
+            {
+                Debug.WriteLine("=== SetLength");
+                this.BaseStream.SetLength(value);
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                Debug.WriteLine("=== Write");
+                this.BaseStream.Write(buffer, offset, count);
+            }
+
+            public override bool CanRead
+            {
+                get
+                {
+                    Debug.WriteLine("=== get_CanRead");
+                    return this.BaseStream.CanRead;
+                }
+            }
+
+            public override bool CanSeek
+            {
+                get
+                {
+                    Debug.WriteLine("=== get_CanSeek");
+                    return this.BaseStream.CanSeek;
+                }
+            }
+
+            public override bool CanWrite
+            {
+                get
+                {
+                    Debug.WriteLine("=== get_CanWrite");
+                    return this.BaseStream.CanWrite;
+                }
+            }
+
+            public override long Length
+            {
+                get
+                {
+                    Debug.WriteLine("=== get_Length");
+                    return this.BaseStream.Length;
+                }
+            }
+
+            public override long Position
+            {
+                get
+                {
+                    Debug.WriteLine("=== get_Position");
+                    return this.BaseStream.Position;
+                }
+
+                set
+                {
+                    Debug.WriteLine("=== set_Position");
+                    this.BaseStream.Position = value;
+                }
+            }
         }
     }
 }

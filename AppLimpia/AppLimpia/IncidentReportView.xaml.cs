@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -106,11 +107,10 @@ namespace AppLimpia
                 // If the image data is available
                 if (this.currentBindingContext.ReportPhotoData != null)
                 {
-                    this.currentBindingContext.ReportPhotoData.Position = 0;
+                    // Copy image data for display
                     this.ImageReportPhoto.Source =
-                        ImageSource.FromStream(() => this.currentBindingContext.ReportPhotoData);
+                        ImageSource.FromStream(() => new MemoryStream(this.currentBindingContext.ReportPhotoData));
                     this.ImageReportPhoto.IsVisible = true;
-                    this.currentBindingContext.ReportPhotoData.Position = 0;
                 }
                 else
                 {
