@@ -124,9 +124,8 @@ namespace AppLimpia.Droid
                 if (intent.Data != null)
                 {
                     // Resume the login process
-                    var loginViewModel = application.MainViewModel?.LoginViewModel;
                     var uri = new Uri(intent.DataString);
-                    loginViewModel?.ResumeLoginWithCommand?.Execute(uri);
+                    application.HandleUri(uri);
                 }
             }
         }

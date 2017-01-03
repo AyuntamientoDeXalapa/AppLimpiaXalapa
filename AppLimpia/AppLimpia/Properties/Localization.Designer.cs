@@ -125,6 +125,15 @@ namespace AppLimpia.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string DialogDismiss {
+            get {
+                return ResourceManager.GetString("DialogDismiss", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notificaciones de distancia.
         /// </summary>
         internal static string DistanceNotifications {
@@ -202,15 +211,6 @@ namespace AppLimpia.Properties {
         internal static string ErrorCannotOpenBrowser {
             get {
                 return ResourceManager.GetString("ErrorCannotOpenBrowser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to OK.
-        /// </summary>
-        internal static string ErrorDialogDismiss {
-            get {
-                return ResourceManager.GetString("ErrorDialogDismiss", resourceCulture);
             }
         }
         
@@ -436,6 +436,15 @@ namespace AppLimpia.Properties {
         internal static string NoSubmittedReports {
             get {
                 return ResourceManager.GetString("NoSubmittedReports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notificación.
+        /// </summary>
+        internal static string NotificationDialogTitle {
+            get {
+                return ResourceManager.GetString("NotificationDialogTitle", resourceCulture);
             }
         }
         

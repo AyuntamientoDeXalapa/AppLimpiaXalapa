@@ -141,7 +141,7 @@
     <value>No se puede abrir el navegador</value>
     <comment>The cannot open web browser error text</comment>
   </data>
-  <data name="ErrorDialogDismiss" xml:space="preserve">
+  <data name="DialogDismiss" xml:space="preserve">
     <value>OK</value>
     <comment>The error dialog dismiss button</comment>
   </data>
@@ -368,5 +368,9 @@
   <data name="NoSubmittedReports" xml:space="preserve">
     <value>No existen reportes</value>
     <comment>The user does not have any submitted reports</comment>
+  </data>
+  <data name="NotificationDialogTitle" xml:space="preserve">
+    <value>Notificación</value>
+    <comment>The notification dialog title</comment>
   </data>
 </root>

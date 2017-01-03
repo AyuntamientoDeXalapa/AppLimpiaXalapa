@@ -163,7 +163,7 @@ namespace AppLimpia
                     App.DisplayAlert(
                         Localization.ErrorDialogTitle,
                         Localization.ErrorCameraForbidden,
-                        Localization.ErrorDialogDismiss);
+                        Localization.DialogDismiss);
                 }
             }
             else
@@ -171,7 +171,7 @@ namespace AppLimpia
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorCameraUnavailable,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
             }
         }
 
@@ -203,7 +203,7 @@ namespace AppLimpia
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     task.Exception.InnerException.Message,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
             }
         }
 
@@ -291,7 +291,7 @@ namespace AppLimpia
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorInvalidIncidentType,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
                 return;
             }
 

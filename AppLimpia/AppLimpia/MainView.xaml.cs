@@ -76,7 +76,7 @@ namespace AppLimpia
                             App.DisplayAlert(
                                 Localization.ErrorDialogTitle,
                                 Localization.ErrorNoLocationService,
-                                Localization.ErrorDialogDismiss);
+                                Localization.DialogDismiss);
                         }
                     },
                 default(CancellationToken),

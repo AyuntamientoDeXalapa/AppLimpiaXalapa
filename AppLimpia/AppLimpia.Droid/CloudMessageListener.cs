@@ -35,6 +35,20 @@ namespace AppLimpia.Droid
         /// <param name="message">The notification message to show.</param>
         private void ShowNotification(string message)
         {
+            // If the application is active
+            var instance = Xamarin.Forms.Application.Current as App;
+            if (instance?.IsActive == true)
+            {
+                // Show a message
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(
+                    () =>
+                        App.DisplayAlert(
+                            Properties.Localization.NotificationDialogTitle,
+                            message,
+                            Properties.Localization.DialogDismiss));
+                return;
+            }
+
             // Launch the application on notification click
             var intent = new Intent(this, typeof(MainActivity));
             intent.SetAction(Intent.ActionView);
@@ -44,13 +58,13 @@ namespace AppLimpia.Droid
 
             // Create a new notification
             var sound = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
-            var notificationBuilder = new Android.App.Notification.Builder(this)
-                .SetSmallIcon(Resource.Drawable.icon)
-                .SetContentTitle("Xalapa Limpia")
-                .SetContentText(message)
-                .SetSound(sound)
-                .SetAutoCancel(true)
-                .SetContentIntent(pendingIntent);
+            var notificationBuilder =
+                new Android.App.Notification.Builder(this).SetSmallIcon(Resource.Drawable.icon)
+                    .SetContentTitle("Xalapa Limpia")
+                    .SetContentText(message)
+                    .SetSound(sound)
+                    .SetAutoCancel(true)
+                    .SetContentIntent(pendingIntent);
 
             // Show notification in the notification tray
             var notificationManager = (NotificationManager)this.GetSystemService(Context.NotificationService);

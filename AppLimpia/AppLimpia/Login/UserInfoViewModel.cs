@@ -113,7 +113,7 @@ namespace AppLimpia.Login
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorInvalidNotificationTypes,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
                 return;
             }
 

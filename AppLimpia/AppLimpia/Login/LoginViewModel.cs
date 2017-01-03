@@ -129,7 +129,7 @@ namespace AppLimpia.Login
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorInvalidUserLogin,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
                 return;
             }
 
@@ -139,7 +139,7 @@ namespace AppLimpia.Login
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorInvalidPassword,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
                 return;
             }
 
@@ -268,7 +268,7 @@ namespace AppLimpia.Login
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorNoLoginData,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
                 return;
             }
 
@@ -311,7 +311,7 @@ namespace AppLimpia.Login
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorNotImplemented,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
             }
         }
 
@@ -382,7 +382,7 @@ namespace AppLimpia.Login
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorCancelled,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
                 return;
             }
 

@@ -1343,7 +1343,7 @@ namespace AppLimpia
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorCanNotChangePassword,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
             }
         }
 
@@ -1357,12 +1357,14 @@ namespace AppLimpia
             {
                 this.LoginInternal();
             }
-
-            // Report error
-            App.DisplayAlert(
-                Localization.ErrorDialogTitle,
-                Localization.ErrorAlreadyLoggedIn,
-                Localization.ErrorDialogDismiss);
+            else
+            {
+                // Report error
+                App.DisplayAlert(
+                    Localization.ErrorDialogTitle,
+                    Localization.ErrorAlreadyLoggedIn,
+                    Localization.DialogDismiss);
+            }
         }
 
         /// <summary>
@@ -1452,7 +1454,7 @@ namespace AppLimpia
                 App.DisplayAlert(
                     Localization.ErrorDialogTitle,
                     Localization.ErrorNotLoggedIn,
-                    Localization.ErrorDialogDismiss);
+                    Localization.DialogDismiss);
             }
         }
 

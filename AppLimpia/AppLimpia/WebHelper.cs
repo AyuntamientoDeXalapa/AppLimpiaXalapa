@@ -845,7 +845,7 @@ namespace AppLimpia
                         App.DisplayAlert(
                             Localization.ErrorDialogTitle,
                             Localization.ErrorNotConnected,
-                            Localization.ErrorDialogDismiss);
+                            Localization.DialogDismiss);
                         Debug.WriteLine(ex.ToString());
                     }
                     else if (ex is RemoteServerException)
@@ -867,7 +867,7 @@ namespace AppLimpia
                         App.DisplayAlert(
                             Localization.ErrorDialogTitle,
                             Localization.ErrorUnknownServerError,
-                            Localization.ErrorDialogDismiss);
+                            Localization.DialogDismiss);
                         Debug.WriteLine(ex.ToString());
                     }
                 }

@@ -30,8 +30,14 @@ namespace AppLimpia
             this.InitializeComponent();
 
             // Show the main view
+            this.IsActive = true;
             App.ShowMainView();
         }
+
+        /// <summary>
+        /// Gets a value indicating whether the current application is active.
+        /// </summary>
+        public bool IsActive { get; private set; }
 
         /// <summary>
         /// Gets or sets the current culture info for the current application.
@@ -66,9 +72,22 @@ namespace AppLimpia
         internal Action<Uri> LaunchUriDelegate { get; set; }
 
         /// <summary>
-        /// Gets the main view model.
+        /// Gets or sets the main view model.
         /// </summary>
-        internal MainViewModel MainViewModel { get; private set; }
+        private MainViewModel MainViewModel { get; set; }
+
+        /// <summary>
+        /// Handles the URI passed as the application startup parameter.
+        /// </summary>
+        /// <param name="uri">The application startup URI.</param>
+        public void HandleUri(Uri uri)
+        {
+            // If the URI is an oauth result
+            if (string.Compare(uri.LocalPath, "/oauth2", StringComparison.CurrentCultureIgnoreCase) == 0)
+            {
+                this.MainViewModel?.LoginViewModel?.ResumeLoginWithCommand?.Execute(uri);
+            }
+        }
 
         /// <summary>
         /// Shows the main application view.
@@ -190,7 +209,6 @@ namespace AppLimpia
         /// </summary>
         protected override void OnStart()
         {
-            Debug.WriteLine($"Device ID: {this.DeviceId}");
         }
 
         /// <summary>
@@ -200,6 +218,7 @@ namespace AppLimpia
         {
             // Stop the timer restarts
             Debug.WriteLine("OnSleep");
+            this.IsActive = false;
             if (this.MainViewModel != null)
             {
                 this.MainViewModel.IsActive = false;
@@ -213,6 +232,7 @@ namespace AppLimpia
         {
             // Restart the timer
             Debug.WriteLine("OnResume");
+            this.IsActive = true;
             if (this.MainViewModel != null)
             {
                 this.MainViewModel.IsActive = true;
