@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -369,97 +367,6 @@ namespace AppLimpia
         {
             // Return to main view
             await this.Navigation.PopModalAsync();
-        }
-
-        private class ProxyStream : Stream
-        {
-            public Stream BaseStream;
-
-            public ProxyStream(Stream baseStream)
-            {
-                this.BaseStream = baseStream;
-            }
-
-            public override void Flush()
-            {
-                Debug.WriteLine("=== Flush");
-                this.BaseStream.Flush();
-            }
-
-            public override int Read(byte[] buffer, int offset, int count)
-            {
-                Debug.WriteLine("=== Read");
-                return this.BaseStream.Read(buffer, offset, count);
-            }
-
-            public override long Seek(long offset, SeekOrigin origin)
-            {
-                Debug.WriteLine("=== Seek");
-                return this.BaseStream.Seek(offset, origin);
-            }
-
-            public override void SetLength(long value)
-            {
-                Debug.WriteLine("=== SetLength");
-                this.BaseStream.SetLength(value);
-            }
-
-            public override void Write(byte[] buffer, int offset, int count)
-            {
-                Debug.WriteLine("=== Write");
-                this.BaseStream.Write(buffer, offset, count);
-            }
-
-            public override bool CanRead
-            {
-                get
-                {
-                    Debug.WriteLine("=== get_CanRead");
-                    return this.BaseStream.CanRead;
-                }
-            }
-
-            public override bool CanSeek
-            {
-                get
-                {
-                    Debug.WriteLine("=== get_CanSeek");
-                    return this.BaseStream.CanSeek;
-                }
-            }
-
-            public override bool CanWrite
-            {
-                get
-                {
-                    Debug.WriteLine("=== get_CanWrite");
-                    return this.BaseStream.CanWrite;
-                }
-            }
-
-            public override long Length
-            {
-                get
-                {
-                    Debug.WriteLine("=== get_Length");
-                    return this.BaseStream.Length;
-                }
-            }
-
-            public override long Position
-            {
-                get
-                {
-                    Debug.WriteLine("=== get_Position");
-                    return this.BaseStream.Position;
-                }
-
-                set
-                {
-                    Debug.WriteLine("=== set_Position");
-                    this.BaseStream.Position = value;
-                }
-            }
         }
     }
 }
