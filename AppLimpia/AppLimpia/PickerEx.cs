@@ -21,8 +21,8 @@ namespace AppLimpia
         /// <summary>
         /// The text of the placeholder in the current picker.
         /// </summary>
-        public static readonly BindableProperty PlaceholderTextProperty = BindableProperty.Create(
-            "PlaceholderText",
+        public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(
+            "Placeholder",
             typeof(string),
             typeof(PickerEx));
 
@@ -54,16 +54,16 @@ namespace AppLimpia
         /// <summary>
         /// Gets or sets the text of the placeholder in the current picker.
         /// </summary>
-        public string PlaceholderText
+        public string Placeholder
         {
             get
             {
-                return (string)this.GetValue(PickerEx.PlaceholderTextProperty);
+                return (string)this.GetValue(PickerEx.PlaceholderProperty);
             }
 
             set
             {
-                this.SetValue(PickerEx.PlaceholderTextProperty, value);
+                this.SetValue(PickerEx.PlaceholderProperty, value);
             }
         }
 

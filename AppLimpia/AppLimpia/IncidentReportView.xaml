@@ -69,7 +69,7 @@
         <!-- Incident report fields -->
         <local:PickerEx x:Name="PickerIncidentTypes"
                         HorizontalOptions="FillAndExpand"
-                        PlaceholderText="{local:Localize IncidentType}"
+                        Placeholder="{local:Localize IncidentType}"
                         SelectedIndex="{Binding IncidentTypeIndex}"/>
   
         <!-- Incident report photo -->

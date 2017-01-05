@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="PickerExRenderer.cs" />
     <Compile Include="SettingsIOS.cs" />
     <None Include="Entitlements.plist" />
     <None Include="Info.plist">
@@ -376,6 +377,114 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\RemoveFromFavorites%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-01%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-01%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-02%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-02%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-03%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-03%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-04%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-04%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-05%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-05%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-06%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-06%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-07%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-07%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-08%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-08%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-09%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-09%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-10%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Tutorial\Tutorial-10%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Close%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Close%403x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\NoReports.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\NoReports%402x.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\NoReports%403x.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.3.175\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />

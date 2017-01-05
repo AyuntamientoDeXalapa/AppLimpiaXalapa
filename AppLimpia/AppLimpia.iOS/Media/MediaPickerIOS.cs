@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -7,6 +8,8 @@ using System.Threading.Tasks;
 using AppLimpia.Media;
 
 using AVFoundation;
+
+using Foundation;
 
 using UIKit;
 
@@ -134,6 +137,59 @@ namespace AppLimpia.iOS.Media
             // Take the camera photo
             MediaPickerIOS.VerifyCameraOptions(options);
             return this.GetMediaAsync(UIImagePickerControllerSourceType.Camera, MediaPickerIOS.TypeImage, options);
+        }
+
+        /// <summary>
+        /// Resizes the image to have the specified maximum sizes.
+        /// </summary>
+        /// <param name="source">The source image to resize.</param>
+        /// <param name="maxWidth">The max width of the image.</param>
+        /// <param name="maxHeight">The max height of the image.</param>
+        /// <returns>The resized image data.</returns>
+        public override Stream ResizeImage(Stream source, int maxWidth, int maxHeight)
+        {
+            // Load the bitmap
+            using (var originalBitmap = new UIKit.UIImage(NSData.FromStream(source)))
+            {
+                // If the image does not need to be resized
+                var originalWidth = originalBitmap.Size.Width;
+                var originalHeight = originalBitmap.Size.Height;
+                if ((originalWidth <= maxWidth) && (originalHeight <= maxHeight))
+                {
+                    return source;
+                }
+
+                // Calculate the resized image size
+                var resizedHeight = (float)originalHeight;
+                var resizedWidth = (float)originalWidth;
+
+                // If height is greater than the maximum height
+                if (resizedHeight > maxHeight)
+                {
+                    resizedHeight = maxHeight;
+                    var factor = (float)originalHeight / maxHeight;
+                    resizedWidth = (float)originalWidth / factor;
+                }
+
+                // If the width is greater than the maximum width
+                if (resizedWidth > maxWidth)
+                {
+                    resizedWidth = maxWidth;
+                    var factor = (float)originalWidth / maxWidth;
+                    resizedHeight = (float)originalHeight / factor;
+                }
+
+                // Resize the image
+                UIGraphics.BeginImageContext(new SizeF(resizedWidth, resizedHeight));
+                originalBitmap.Draw(new RectangleF(0, 0, resizedWidth, resizedHeight));
+                var resizedBitmap = UIGraphics.GetImageFromCurrentImageContext();
+                UIGraphics.EndImageContext();
+
+                // Save the rescaled image
+                var imageData = resizedBitmap.AsJPEG(0.95f).ToArray();
+                resizedBitmap.Dispose();
+                return new MemoryStream(imageData);
+            }
         }
 
         /// <summary>

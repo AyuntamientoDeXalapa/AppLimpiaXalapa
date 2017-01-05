@@ -235,16 +235,16 @@ namespace AppLimpia
             // Fill in slides
             // ReSharper disable once UseObjectOrCollectionInitializer
             var slides = new ObservableCollection<string>();
-            slides.Add(Device.OnPlatform("Tutorial-01.png", "tutorial_01.png", "Assets/Tutorial/Tutorial-01.png"));
-            slides.Add(Device.OnPlatform("Tutorial-02.png", "tutorial_02.png", "Assets/Tutorial/Tutorial-02.png"));
-            slides.Add(Device.OnPlatform("Tutorial-03.png", "tutorial_03.png", "Assets/Tutorial/Tutorial-03.png"));
-            slides.Add(Device.OnPlatform("Tutorial-04.png", "tutorial_04.png", "Assets/Tutorial/Tutorial-04.png"));
-            slides.Add(Device.OnPlatform("Tutorial-05.png", "tutorial_05.png", "Assets/Tutorial/Tutorial-05.png"));
-            slides.Add(Device.OnPlatform("Tutorial-06.png", "tutorial_06.png", "Assets/Tutorial/Tutorial-06.png"));
-            slides.Add(Device.OnPlatform("Tutorial-07.png", "tutorial_07.png", "Assets/Tutorial/Tutorial-07.png"));
-            slides.Add(Device.OnPlatform("Tutorial-08.png", "tutorial_08.png", "Assets/Tutorial/Tutorial-08.png"));
-            slides.Add(Device.OnPlatform("Tutorial-09.png", "tutorial_09.png", "Assets/Tutorial/Tutorial-09.png"));
-            slides.Add(Device.OnPlatform("Tutorial-10.png", "tutorial_10.png", "Assets/Tutorial/Tutorial-10.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-01.png", "tutorial_01.png", "Assets/Tutorial/Tutorial-01.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-02.png", "tutorial_02.png", "Assets/Tutorial/Tutorial-02.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-03.png", "tutorial_03.png", "Assets/Tutorial/Tutorial-03.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-04.png", "tutorial_04.png", "Assets/Tutorial/Tutorial-04.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-05.png", "tutorial_05.png", "Assets/Tutorial/Tutorial-05.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-06.png", "tutorial_06.png", "Assets/Tutorial/Tutorial-06.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-07.png", "tutorial_07.png", "Assets/Tutorial/Tutorial-07.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-08.png", "tutorial_08.png", "Assets/Tutorial/Tutorial-08.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-09.png", "tutorial_09.png", "Assets/Tutorial/Tutorial-09.png"));
+            slides.Add(Device.OnPlatform("Tutorial/Tutorial-10.png", "tutorial_10.png", "Assets/Tutorial/Tutorial-10.png"));
             this.TutorialSlides.ItemsSource = slides;
 
             // Set up slide changed handler

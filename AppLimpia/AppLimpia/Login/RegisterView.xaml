@@ -74,7 +74,7 @@
         <local:PickerEx x:Name="PickerNotificationTypes"
                         Style="{DynamicResource LoginPicker}"
                         HorizontalOptions="FillAndExpand"
-                        PlaceholderText="{local:Localize NotificationTypes}"
+                        Placeholder="{local:Localize NotificationTypes}"
                         SelectedIndex="{Binding NotificationTypeIndex}"/>
         <Label HorizontalOptions="FillAndExpand"
                Style="{DynamicResource ErrorLabel}"

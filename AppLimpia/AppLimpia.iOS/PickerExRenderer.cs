@@ -1,29 +1,30 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-using Android.Content.Res;
+using Foundation;
+
+using UIKit;
 
 using Xamarin.Forms;
-using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.Platform.iOS;
 
-[assembly: ExportRenderer(typeof(AppLimpia.PickerEx), typeof(AppLimpia.Droid.PickerExRenderer))]
+[assembly: ExportRenderer(typeof(AppLimpia.PickerEx), typeof(AppLimpia.iOS.PickerExRenderer))]
 
-namespace AppLimpia.Droid
+#region Generated Code
+// To suppress the StyleCop warning
+namespace AppLimpia.iOS
+#endregion
 {
     /// <summary>
-    /// A renderer for <see cref="MapEx"/> control.
+    /// A renderer for <see cref="PickerEx"/> control.
     /// </summary>
     public class PickerExRenderer : PickerRenderer
     {
         /// <summary>
         /// The default text color.
         /// </summary>
-        private ColorStateList defaultTextColor;
-
-        /// <summary>
-        /// The default hint text color.
-        /// </summary>
-        private ColorStateList defaultHintTextColor;
+        private UIColor defaultTextColor;
 
         /// <summary>
         /// Handles the ElementChanged event.
@@ -40,11 +41,16 @@ namespace AppLimpia.Droid
                 // Subscribe to events
                 System.Diagnostics.Debug.Assert(this.Control != null, "Control is not created");
 
+                // Save the default values
+                this.defaultTextColor = this.Control.TextColor;
+
                 // Configure the control
-                this.Control.ClearFocus();
-                this.UpdatePlaceholderText();
                 this.UpdateTextColor();
-                this.UpdatePlaceholderColor();
+                this.UpdatePlaceholder();
+
+                // FIX: Xamarin updates placeholder on every collection change
+                ((ObservableCollection<string>)e.NewElement.Items).CollectionChanged +=
+                    (s, _) => { this.UpdatePlaceholder(); };
             }
         }
 
@@ -65,21 +71,33 @@ namespace AppLimpia.Droid
             }
             else if (e.PropertyName == PickerEx.PlaceholderProperty.PropertyName)
             {
-                this.UpdatePlaceholderText();
+                this.UpdatePlaceholder();
             }
             else if (e.PropertyName == PickerEx.PlaceholderColorProperty.PropertyName)
             {
-                this.UpdatePlaceholderColor();
+                this.UpdatePlaceholder();
             }
         }
 
         /// <summary>
-        /// Sets the text of the placeholder for the current control.
+        /// Sets the text and the color of the placeholder for the current control.
         /// </summary>
-        private void UpdatePlaceholderText()
+        private void UpdatePlaceholder()
         {
+            // Get the placeholder text and color
             var element = (PickerEx)this.Element;
-            element.Title = element.Placeholder;
+            if (element.Placeholder == null)
+            {
+                return;
+            }
+
+            // Update the placeholder text
+            var targetColor = element.PlaceholderColor;
+            var color = (element.IsEnabled && !targetColor.Equals(Color.Default)) ? targetColor : Color.Gray;
+            this.Control.AttributedPlaceholder = new NSAttributedString(
+                                                     element.Placeholder,
+                                                     this.Control.Font,
+                                                     color.ToUIColor());
         }
 
         /// <summary>
@@ -87,31 +105,16 @@ namespace AppLimpia.Droid
         /// </summary>
         private void UpdateTextColor()
         {
-            // Get the default hint text color
-            if (this.defaultTextColor == null)
+            // Get the text olor
+            var element = (PickerEx)this.Element;
+            var textColor = this.Element.TextColor;
+            if (!element.IsEnabled || textColor.Equals(Color.Default))
             {
-                this.defaultTextColor = this.Control.TextColors;
+                this.Control.TextColor = this.defaultTextColor;
+                return;
             }
 
-            // Set the new hint text color
-            var textColor = ((PickerEx)this.Element).TextColor;
-            this.Control.SetTextColor(textColor.ToAndroidPreserveDisabled(this.defaultTextColor));
-        }
-
-        /// <summary>
-        /// Updates the placeholder color for the current control.
-        /// </summary>
-        private void UpdatePlaceholderColor()
-        {
-            // Get the default hint text color
-            if (this.defaultHintTextColor == null)
-            {
-                this.defaultHintTextColor = this.Control.HintTextColors;
-            }
-
-            // Set the new hint text color
-            var placeholderColor = ((PickerEx)this.Element).PlaceholderColor;
-            this.Control.SetHintTextColor(placeholderColor.ToAndroidPreserveDisabled(this.defaultHintTextColor));
+            this.Control.TextColor = textColor.ToUIColor();
         }
     }
 }

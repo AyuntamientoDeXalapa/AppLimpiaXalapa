@@ -61,7 +61,7 @@ namespace AppLimpia.WinPhone
             {
                 this.UpdateTextColor();
             }
-            else if (e.PropertyName == PickerEx.PlaceholderTextProperty.PropertyName)
+            else if (e.PropertyName == PickerEx.PlaceholderProperty.PropertyName)
             {
                 this.UpdatePlaceholderText();
             }
@@ -120,9 +120,9 @@ namespace AppLimpia.WinPhone
         private void UpdatePlaceholderText()
         {
             var element = (PickerEx)this.Element;
-            if (element.PlaceholderText != null)
+            if (element.Placeholder != null)
             {
-                this.Control.PlaceholderText = element.PlaceholderText;
+                this.Control.PlaceholderText = element.Placeholder;
             }
             else
             {

@@ -70,7 +70,7 @@
                  Padding="30,10">
       <local:PickerEx x:Name="PickerNotificationTypes"
                       HorizontalOptions="FillAndExpand"
-                      PlaceholderText="{local:Localize NotificationTypes}"
+                      Placeholder="{local:Localize NotificationTypes}"
                       SelectedIndex="{Binding NotificationTypeIndex}"/>
       <Label HorizontalOptions="FillAndExpand"
              Style="{DynamicResource ErrorLabel}"

@@ -66,7 +66,7 @@ namespace AppLimpia.iOS
             var application = new App();
             application.CurrentCultureInfo = AppDelegate.GetCurrentCultureInfo();
             application.DeviceId = $"{Xamarin.Forms.Device.OS}:{deviceUuid.AsString()}";
-            application.LaunchUriDelegate = this.LaunchUri;
+            application.LaunchUriDelegate = AppDelegate.LaunchUri;
 
             // If launched with the URI
             if (options != null)
@@ -102,7 +102,7 @@ namespace AppLimpia.iOS
             // If application was launched with an URI
             if (this.launchedUri != null)
             {
-                this.HandleUri(this.launchedUri);
+                AppDelegate.HandleUri(this.launchedUri);
                 this.launchedUri = null;
             }
 
@@ -125,7 +125,7 @@ namespace AppLimpia.iOS
             // Handle the resource URI
             Debug.WriteLine("OpenUrl");
             Debug.WriteLine(url);
-            this.HandleUri(new Uri(url.ToString()));
+            AppDelegate.HandleUri(new Uri(url.ToString()));
 
             // Return success
             return true;
@@ -213,7 +213,25 @@ namespace AppLimpia.iOS
         /// <param name="userInfo">A dictionary that contains information related to the remote notification.</param>
         public override void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
         {
-            Debug.WriteLine("Received remote notification");
+            // If "aps" key is present
+            if ((userInfo != null) && userInfo.ContainsKey(new NSString("aps")))
+            {
+                // Get the alert text
+                var aps = userInfo.ObjectForKey(new NSString("aps")) as NSDictionary;
+                var alertText = string.Empty;
+                if (aps?.ContainsKey(new NSString("alert")) == true)
+                {
+                    alertText = (aps[new NSString("alert")] as NSString)?.ToString();
+                }
+
+                // Show a message
+                Xamarin.Forms.Device.BeginInvokeOnMainThread(
+                    () =>
+                        App.DisplayAlert(
+                            Properties.Localization.NotificationDialogTitle,
+                            alertText,
+                            Properties.Localization.DialogDismiss));
+            }
         }
 
         /// <summary>
@@ -324,7 +342,7 @@ namespace AppLimpia.iOS
         /// Launches the application associated with the specified URI.
         /// </summary>
         /// <param name="uriToLaunch">The URI to launch.</param>
-        private void LaunchUri(Uri uriToLaunch)
+        private static void LaunchUri(Uri uriToLaunch)
         {
             var uri = new NSUrl(uriToLaunch.ToString());
             UIApplication.SharedApplication.OpenUrl(uri);
@@ -334,15 +352,11 @@ namespace AppLimpia.iOS
         /// Handles the URI passed ti the current application.
         /// </summary>
         /// <param name="uri">The URI to be handled.</param>
-        private void HandleUri(Uri uri)
+        private static void HandleUri(Uri uri)
         {
             // Resume the login process
             var application = Xamarin.Forms.Application.Current as App;
-            if (application != null)
-            {
-                var loginViewModel = application.MainPage?.BindingContext as Login.LoginViewModel;
-                loginViewModel?.ResumeLoginWithCommand?.Execute(uri);
-            }
+            application?.HandleUri(uri);
         }
     }
 }
