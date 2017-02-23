@@ -112,13 +112,13 @@ namespace AppLimpia.Droid
         private static void HandleIntent(App application, Intent intent)
         {
             // If no application exists
-            if (application == null)
+            if ((application == null) || (intent == null))
             {
                 return;
             }
 
             // If the current intent is a view action
-            if (intent.Action.Equals(Intent.ActionView))
+            if ((intent.Action != null) && intent.Action.Equals(Intent.ActionView))
             {
                 // If intent have data
                 if (intent.Data != null)
