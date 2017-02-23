@@ -2,11 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:cv="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.CarouselView"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:AppLimpia;assembly=AppLimpia"
-             mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance local:MainViewModel}"
              x:Class="AppLimpia.MainView">
   <ContentPage.Padding>
     <OnPlatform x:TypeArguments="Thickness"
