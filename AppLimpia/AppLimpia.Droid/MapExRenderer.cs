@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Android.Content;
 using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
+using Android.OS;
 using Android.Views;
 using Android.Widget;
 
@@ -101,6 +102,7 @@ namespace AppLimpia.Droid
                 // Inflate the view for the pin
                 if (customPin.Type != MapPinType.Vehicle)
                 {
+                    var useTouch = Build.VERSION.SdkInt >= BuildVersionCodes.N;
                     var view = inflater.Inflate(Resource.Layout.drop_point_annotation, null);
 
                     // Set annotation title
@@ -121,11 +123,25 @@ namespace AppLimpia.Droid
                     var toggleFavorite = view?.FindViewById<Android.Widget.ImageButton>(Resource.Id.buttonFavoriteToggle);
                     if (toggleFavorite != null)
                     {
-                        toggleFavorite.Click += (s, e) =>
-                            {
-                                marker.HideInfoWindow();
-                                customPin.ToggleFavoriteCommand.Execute(null);
-                            };
+                        if (useTouch)
+                        {
+                            toggleFavorite.Touch += (s, e) =>
+                                {
+                                    if (e.Event.Action == MotionEventActions.Up)
+                                    {
+                                        marker.HideInfoWindow();
+                                        customPin.ToggleFavoriteCommand.Execute(null);
+                                    }
+                                };
+                        }
+                        else
+                        {
+                            toggleFavorite.Click += (s, e) =>
+                                {
+                                    marker.HideInfoWindow();
+                                    customPin.ToggleFavoriteCommand.Execute(null);
+                                };
+                        }
 
                         // Change the image if required
                         if (customPin.IsFavorite)
@@ -138,22 +154,50 @@ namespace AppLimpia.Droid
                     var locateVehicle = view?.FindViewById<Android.Widget.Button>(Resource.Id.buttonLocateVehicle);
                     if (locateVehicle != null)
                     {
-                        locateVehicle.Click += (s, e) =>
-                            {
-                                marker.HideInfoWindow();
-                                customPin.LocateVehicleCommand.Execute(null);
-                            };
+                        if (useTouch)
+                        {
+                            locateVehicle.Touch += (s, e) =>
+                                {
+                                    if (e.Event.Action == MotionEventActions.Up)
+                                    {
+                                        marker.HideInfoWindow();
+                                        customPin.LocateVehicleCommand.Execute(null);
+                                    }
+                                };
+                        }
+                        else
+                        {
+                            locateVehicle.Click += (s, e) =>
+                                {
+                                    marker.HideInfoWindow();
+                                    customPin.LocateVehicleCommand.Execute(null);
+                                };
+                        }
                     }
 
                     // Set report button event
                     var report = view?.FindViewById<Android.Widget.Button>(Resource.Id.buttonReport);
                     if (report != null)
                     {
-                        report.Click += (s, e) =>
-                            {
-                                marker.HideInfoWindow();
-                                customPin.ReportIncidentCommand.Execute(null);
-                            };
+                        if (useTouch)
+                        {
+                            report.Touch += (s, e) =>
+                                {
+                                    if (e.Event.Action == MotionEventActions.Up)
+                                    {
+                                        marker.HideInfoWindow();
+                                        customPin.ReportIncidentCommand.Execute(null);
+                                    }
+                                };
+                        }
+                        else
+                        {
+                            report.Click += (s, e) =>
+                                {
+                                    marker.HideInfoWindow();
+                                    customPin.ReportIncidentCommand.Execute(null);
+                                };
+                        }
                     }
 
                     // Return the generated view
